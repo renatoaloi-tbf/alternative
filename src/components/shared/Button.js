@@ -7,6 +7,7 @@ import {TouchableOpacity} from 'react-native';
 const enhancedButton = compose(
   withProps(({onPress}) => ({
     onPress: e => {
+      e.persist();
       if (typeof onPress === 'function') {
         requestAnimationFrame(() => {
           onPress(e);

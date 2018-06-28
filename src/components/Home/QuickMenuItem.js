@@ -10,7 +10,6 @@ import {navigatorStyle} from '~/config';
 
 const enhance = compose(
   getNavigatorContext,
-  pure,
   setPropTypes({
     icon: string.isRequired,
     description: string.isRequired,
@@ -23,14 +22,15 @@ const enhance = compose(
         navigatorStyle
       });
     }
-  })
+  }),
+  pure
 );
 
 const QuickMenuItemEnchance = enhance(props => {
   return (
     <TouchableOpacityDefault {...props} onPress={props.goTo}>
       <WrapperIcon>
-        <IconDefault size={50} secondary name={props.icon} />
+        <IconDefault size={50} opacity={0.57} name={props.icon} />
       </WrapperIcon>
       <Bottom>
         <Text inverted size={22} weight="700">
@@ -46,7 +46,7 @@ export const QuickMenuItem = styled(QuickMenuItemEnchance)``;
 const TouchableOpacityDefault = styled(TouchableOpacity)`
   align-items: center;
   width: 49%;
-  border-radius: 2;
+  border-radius: ${props => props.theme.borderRadius};
   margin-top: 8;
   box-shadow: 0px 0.5px 1px #e0e0e0;
   elevation: 3;

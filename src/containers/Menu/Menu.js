@@ -13,7 +13,11 @@ import {func, object} from 'prop-types';
 import {connect} from 'react-redux';
 
 import {Header, MenuItem} from '~/components/Menu';
-import {ScrollWrapper, Text} from '~/components/shared';
+import {
+  ScrollWrapper,
+  Text,
+  StatusBarBackgroundColor
+} from '~/components/shared';
 
 const enhance = compose(
   connect(
@@ -24,10 +28,12 @@ const enhance = compose(
 );
 
 export const Menu = enhance(({user}) => {
+  console.log(user);
   return (
     <Wrapper>
+      <StatusBarBackgroundColor />
       <Header name={user.name} address={user.city} />
-      <ScrollWrapperDefault contentContainerStyle={listStyle}>
+      <ScrollWrapperDefault>
         <MenuItem route="Home" name="Home" icon="home" />
         <MenuItem route="Quality" name="Qualidade" icon="certificate" />
         <MenuItem route="Volume" name="Volume" icon="beaker" />
@@ -38,19 +44,22 @@ export const Menu = enhance(({user}) => {
           icon="file-document"
         />
         <MenuItem
-          route="Documentation"
+          route="http://milk-web.brazilsouth.cloudapp.azure.com:3000/privacy-policy"
           name="Política de privacidade"
           icon="lock"
+          link={true}
         />
         <MenuItem
-          route="Documentation"
+          route="http://milk-web.brazilsouth.cloudapp.azure.com:3000/terms-of-use"
           name="Termos de uso"
           icon="comment-text"
+          link={true}
         />
         <MenuItem
-          route="Documentation"
           name="Manual do produtor"
           icon="book-open"
+          route="http://www.google.com.br"
+          link={true}
         />
         <WrapperExit>
           <MenuItem
@@ -81,6 +90,4 @@ const WrapperExit = styled.View`
   justify-content: center;
 `;
 
-const ScrollWrapperDefault = ScrollWrapper.extend`
-  padding-top: 27;
-`;
+const ScrollWrapperDefault = ScrollWrapper.extend``;

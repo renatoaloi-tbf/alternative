@@ -21,9 +21,11 @@ export const Header = enhance(({name, address}) => {
 				<IconUri size={60} name="avatarYellow" />
 			</AvatarContainer>
 			<DescriptionUser>
-				<Text inverted size={18}>
-					{name}
-				</Text>
+				<WrapperTitle>
+					<Title numberOfLines={2} inverted size={18}>
+						{name}
+					</Title>
+				</WrapperTitle>
 				<CityText inverted size={12}>
 					{address}
 				</CityText>
@@ -33,7 +35,7 @@ export const Header = enhance(({name, address}) => {
 });
 
 const Wrapper = styled.View`
-	height: ${Platform.OS === 'ios' ? 135 : 115};
+	height: ${Platform.OS === 'ios' ? 115 : 115};
 	background-color: ${props => props.theme.infoMenu};
 	flex-direction: row;
 	align-items: center;
@@ -47,8 +49,15 @@ const AvatarContainer = styled.View`
 
 const DescriptionUser = styled.View`
 	padding-left: 15;
+	padding-right: 15;
 `;
 
 const CityText = Text.extend`
 	opacity: 0.7;
+`;
+
+const Title = Text.extend``;
+
+const WrapperTitle = styled.View`
+	width: 90%;
 `;

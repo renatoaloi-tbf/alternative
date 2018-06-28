@@ -16,22 +16,21 @@ export const login = (user, password) => {
       });
       return error;
     }
-    // const code = Base64.btoa(`${user}:${password}`);
-    // const config = {
-    //   method: 'get',
-    //   headers: {
-    //     Authorization: `Basic ${code}`
-    //   }
-    // };
+    const code = Base64.btoa(`${user}:${password}`);
+    const config = {
+      method: 'get',
+      headers: {
+        Authorization: `Basic ${code}`
+      }
+    };
+    console.log(config);
     try {
-      const url = apiUrl;
-      // const res = await fetch(url, config);
-      const res = await fetch(url);
+      const url = `${apiUrl}/auth/authenticate`;
+      const res = await fetch(url, config);
       const repo = await res.json();
       if (repo.status === 401) {
         return fail(repo);
       }
-      debugger;
       return success(repo.result);
     } catch (e) {
       return fail(e);

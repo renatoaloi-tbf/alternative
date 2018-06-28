@@ -32,14 +32,38 @@ const enhance = compose(
     {getPrices}
   ),
   withState('year', 'setYear', moment().year()),
-  withState('periodPrice', 'setPeriodPrice', ({researched}) => ({
-    pricePeriod: researched.searchPrice.byIndex[0],
-    pricePeriodAfter: researched.searchPrice.byIndex[1]
-  })),
+  lifecycle({
+    async componentWillMount() {
+      await this.props.getPrices(this.props.price.byYear, this.props.year);
+    }
+  }),
+  withState('periodPrice', 'setPeriodPrice', ({researched}) => {
+    return {
+      pricePeriod: researched.searchPrice.byIndex[0],
+      pricePeriodAfter: researched.searchPrice.byIndex[1]
+    };
+  }),
   withHandlers({
-    handlersPress: ({setYear, getPrices, price}) => e => {
+    handlersPress: ({
+      setYear,
+      getPrices,
+      price,
+      researched,
+      setPeriodPrice
+    }) => e => {
       setYear(e);
       getPrices(price.byYear, e);
+      const pricePeriod = researched.searchPrice.byIndex[0];
+      let pricePeriodAfter = researched.searchPrice.byIndex[1];
+      const pd = moment().month(1);
+      pricePeriodAfter = pricePeriodAfter
+        ? pricePeriodAfter
+        : {y: 'Previsão', period: pd.format('MMMM/YYYY')};
+
+      setPeriodPrice({
+        pricePeriod,
+        pricePeriodAfter
+      });
     },
     handlerClick: ({researched, setPeriodPrice, year}) => e => {
       const pricePeriod = researched.searchPrice.byIndex[e.x];
@@ -53,11 +77,6 @@ const enhance = compose(
         pricePeriod,
         pricePeriodAfter
       });
-    }
-  }),
-  lifecycle({
-    componentWillMount() {
-      this.props.getPrices(this.props.price.byYear, this.props.year);
     }
   })
 );
@@ -76,7 +95,7 @@ export const Price = enhance(
     return (
       <Wrapper secondary>
         <TopBar
-          title="Price"
+          title="Preço"
           rightComponent={<Icon inverted name="bell" />}
           leftComponent={<DrawerButton />}
         />

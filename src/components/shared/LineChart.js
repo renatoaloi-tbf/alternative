@@ -52,6 +52,7 @@ const enhancer = compose(
           drawLabels: true,
           drawAxisLine: false,
           drawGridLines: false,
+          axisMinimum: 0,
           zeroLine: {
             enabled: true,
             lineWidth: 1.3
@@ -71,6 +72,7 @@ const enhancer = compose(
         left: {
           drawLabels: true,
           drawAxisLine: false,
+          axisMinimum: 0,
           drawGridLines: true,
           zeroLine: {
             enabled: true,

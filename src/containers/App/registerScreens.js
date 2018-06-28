@@ -26,11 +26,13 @@ export const registerScreens = (store, Provider) => {
 
   function registerComponent(name, screen) {
     // TODO: remover isso
-    const screenComponent =
-      name !== 'Login' || name !== 'Menu'
-        ? withNavigations(withNavigatorContext(screen))
-        : withNavigatorContext(screen);
-    Navigation.registerComponent(name, () => screenComponent, store, Provider);
+
+    Navigation.registerComponent(
+      name,
+      () => withNavigatorContext(screen),
+      store,
+      Provider
+    );
     registeredScreens.push(name);
   }
 };

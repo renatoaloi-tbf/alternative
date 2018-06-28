@@ -48,7 +48,6 @@ const enhance = compose(
   ]),
   withProps(({statements, month}) => ({
     data: map(statements.byMonth[month].Items, item => {
-      console.log(item);
       return [item.desc, item.qtd, item.un, item.total, item.tax, item.ded];
     })
   })),
@@ -62,7 +61,6 @@ const enhance = compose(
 
 export const StatementOfPayment = enhance(
   ({statements, month, header, widthArr, data}) => {
-    console.log(data, statements);
     return (
       <Wrapper secondary>
         <TopBar

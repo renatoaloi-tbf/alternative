@@ -192,36 +192,18 @@ export const Filter = compose(
 									/>
 								)}
 							</SelectRanger>
-							{notComparison && (
-								<WrapperCompareText>
-									<CheckBoxStyle
-										checkBoxColor="#fff"
-										rightTextView={
-											<TextCheckBox inverted>
-												Comparar com outro periodo
-											</TextCheckBox>
-										}
-										onClick={() => setCompare(!compare)}
-										isChecked={!compare}
-									/>
-								</WrapperCompareText>
-							)}
-							{notComparison && (
-								<SelectRanger>
-									<Select
-										onPress={setDateStartComparation}
-										title="Data início comparação"
-										buttonText="Selecionar"
-										disabled={compare}
-									/>
-									<Select
-										onPress={setDateEndComparation}
-										title="Data términi da comparação"
-										buttonText="Pronto"
-										disabled={compare}
-									/>
-								</SelectRanger>
-							)}
+							<WrapperCompareText>
+								<CheckBoxStyle
+									checkBoxColor="#fff"
+									rightTextView={
+										<TextCheckBox inverted>
+											Comparar com outro periodo
+										</TextCheckBox>
+									}
+									onClick={() => setCompare(!compare)}
+									isChecked={!compare}
+								/>
+							</WrapperCompareText>
 						</WrapperRange>
 					</WrapperSelected>
 				)}
@@ -286,8 +268,8 @@ const SelectRanger = styled.View`
 	justify-content: space-between;
 `;
 const WrapperCompareText = styled.View`
-	padding-top: 20;
-	padding-bottom: 20;
+	padding-top: 10;
+	padding-bottom: 10;
 `;
 
 const WrapperCompare = styled.View``;

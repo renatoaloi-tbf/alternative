@@ -1,5 +1,5 @@
 export const theme = {
-    borderRadius: 10,
+    borderRadius: 2,
     bg: 'white',
     bgSecondary: 'whitesmoke',
     text: '#000',

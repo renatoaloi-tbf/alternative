@@ -11,7 +11,8 @@ import {
 import {func, object} from 'prop-types';
 import {connect} from 'react-redux';
 import moment from 'moment';
-
+import {reduce, map} from 'lodash';
+import numeral from 'numeral';
 import {
   Wrapper,
   TopBar,
@@ -22,44 +23,56 @@ import {
 import {FilterOneDatePicker} from '~/components/FilterOneDatePicker';
 import {DocumentationItem} from '~/components/Documentation';
 import {getStatements} from '~/actions';
+import {isNumber} from '~/utils';
 
 const enhance = compose(
   connect(
     ({statements, researched}) => ({statements, researched}),
     {getStatements}
   ),
-  withState('isFilter', 'setIsFilter', false),
+  withState('count', 'setCount', ({statements}) => {
+    const documetations = statements.byMonth[moment().format('MM/YYYY')];
+    if (documetations && documetations.Items.length) {
+      const qtaList = map(documetations.Items, item => item.qtd);
+      const acount = reduce(qtaList, (previ, next) => previ + next);
+      return `${isNumber(acount)} L`;
+    }
+    return `0 L`;
+  }),
+  withState('isFilter', 'setIsFilter', true),
   withState('isStatements', 'setStatements', true),
-  withState(
-    'period',
-    'setPeriod',
-    moment()
-      .locale('pt-br')
-      .format('MMM/YYYY')
-  ),
-  withState(
-    'searchPeriod',
-    'setSearchPeriod',
-    moment()
-      .locale('pt-br')
-      .format('M/YYYY')
-  ),
+  withState('period', 'setPeriod', moment().format('MMMM [de] YYYY')),
+  withState('searchPeriod', 'setSearchPeriod', moment().format('M/YYYY')),
   withHandlers({
-    handlerClose: ({setIsFilter, setStatements, setPeriod}) => () => {
-      setIsFilter(false);
+    handlerClose: ({
+      setIsFilter,
+      setStatements,
+      setPeriod,
+      setSearchPeriod
+    }) => () => {
+      setIsFilter(true);
       setStatements(false);
-      setPeriod(moment().format('MMM/YYYY'));
+      setPeriod(moment().format('MMMM [de] YYYY'));
+      setSearchPeriod(moment().format('MMM/YYYY'));
     },
     handlerPress: ({
       setIsFilter,
       setStatements,
       statements,
       setPeriod,
-      setSearchPeriod
+      setSearchPeriod,
+      setCount
     }) => e => {
-      setIsFilter(true);
-      setPeriod(e.label);
-      if (statements.byMonth[e.value]) {
+      setIsFilter(false);
+      setPeriod(moment(e.label, 'MMM/YYYY').format('MMMM [de] YYYY'));
+      const documetations = statements.byMonth[e.value];
+      if (documetations) {
+        if (documetations && documetations.Items.length) {
+          const qtaList = map(documetations.Items, item => item.qtd);
+          const acount = reduce(qtaList, (previ, next) => previ + next);
+          console.log(acount);
+          setCount(`${isNumber(acount)} L`);
+        }
         setStatements(true);
         setSearchPeriod(e.value);
       } else {
@@ -89,12 +102,13 @@ export const Documentation = enhance(
     handlerPress,
     period,
     isStatements,
-    searchPeriod
+    searchPeriod,
+    count
   }) => {
     return (
       <Wrapper secondary>
         <TopBar
-          title="Documentação"
+          title="Documentos"
           rightComponent={<Icon inverted name="bell" />}
           leftComponent={<DrawerButton />}
         />
@@ -115,6 +129,7 @@ export const Documentation = enhance(
                 route="StatementOfPayment"
                 icon="file-document-box"
                 description="Demonstrativo de pagamento"
+                value={count}
               />
             )}
             <DocumentationItem
@@ -127,19 +142,19 @@ export const Documentation = enhance(
               route="StatementOfPayment"
               success
               icon="onenote"
-              description="Nota"
+              description="Nota Fiscal"
             />
             <DocumentationItem
               warning
               route="StatementOfPayment"
               icon="note"
-              description="Demonstrativo de Imposto"
+              description="Demonstrativo de imposto de renda"
             />
             <DocumentationItem
               warningLigth
               icon="alert"
               route="StatementOfPayment"
-              description="Resultado fora do pradão"
+              description="Resultados fora do pradão - IN62"
             />
           </WrapperItem>
         </ScrollWrapperStyle>

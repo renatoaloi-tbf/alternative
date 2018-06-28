@@ -25,49 +25,89 @@ import {
   BarChart,
   ScrollWrapper
 } from '~/components/shared';
+
 import {VolumeDetails, VolumeAverage} from '~/components/Volume';
+import {FilterCore} from '~/components/FilterCore';
 
 const enhance = compose(
   connect(
     ({volume, researched}) => ({volume, researched}),
     {getSearchVolume, closeSearchQuality}
   ),
-  withState('range', 'setRange', {}),
+  withState('range', 'setRange', {
+    startDate: moment().subtract(1, 'month'),
+    endDate: moment()
+  }),
   withState('details', 'setDetails', {}),
-  withState('isFilter', 'setFilter', false),
+  withState('isFilter', 'setFilter', true),
+  withState('isClose', 'setClose', false),
   withState('collected', 'setCollected', 0),
   withState('isCollected', 'setIsCollected', false),
+  withState('searchMonth', 'setSearchMonth', ''),
   withHandlers({
     handlerClose: ({
-      setFilter,
       setDetails,
       closeSearchQuality,
-      setIsCollected
+      setIsCollected,
+      setRange,
+      setSearchMonth,
+      volume,
+      setClose
     }) => () => {
-      closeSearchQuality();
-      setFilter(false);
+      setRange({});
+      setClose(false);
+      const range = {
+        startDate: moment().subtract(1, 'month'),
+        endDate: moment()
+      };
+      setSearchMonth(
+        `${moment(range.startDate, 'MM/YYYY').format('MMM/YYYY')} - ${moment(
+          range.endDate,
+          'MM/YYYY'
+        ).format('MMM/YYYY')}`
+      );
+      getSearchVolume(range, volume.all);
+      setRange({...range});
       setIsCollected(false);
       setDetails({});
     },
-    handlerChange: ({setRange, getSearchVolume, volume, setFilter}) => e => {
-      setRange(e);
-      setFilter(true);
-      getSearchVolume(e.value, volume.all);
+    onChange: ({setRange, getSearchVolume, volume, setFilter}) => e => {
+      if (size(e) === 2) {
+        setRange(e);
+        getSearchVolume(e, volume.all);
+      }
     },
     onSelect: ({
       researched,
       setDetails,
       setRange,
       setCollected,
-      setIsCollected
+      setIsCollected,
+      setClose,
+      setSearchMonth
     }) => e => {
       if (!isEmpty(e)) {
         const volume = researched.searchVolume.byIndex[e.x];
         setCollected(volume.volume);
         setIsCollected(true);
-        setRange({label: moment(volume.start_date).format('LL')});
-        setDetails(researched.searchVolume.byIndex[e.x]);
+        setSearchMonth(moment(volume.start_date).format('LL'));
+        // setRange({label: });
+        const details = researched.searchVolume.byIndex[e.x];
+        setDetails(details);
+        setClose(true);
       }
+    }
+  }),
+  lifecycle({
+    componentWillMount() {
+      const {startDate, endDate} = this.props.range;
+      this.props.setSearchMonth(
+        `${moment(startDate, 'MM/YYYY').format('MMM/YYYY')} - ${moment(
+          endDate,
+          'MM/YYYY'
+        ).format('MMM/YYYY')}`
+      );
+      this.props.getSearchVolume(this.props.range, this.props.volume.all);
     }
   })
 );
@@ -82,7 +122,10 @@ export const Volume = enhance(
     range,
     isFilter,
     collected,
-    isCollected
+    isCollected,
+    onChange,
+    isClose,
+    searchMonth
   }) => {
     return (
       <Wrapper secondary>
@@ -93,11 +136,15 @@ export const Volume = enhance(
         />
         <ScrollWrapperStyle>
           <WrapperHeader>
-            <FilterOneDatePicker
+            <FilterCore
               onClose={handlerClose}
               value={range.label}
-              onPress={handlerChange}
+              onChange={onChange}
               isFilter={isFilter}
+              isClose={isClose}
+              close={handlerClose}
+              value={searchMonth}
+              inverted={false}
             />
           </WrapperHeader>
           <WrapperVolumeAverage>

@@ -13,7 +13,7 @@ import {connect} from 'react-redux';
 import {ScrollView} from 'react-native';
 import {processColor} from 'react-native';
 import {size, map, forEach, find, isEmpty} from 'lodash';
-
+import moment from 'moment';
 import {
 	Wrapper,
 	TopBar,
@@ -25,6 +25,7 @@ import {
 	EmptyText
 } from '~/components/shared';
 import {DatePickerModal} from '~/components/DatePickerModal';
+import {FilterCore} from '~/components/FilterCore';
 import {ItemQuality} from '~/components/Quality';
 import {Filter} from '~/components/Filter';
 import {
@@ -47,12 +48,6 @@ const enhance = compose(
 			selected: true
 		},
 		{
-			name: 'CODE',
-			value: 'code',
-			measure: 'g/100',
-			selected: false
-		},
-		{
 			name: 'ESD',
 			value: 'esd',
 			measure: 'g/100',
@@ -61,12 +56,6 @@ const enhance = compose(
 		{
 			name: 'EST',
 			value: 'est',
-			measure: 'g/100',
-			selected: false
-		},
-		{
-			name: 'FACTORY',
-			value: 'factory',
 			measure: 'g/100',
 			selected: false
 		},
@@ -95,10 +84,16 @@ const enhance = compose(
 			selected: false
 		}
 	]),
-	withState('range', 'setRange', {}),
+	withState('range', 'setRange', {
+		startDate: moment().subtract(1, 'years'),
+		endDate: moment()
+	}),
 	withState('xAxis', 'setXAxis', []),
+	withState('isFilter', 'setFilter', true),
+	withState('isClose', 'setClose', false),
+
 	withState('searchToMonth', 'setSearchToMonth', false),
-	withState('searchMonth', 'setSearchMonth', ''),
+	withState('searchMonth', 'setSearchMonth', 'Mais recentes'),
 	withHandlers({
 		open: ({setVisible}) => () => {
 			setVisible(true);
@@ -107,12 +102,24 @@ const enhance = compose(
 			closeSearchQuality,
 			setRange,
 			setSearchToMonth,
-			setSearchMonth
+			setSearchMonth,
+			types,
+			quality,
+			getSearchQuality,
+			setFilter,
+			setClose
 		}) => () => {
-			closeSearchQuality();
 			setRange({});
-			setSearchMonth('');
-			setSearchToMonth(false);
+			setFilter(true);
+			setClose(false);
+			setSearchMonth('Mais recentes');
+			const range = {
+				startDate: moment().subtract(1, 'years'),
+				endDate: moment()
+			};
+			setRange({...range});
+			const type = find(types, item => item.selected);
+			getSearchQuality(range, quality.groupByYear, type.value);
 		},
 		handlersFilter: ({
 			types,
@@ -133,6 +140,7 @@ const enhance = compose(
 			});
 			const type = find(types, item => item.selected);
 			setTpes(types);
+			console.log(range);
 			if (!isEmpty(range)) {
 				if (!searchToMonth) {
 					getSearchQuality(range, quality.groupByYear, type.value);
@@ -151,11 +159,13 @@ const enhance = compose(
 			setRange,
 			searchToMonth,
 			getDetailsDayQuality,
-			searchMonth
+			searchMonth,
+			setClose
 		}) => e => {
+			setRange(e);
 			if (size(e) === 2) {
+				setClose(false);
 				const type = find(types, item => item.selected);
-				setRange(e);
 				if (!searchToMonth) {
 					getSearchQuality(e, quality.groupByYear, type.value);
 				} else {
@@ -171,17 +181,44 @@ const enhance = compose(
 			getDetailsDayQuality,
 			types,
 			setSearchMonth,
-			setSearchToMonth
+			setSearchToMonth,
+			setClose,
+			setFilter
 		}) => e => {
-			if (!isEmpty(e)) {
+			if (e && !isEmpty(e)) {
 				const month = researched.searchQuality.byIndex[e.x];
 				const type = find(types, item => item.selected);
 				if (quality.groupByMonth[month]) {
-					setSearchMonth(month);
+					setClose(true);
+					setFilter(false);
+					const dateFormat = moment(month, 'MM/YYYY').format('MMMM/YYYY');
+					setSearchMonth(dateFormat);
 					setSearchToMonth(true);
 					getDetailsDayQuality(quality.groupByMonth[month], type.value);
 				}
 			}
+		},
+		apply: ({setFilter, setSearchMonth, range, setClose}) => e => {
+			setFilter(false);
+			setClose(true);
+			const initDateFormat = moment(range.startDate, 'MM/YYYY').format(
+				'MMM/YY'
+			);
+			const endDateFormat = moment(range.endDate, 'MM/YYYY').format('MMM/YY');
+			setSearchMonth(`${initDateFormat} - ${endDateFormat}`);
+		},
+		open: ({setClose}) => () => {
+			setClose(true);
+		}
+	}),
+	lifecycle({
+		componentWillMount() {
+			const type = find(this.props.types, item => item.selected);
+			this.props.getSearchQuality(
+				this.props.range,
+				this.props.quality.groupByYear,
+				type.value
+			);
 		}
 	})
 );
@@ -189,7 +226,6 @@ const enhance = compose(
 export const Quality = enhance(
 	({
 		isVisible,
-		open,
 		onChange,
 		data,
 		xAxis,
@@ -197,9 +233,13 @@ export const Quality = enhance(
 		types,
 		handlersFilter,
 		close,
-		onSelect
+		onSelect,
+		isFilter,
+		apply,
+		searchMonth,
+		isClose,
+		open
 	}) => {
-		console.log(researched);
 		return (
 			<Wrapper secondary>
 				<TopBar
@@ -208,7 +248,15 @@ export const Quality = enhance(
 					rightComponent={<Icon inverted name="bell" />}
 				/>
 				<WrapperHeader>
-					<Filter onChange={onChange} onClose={close} />
+					<FilterCore
+						isFilter={isFilter}
+						onChange={onChange}
+						apply={apply}
+						value={searchMonth}
+						close={close}
+						isClose={isClose}
+						open={open}
+					/>
 				</WrapperHeader>
 				<WrapperFilter>
 					<FlatListStyle
@@ -260,6 +308,7 @@ const WrapperFooter = styled.View``;
 const FlatListStyle = styled(FlatList)`
 	margin-top: 2;
 	margin-bottom: 2;
+	elevation: 1;
 `;
 
 const WrapperFilter = styled.View`

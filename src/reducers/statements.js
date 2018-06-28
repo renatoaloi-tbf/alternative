@@ -12,7 +12,6 @@ const getStatements = (state, {payload}) => {
 
   const {milkStatements} = payload.data[0];
   forEach(milkStatements, item => {
-    debugger;
     const date = `${padZero(2, item.month)}/${item.year}`;
     if (newState.allMonths.indexOf(date)) {
       newState.allMonths.push(date);

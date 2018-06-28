@@ -7,10 +7,8 @@ const moment = extendMoment(Moment);
 
 const qualityConstant = {
   ccs: 0,
-  code: 0,
   esd: 0,
   est: 0,
-  factory: 0,
   fat: 0,
   lact: 0,
   prot: 0,
@@ -40,11 +38,11 @@ const INITIAL_STATE = {
 const getData = (state, {payload}) => {
   const newState = cloneDeep(INITIAL_STATE);
   const {qualities, range, type} = payload;
+  console.log(range);
   const list = [];
   newState.searchQuality.period = dateDiffList(range.startDate, range.endDate);
   forEach(newState.searchQuality.period, (item, index) => {
     newState.searchQuality.byIndex[index] = item;
-    console.log(item);
     if (qualities[item]) {
       list.push(qualities[item]);
     } else {
@@ -52,6 +50,7 @@ const getData = (state, {payload}) => {
     }
   });
   newState.searchQuality.items = map(list, item => ({y: item[type]}));
+  console.log(newState);
   return newState;
 };
 
@@ -68,8 +67,8 @@ const setArray = number => {
 const getVolumeData = (state, {payload}) => {
   const newState = cloneDeep(INITIAL_STATE);
   const {range, volumes} = payload;
-  const start = moment(range, 'MM/YYYY').startOf('month');
-  const end = moment(range, 'MM/YYYY').endOf('month');
+  const start = moment(range.startDate, 'MM/YYYY').startOf('month');
+  const end = moment(range.endDate, 'MM/YYYY').endOf('month');
   const ra = moment.range(start, end);
   const filterVolumes = filter(volumes, item =>
     ra.contains(moment(item.searchDate))
@@ -94,7 +93,6 @@ const close = () => {
   return newState;
 };
 const getDetailsDayQuality = (state, {payload}) => {
-  debugger;
   const newState = cloneDeep(INITIAL_STATE);
   const {qualities, type} = payload;
   newState.searchQuality.period = map(qualities, item => item.period);
@@ -111,12 +109,15 @@ const getDetailsDayQuality = (state, {payload}) => {
 const getPriceData = (state, {payload}) => {
   const newState = cloneDeep(INITIAL_STATE);
   const {prices, year} = payload;
+  debugger;
   const pricesYear = prices[year];
-  // map(moment.months(), item => )
 
   newState.searchPrice.items = map(moment.months(), (item, index) => {
-    debugger;
-    const findPrice = find(pricesYear, item => item.month === index + 1);
+    const findPrice = find(
+      pricesYear,
+      price => parseInt(price.month) === index + 1
+    );
+
     if (findPrice) {
       return {y: parseFloat(findPrice.price)};
     }
@@ -145,7 +146,6 @@ export const researched = (state = INITIAL_STATE, action) => {
       return getData(state, action);
     case 'SEARCH_VOLUME':
       return getVolumeData(state, action);
-      debugger;
     case 'DETAILS_DAY_QUALITY':
       return getDetailsDayQuality(state, action);
     case 'PRICES_YEAR':

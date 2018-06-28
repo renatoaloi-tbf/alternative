@@ -1,7 +1,7 @@
 import React from 'react';
 import styled, {css} from 'styled-components/native';
 import {default as NativeIcon} from 'react-native-vector-icons/MaterialCommunityIcons';
-import {compose, setPropTypes, withProps} from 'recompose';
+import {compose, setPropTypes, withProps, pure} from 'recompose';
 import {string} from 'prop-types';
 import {Platform} from 'react-native';
 
@@ -13,15 +13,17 @@ const enhancedIcon = compose(
   }),
   withProps(({name, iosName, androidName}) => ({
     name: name || (Platform.OS === 'ios' ? iosName : androidName)
-  }))
+  })),
+  pure
 )(props => <NativeIcon {...props} />);
 
 export const Icon = styled(enhancedIcon).attrs({
   size: props => props.size || 25,
-  color: props => props.color || props.theme.text
+  color: props => props.color || props.theme.text,
+  opacity: props => props.opacity || 1
 })`
   color: ${props => props.color};
-
+  opacity: ${props => props.opacity};
   ${props =>
     props.success &&
     css`

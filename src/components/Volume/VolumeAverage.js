@@ -15,6 +15,7 @@ import {
 // locals
 import {getNavigatorContext} from '~/enhancers';
 import {Text} from '~/components/shared';
+import {isNumber} from '~/utils';
 
 const enhance = compose(
   setPropTypes({
@@ -48,7 +49,7 @@ export const VolumeAverage = enhance(
                 Litros Coletados
               </Text>
               <Text inverted size={30}>
-                {collected.toLocaleString()} L
+                {isNumber(collected)} L
               </Text>
             </StyleTextTotal>
           ) : (
@@ -57,7 +58,7 @@ export const VolumeAverage = enhance(
                 Total - {month}
               </Text>
               <Text inverted size={30}>
-                {total.toLocaleString()} L
+                {isNumber(total)} L
               </Text>
             </StyleTextMonth>
           )}

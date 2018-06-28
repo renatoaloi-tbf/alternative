@@ -3,8 +3,13 @@ import devToolsEnhancer from 'remote-redux-devtools';
 import ReduxThunk from 'redux-thunk';
 import {reducer as form} from 'redux-form';
 import {AsyncStorage} from 'react-native';
-import {persistStore, persistReducer} from 'redux-persist';
+import {
+  persistStore,
+  persistReducer,
+  persistCombineReducers
+} from 'redux-persist';
 import storage from 'redux-persist/lib/storage'; // or whatever storage you are using
+import autoMergeLevel2 from 'redux-persist/lib/stateReconciler/autoMergeLevel2';
 
 // local
 import {
@@ -17,7 +22,13 @@ import {
   user
 } from '../reducers';
 
-const appReducer = combineReducers({
+const config = {
+  key: 'root',
+  storage,
+  stateReconciler: autoMergeLevel2
+};
+
+const appReducer = persistCombineReducers(config, {
   price,
   menu,
   quality,
@@ -30,16 +41,13 @@ const appReducer = combineReducers({
 
 var middlewares = compose(applyMiddleware(ReduxThunk));
 
-const config = {
-  key: 'root',
-  storage
-};
-
-const reducer = persistReducer(config, appReducer);
+// const reducer = persistReducer(config, appReducer);
 // const persistedReducer = persistReducer(persistConfig, appReducer);
 
 export const configureStore = () => {
-  const store = createStore(reducer, devToolsEnhancer(), middlewares);
+  const store = createStore(appReducer, devToolsEnhancer(), middlewares);
+  console.log(store.getState());
   let persistor = persistStore(store);
+  console.log(persistor.getState());
   return {persistor, store};
 };

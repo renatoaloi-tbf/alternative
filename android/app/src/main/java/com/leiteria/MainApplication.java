@@ -16,6 +16,7 @@ import com.reactnativenavigation.NavigationApplication;
 import com.oblador.vectoricons.VectorIconsPackage;
 import com.zyu.ReactNativeWheelPickerPackage;
 import com.github.wuxudong.rncharts.MPAndroidChartPackage;
+import org.devio.rn.splashscreen.SplashScreenReactPackage;
 
 public class MainApplication extends NavigationApplication {
 
@@ -29,7 +30,8 @@ public class MainApplication extends NavigationApplication {
         new MainReactPackage(),
         new VectorIconsPackage(),
         new ReactNativeWheelPickerPackage(),
-        new MPAndroidChartPackage()
+        new MPAndroidChartPackage(),
+        new SplashScreenReactPackage() 
     );
   }
 

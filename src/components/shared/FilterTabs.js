@@ -11,7 +11,6 @@ const enhance = compose(
   }),
   withProps(({children, activeTab}) => ({
     render: () => {
-      console.log(isArray(children));
       return isArray(children)
         ? React.cloneElement(children[activeTab])
         : React.cloneElement(children);

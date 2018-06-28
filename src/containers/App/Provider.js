@@ -1,15 +1,18 @@
 import {Provider as ProviderRedux} from 'react-redux';
 import React from 'react';
 import {ThemeProvider} from 'styled-components';
+import {PersistGate} from 'redux-persist/es/integration/react';
 
 // local
-import {theme} from '../../config';
+import {theme} from '~/config';
 
-export const Provider = props => {
-  console.log(props);
+export const Provider = persistor => props => {
+  console.log(persistor.getState());
   return (
     <ProviderRedux store={props.store}>
-      <ThemeProvider theme={theme}>{props.children}</ThemeProvider>
+      <PersistGate persistor={persistor}>
+        <ThemeProvider theme={theme}>{props.children}</ThemeProvider>
+      </PersistGate>
     </ProviderRedux>
   );
 };

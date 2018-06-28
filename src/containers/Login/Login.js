@@ -11,8 +11,9 @@ import {
 } from 'recompose';
 import {func, object} from 'prop-types';
 import {connect} from 'react-redux';
-import {reduxForm, Field} from 'redux-form';
-// import {Image} from 'react-native';
+import {reduxForm, Field, SubmissionError} from 'redux-form';
+// import {  } from 'redux-form'
+import {Linking} from 'react-native';
 import {
 	Wrapper,
 	Text,
@@ -71,19 +72,82 @@ const enhance = compose(
 		}) => async () => {
 			setLoading(true);
 			const {token} = await login(userName, password);
-			console.log(token);
 			setLoading(false);
 			if (token) {
 				loginSuccess();
 			} else {
 				showErrorNotification('Usuário ou senha incorretos');
 			}
+		},
+		submit: ({
+			setLoading,
+			loginSuccess,
+			showErrorNotification,
+			login
+		}) => async values => {
+			if (!values.user) {
+				throw new SubmissionError({
+					user: 'Campo obrigatório'
+				});
+			}
+			if (!values.password) {
+				throw new SubmissionError({
+					password: 'Campo obrigatório'
+				});
+			}
+			setLoading(true);
+			const {token} = await login(values.user, values.password);
+			setLoading(false);
+			if (token) {
+				loginSuccess();
+			} else {
+				showErrorNotification('Usuário ou senha incorretos');
+			}
+
 		}
 	})
 );
 
-export const Login = enhance(
-	({loginIn, userName, setUserName, password, setPassword, isLoading}) => {
+const renderInputText = ({
+	placeholder,
+	secureTextEntry,
+	input: {onChange, value, onBlur, onFocus, ...restInput},
+	meta: {touched, error}
+}) => {
+	return (
+		<WrapperField>
+			<TextInput
+				secureTextEntry={secureTextEntry || false}
+				onBlur={onBlur}
+				placeholder={placeholder}
+				onChangeText={onChange}
+				onFocus={onFocus}
+				value={value}
+				{...restInput}
+			/>
+			<WrapperFieldError>
+				{touched && error ? (
+					<Text size={11} danger>
+						{error}
+					</Text>
+				) : null}
+			</WrapperFieldError>
+		</WrapperField>
+	);
+};
+
+const LoginForm = enhance(
+	({
+		loginIn,
+		userName,
+		setUserName,
+		password,
+		setPassword,
+		isLoading,
+		handleSubmit,
+		submit
+	}) => {
+		console.log(handleSubmit);
 		return (
 			<WrapperLogin loading={isLoading}>
 				<LogoNestleWrapper>
@@ -97,20 +161,20 @@ export const Login = enhance(
 						<PasswordText align="center" secondary size={15}>
 							Entre com seu usuário e senha:
 						</PasswordText>
-						<TextInputLogin
+						<Field
+							name="user"
+							component={renderInputText}
 							placeholder="Usuário"
-							valeu={userName}
-							onChangeText={text => setUserName(text)}
 						/>
 
-						<TextInputLogin
-							secureTextEntry
+						<Field
+							secureTextEntry={true}
+							name="password"
 							placeholder="Senha"
-							value={password}
-							onChangeText={text => setPassword(text)}
+							component={renderInputText}
 						/>
 
-						<ButtonLogin info onPress={loginIn}>
+						<ButtonLogin info onPress={handleSubmit(submit)}>
 							<Text weight="800" inverted>
 								ENTRAR
 							</Text>
@@ -119,21 +183,29 @@ export const Login = enhance(
 				</WrapperLogo>
 				<WrapperFooter>
 					<Password>
-						<Text secondary align="center" size={12}>
-							Esqueceu sua senha?
-						</Text>
+						<Button icon onPress={() => Linking.openURL('http://www.google.com.br')}>
+							<Text secondary align="center" size={12}>
+								Esqueceu sua senha?
+							</Text>
+						</Button>
 					</Password>
 					<Info>
-						<Text secondary align="center" size={12}>
-							Ao criar seu cadastro você concorda com os Termos de Uso e
-							Política de Privacidade da Nestlé
-						</Text>
+						<Button icon>
+							<Text secondary align="center" size={12}>
+								Ao criar seu cadastro você concorda com os Termos de Uso e
+								Política de Privacidade da Nestlé
+							</Text>
+						</Button>
 					</Info>
 				</WrapperFooter>
 			</WrapperLogin>
 		);
 	}
 );
+
+export const Login = reduxForm({
+	form: 'loginForm'
+})(LoginForm);
 
 const LogoNestleWrapper = styled.View`
 	align-items: center;
@@ -182,3 +254,10 @@ const LogoApp = Image.extend`
 const PasswordText = Text.extend`
 	padding-bottom: 10;
 `;
+
+const WrapperField = styled.View`
+	padding-bottom: 10;
+`;
+const WrapperFieldError = styled.View``;
+
+const WrapperFooterPrivacy = styled.View``;

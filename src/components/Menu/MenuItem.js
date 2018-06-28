@@ -15,7 +15,8 @@ import {connect} from 'react-redux';
 import {
 	Platform,
 	Image as ImageNative,
-	TouchableOpacity as TouchableOpacityNative
+	TouchableOpacity as TouchableOpacityNative,
+	Linking
 } from 'react-native';
 
 // Local
@@ -34,7 +35,8 @@ const enhance = compose(
 		icon: string.isRequired,
 		name: string.isRequired,
 		route: string.isRequired,
-		logout: bool
+		logout: bool,
+		link: bool
 	}),
 	withProps(({menu, route}) => ({
 		activated: menu.currentScreen === route
@@ -47,20 +49,26 @@ const enhance = compose(
 			setActivated,
 			push,
 			name,
-			menu
+			menu,
+			link
 		}) => () => {
 			navigator.toggleDrawer({
 				to: 'closed',
 				side: 'left',
 				animated: true
 			});
-			navigator.push({
-				screen: route,
-				payload: {
-					logout: logout
-				},
-				navigatorStyle
-			});
+			if(!link) {
+				navigator.push({
+					screen: route,
+					payload: {
+						logout: logout
+					},
+					navigatorStyle
+				});	
+			} else {
+				Linking.openURL(route)
+			}
+			
 		}
 	}),
 	onlyUpdateForKeys('activated'),
@@ -72,7 +80,7 @@ export const MenuItem = enhance(({name, icon, goTo, activated}) => {
 		<Wrapper>
 			<TouchableOpacity onPress={goTo}>
 				<WrapperIcon>
-					<Icon secondary size={24} name={icon} />
+					<Icon secondary size={24} name={icon} opacity={0.57} />
 				</WrapperIcon>
 				<WrapperText>
 					<Text size={15} weight="600">
@@ -86,12 +94,12 @@ export const MenuItem = enhance(({name, icon, goTo, activated}) => {
 
 const Wrapper = styled.View`
 	padding-left: 25;
-	padding-top: 16;
-	padding-bottom: 16;
+	padding-top: 5%;
+	padding-bottom: 5%;
 `;
 const TouchableOpacity = styled(TouchableOpacityNative)`
 	flex-direction: row;
-	align-items: center;2
+	align-items: center;
 `;
 const WrapperIcon = styled.View`
 	padding-right: 20;

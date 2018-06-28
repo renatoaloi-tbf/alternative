@@ -26,6 +26,7 @@ const enhancer = compose(
               barSpacePercent: 100,
               highlightAlpha: 50,
               drawValues: false,
+              axisDependency: 'left',
               color: processColor('#0096FF'),
               barShadowColor: processColor('lightgrey'),
               highlightColor: processColor('red')
@@ -39,19 +40,10 @@ const enhancer = compose(
     })(),
     xAxis: (() => {
       return {
-        left: {
-          enabled: false,
-          drawLabels: true,
-          drawAxisLine: false,
-          drawGridLines: false,
-          zeroLine: {
-            enabled: true,
-            lineWidth: 1.5
-          }
-        },
-        right: {
-          enabled: false
-        },
+        axisMinimum: 0,
+        axisLineWidth: 0,
+        limitLine: 115,
+        drawGridLines: false,
         valueFormatter: [...valueFormatter],
         granularityEnabled: true,
         granularity: 1,
@@ -62,8 +54,9 @@ const enhancer = compose(
       return {
         left: {
           drawLabels: true,
-          drawAxisLine: false,
+          drawAxisLine: true,
           drawGridLines: true,
+          axisMinimum: 0,
           zeroLine: {
             enabled: true,
             lineWidth: 1.5
@@ -77,11 +70,11 @@ const enhancer = compose(
             enabled: true,
             lineWidth: 1.5
           }
-        }
+        },
+        axisMinimum: 0
       };
     })(),
     onSelect: e => {
-      console.log(e.nativeEvent);
       if (typeof onSelect === 'function') {
         onSelect(e.nativeEvent);
       }
@@ -101,6 +94,7 @@ export const BarChart = enhancer(({data, xAxis, yAxis, onSelect}) => {
         chartDescription={{text: ''}}
         xAxis={xAxis}
         yAxis={yAxis}
+        zoom={{scaleX: 4, scaleY: 1, xValue: 0, yValue: 1}}
         onSelect={onSelect.bind(this)}
       />
     </Wrapper>

@@ -36,7 +36,6 @@ export const getDetailsDayQuality = (qualities, type) => {
 };
 
 export const getPrices = (prices, year) => {
-  console.log(prices, year);
   return {
     type: 'PRICES_YEAR',
     payload: {

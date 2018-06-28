@@ -48,7 +48,7 @@ export const VolumeDetails = enhance(({details}) => {
           Volume Coletado
         </TextLeft>
         <TextRight size={12} secondary>
-          {details.volume} L
+          {details.volume ? details.volume : 0} L
         </TextRight>
       </WrapperTetx>
       <WrapperTetx>
@@ -56,7 +56,7 @@ export const VolumeDetails = enhance(({details}) => {
           Temperatura
         </TextLeft>
         <TextRight size={12} secondary>
-          {details.temperature}
+          {details.temperature ? details.temperature : 0}
         </TextRight>
       </WrapperTetx>
       <WrapperTetx>
@@ -64,7 +64,7 @@ export const VolumeDetails = enhance(({details}) => {
           Rota
         </TextLeft>
         <TextRight size={12} secondary>
-          {details.route} {details.ra}
+          {details.route ? details.route : ''} {details.ra ? details.ra : ''}
         </TextRight>
       </WrapperTetx>
       <WrapperTetx>
@@ -72,7 +72,7 @@ export const VolumeDetails = enhance(({details}) => {
           Transportadora
         </TextLeft>
         <TextRight size={12} secondary>
-          {details.trans}
+          {details.trans ? details.trans : ''}
         </TextRight>
       </WrapperTetx>
       <WrapperTetx>
@@ -80,7 +80,7 @@ export const VolumeDetails = enhance(({details}) => {
           Código Equipamento
         </TextLeft>
         <TextRight size={12} secondary>
-          {details.device}
+          {details.device ? details.device : ''}
         </TextRight>
       </WrapperTetx>
       <WrapperTetx>
@@ -88,7 +88,7 @@ export const VolumeDetails = enhance(({details}) => {
           Motorista
         </TextLeft>
         <TextRight size={12} secondary>
-          {details.driver}
+          {details.driver ? details.driver : ''}
         </TextRight>
       </WrapperTetx>
       <WrapperTetx>
@@ -96,7 +96,7 @@ export const VolumeDetails = enhance(({details}) => {
           Total Volume Rejeitado
         </TextLeft>
         <TextRight size={12} secondary>
-          {details.rejected_volume} L
+          {details.rejected_volume ? details.rejected_volume : 0} L
         </TextRight>
       </WrapperTetx>
     </Wrapper>

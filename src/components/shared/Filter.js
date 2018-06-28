@@ -30,7 +30,6 @@ export const Filter = compose(
 	withState('openFilter', 'setOpenFilter', false),
 	withState('compare', 'setCompare', true),
 	withProps(({startDate, endDate}) => {
-		console.log(startDate, endDate);
 		return {
 			icon: startDate && endDate ? 'ios-close' : 'ios-checkmark'
 		};
@@ -49,7 +48,6 @@ export const Filter = compose(
 		{startDate: ''},
 		{
 			handleStartDate: () => values => {
-				console.log(values);
 				return {
 					startDate: values
 				};
@@ -156,6 +154,11 @@ const Wrapper = styled.View`
 
 const WrapperView = styled.View`
 	background-color: ${props => props.theme.bg};
+	${props =>
+		props.selected &&
+		css`
+			background-color: ${props => props.theme.successMenu};
+		`};
 	width: 100%;
 	height: 50;
 	flex-direction: row;

@@ -16,11 +16,11 @@ const enhance = compose(
     description: string.isRequired,
     route: string.isRequired,
     demonstrative: string,
-    month: string
+    month: string,
+    value: string
   }),
   withHandlers({
     goTo: ({navigator, route, month}) => () => {
-      debugger;
       navigator.push({
         screen: route,
         navigatorStyle,
@@ -34,11 +34,10 @@ const enhance = compose(
 );
 
 const DocumentationItemEnchance = enhance(props => {
-  console.log(props.isActived);
   return (
     <TouchableOpacityDefault {...props}>
       <WrapperIcon>
-        <IconDefault size={50} secondary name={props.icon} />
+        <IconDefault size={50} opacity={0.57} name={props.icon} />
       </WrapperIcon>
       <Body>
         <WrapperDescription>
@@ -48,9 +47,11 @@ const DocumentationItemEnchance = enhance(props => {
         </WrapperDescription>
 
         <WrapperDemonstrative>
-          <TextDemonstrative align="center" inverted size={13}>
-            27.694 L
-          </TextDemonstrative>
+          {props.value && (
+            <TextDemonstrative align="center" inverted size={13}>
+              {props.value}
+            </TextDemonstrative>
+          )}
         </WrapperDemonstrative>
       </Body>
       <Footer onPress={props.goTo}>

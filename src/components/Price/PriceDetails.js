@@ -27,12 +27,10 @@ const enhance = compose(
         onPress(type);
       }
     }
-  })),
-  pure
+  }))
 );
 
 export const PriceDetails = enhance(({pricePeriod, pricePeriodAfter}) => {
-  console.log(pricePeriodAfter);
   return (
     <Wrapper>
       {pricePeriod && (
