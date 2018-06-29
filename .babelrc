@@ -1,0 +1,15 @@
+{
+    "presets": [
+        "react-native"
+    ],
+    "plugins": [
+        [
+            "babel-plugin-root-import",
+            {
+                "rootPathPrefix": "~",
+                "rootPathSuffix": "src"
+            }
+        ],
+        "inline-svg"
+    ]
+}
