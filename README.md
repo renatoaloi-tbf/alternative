@@ -160,6 +160,32 @@ react-native start --reset-cache
 
 Para atualizar o emulador, tecle a tecla "R" duas vezes.
 
+### Ferramentas de Depuração
+
+#### Instalar DevTools
+
+Ferramenta para auxiliar na depuração dos elementos.
+
+> referência: https://github.com/facebook/react-devtools/tree/master/packages/react-devtools
+
+#### Remote Debug
+
+Para ativar a depuração remota de JS, basta teclar ```CRTL + M``` no emulador e selecionar a opção:
+
+```
+Debug JS Remotely
+```
+
+Isso vai abrir um navegador acessando o endereço:
+
+```
+http://localhost:8081/debugger-ui/
+```
+
+Tecle ```CTRL + Shift + J``` no teclado para abrir o console de depuração do Google Chrome.
+
+--------------
+
 #### Copie a fonte Ionicons (Não é mais necessário na nova versão do App)
 
 Siga os passos indicados na seção ```Android > Option: Manually```
@@ -169,12 +195,6 @@ Siga os passos indicados na seção ```Android > Option: Manually```
 Copie apenas o arquivo ```Ionicons.ttf``` da pasta ```C:\reactnative\leiteria\node_modules\react-native-vector-icons\Fonts``` para a pasta ```C:\reactnative\leiteria\android\app\src\main\assets\fonts```
 
 > Atenção para o ```fonts``` em minúsculo na pasta de destino
-
-#### Instalar DevTools
-
-Ferramenta para auxiliar na depuração dos elementos.
-
-> referência: https://github.com/facebook/react-devtools/tree/master/packages/react-devtools
 
 #### Mudar página inicial (Não é mais necessário na nova versão do App)
 
