@@ -9,6 +9,7 @@ import {Volume} from '~/containers/Volume';
 import {Quality} from '~/containers/Quality';
 import {Menu} from '~/containers/Menu';
 import {NotificationModal} from '~/components/shared';
+import PriceMinimum from '../../components/PriceMinimum/PriceMinimum';
 
 export const registeredScreens = [];
 
@@ -23,6 +24,7 @@ export const registerScreens = (store, Provider) => {
   registerComponent('Quality', Quality);
   registerComponent('Menu', Menu);
   registerComponent('StatementOfPayment', StatementOfPayment);
+  registerComponent('PriceMinimum', PriceMinimum);
 
   function registerComponent(name, screen) {
     // TODO: remover isso
