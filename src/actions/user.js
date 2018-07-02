@@ -23,7 +23,7 @@ export const login = (user, password) => {
         Authorization: `Basic ${code}`
       }
     };
-    console.log(config);
+    console.log("users.js - config", config);
     try {
       const url = `${apiUrl}/auth/authenticate`;
       const res = await fetch(url, config);

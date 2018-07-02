@@ -31,7 +31,7 @@ public class MainApplication extends NavigationApplication {
         new VectorIconsPackage(),
         new ReactNativeWheelPickerPackage(),
         new MPAndroidChartPackage(),
-        new SplashScreenReactPackage() 
+        new SplashScreenReactPackage()
     );
   }
 

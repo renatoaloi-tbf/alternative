@@ -140,7 +140,7 @@ const enhance = compose(
 			});
 			const type = find(types, item => item.selected);
 			setTpes(types);
-			console.log(range);
+			console.log("Quality.js - handlersFilter", range);
 			if (!isEmpty(range)) {
 				if (!searchToMonth) {
 					getSearchQuality(range, quality.groupByYear, type.value);

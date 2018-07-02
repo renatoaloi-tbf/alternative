@@ -70,7 +70,7 @@ const enhance = compose(
         if (documetations && documetations.Items.length) {
           const qtaList = map(documetations.Items, item => item.qtd);
           const acount = reduce(qtaList, (previ, next) => previ + next);
-          console.log(acount);
+          console.log("Documentation.js - handlePress", acount);
           setCount(`${isNumber(acount)} L`);
         }
         setStatements(true);

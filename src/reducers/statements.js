@@ -4,21 +4,26 @@ import {forEach, cloneDeep} from 'lodash';
 
 const INITIAL_STATE = {
   allMonths: [],
-  byMonth: {}
+  byMonth: {},
+  byMonthExt: {},
 };
+
+const Months = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
 
 const getStatements = (state, {payload}) => {
   const newState = cloneDeep(state);
 
   const {milkStatements} = payload.data[0];
   forEach(milkStatements, item => {
+    const dateExt = `${Months[item.month-1]} ${item.year}`;
     const date = `${padZero(2, item.month)}/${item.year}`;
     if (newState.allMonths.indexOf(date)) {
       newState.allMonths.push(date);
       newState.byMonth[date] = item;
+      newState.byMonthExt[date] = dateExt;
     }
   });
-  console.log(newState);
+  console.log("statements.js - getStatements", newState);
   return newState;
 };
 

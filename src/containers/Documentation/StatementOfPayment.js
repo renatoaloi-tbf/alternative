@@ -14,6 +14,8 @@ import {connect} from 'react-redux';
 import moment from 'moment';
 import {ScrollView} from 'react-native';
 
+import { getStatements } from '~/actions';
+
 import {
   Table,
   TableWrapper,
@@ -36,8 +38,9 @@ import {
 const enhance = compose(
   connect(
     ({statements, researched}) => ({statements, researched}),
-    null
+    { getStatements }
   ),
+  withState('month', 'setMonth', '12/2017'),
   withState('header', 'setHeader', [
     'Descrição',
     'Qtde',
@@ -48,94 +51,105 @@ const enhance = compose(
   ]),
   withProps(({statements, month}) => ({
     data: map(statements.byMonth[month].Items, item => {
-      return [item.desc, item.qtd, item.un, item.total, item.tax, item.ded];
+      var qtd = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 0 }).format(item.qtd);
+      // + item.un
+      var vl = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(item.vl);
+      var total = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(item.total);
+      var tax = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 2 }).format(item.tax);
+      var ded = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(item.ded);
+      
+      
+      return [item.desc, qtd + 'L', vl, total, tax, ded];
     })
   })),
   withState('widthArr', 'setWidthArr', [150, 60, 80, 100, 120, 140]),
   lifecycle({
     componentWillMount() {
-      this.props.statements[this.props.month];
+      this.props.setMonth(moment().subtract(1, 'M').format('MM/YYYY'));
+      this.props.getStatements[this.props.month];
     }
   })
 );
 
 export const StatementOfPayment = enhance(
   ({statements, month, header, widthArr, data}) => {
+    console.log("StatementOfPayment.js - statements", statements);
+    console.log("StatementOfPayment.js - month", month);
     return (
       <Wrapper secondary>
         <TopBar
-          title={`${moment(month, 'MM/YYYY').format('MMM YYYY')}`}
+          title={statements.byMonthExt[month]}
           rightComponent={<Icon inverted name="bell" />}
           leftComponent={<BackButton />}
         />
         <ScrollWrapperState>
           <WrapperLocalidade>
-            <WrapperTetx>
-              <TextLeft size={13}>Localidade</TextLeft>
-              <TextRight size={13}>{statements.byMonth[month].loc}</TextRight>
-            </WrapperTetx>
-            <WrapperTetx>
-              <TextLeft size={13}>CNPF</TextLeft>
-              <TextRight size={13}>{statements.byMonth[month].cnpj}</TextRight>
-            </WrapperTetx>
-          </WrapperLocalidade>
-          <WrapperDetails>
-            <WrapperTetx>
+              <WrapperText>
+                <TextLeft size={13}>Localidade</TextLeft>
+                <TextRight size={13}>{statements.byMonth[month].loc}</TextRight>
+              </WrapperText>
+              <WrapperText>
+                <TextLeft size={13}>CNPJ/CPF</TextLeft>
+                <TextRight size={13}>{statements.byMonth[month].cnpj}</TextRight>
+              </WrapperText>
+            </WrapperLocalidade>
+            <WrapperDetails>
+            <WrapperText>
               <TextLeft inverted size={13}>
                 Fornecedor
               </TextLeft>
               <TextRight inverted size={13}>
                 {statements.byMonth[month].cfop}
               </TextRight>
-            </WrapperTetx>
-            <WrapperTetx>
+            </WrapperText>
+            <WrapperText>
               <TextLeft inverted size={13}>
                 Nome
               </TextLeft>
               <TextRight inverted size={13}>
                 {statements.byMonth[month].name}
               </TextRight>
-            </WrapperTetx>
-            <WrapperTetx>
+            </WrapperText>
+            <WrapperText>
               <TextLeft inverted size={13}>
-                CNPJ/CPF
+                CNPJ/CPF 
               </TextLeft>
               <TextRight inverted size={13}>
                 {statements.byMonth[month].cpf_cnpj}
               </TextRight>
-            </WrapperTetx>
-            <WrapperTetx>
+            </WrapperText>
+            <WrapperText>
               <TextLeft inverted size={13}>
                 Fazenda
               </TextLeft>
               <TextRight inverted size={13}>
                 {statements.byMonth[month].farm_name}
               </TextRight>
-            </WrapperTetx>
-            <WrapperTetx>
+            </WrapperText>
+            <WrapperText>
               <TextLeft inverted size={13}>
                 Município
               </TextLeft>
               <TextRight inverted size={12}>
                 {statements.byMonth[month].city}
               </TextRight>
-            </WrapperTetx>
-            <WrapperTetx>
+            </WrapperText>
+            <WrapperText>
               <TextLeft inverted size={12}>
                 Insc.
               </TextLeft>
               <TextRight inverted size={12}>
                 {statements.byMonth[month].ie}
               </TextRight>
-            </WrapperTetx>
-            <WrapperTetx>
+            </WrapperText>
+            <WrapperText>
               <TextLeft inverted size={12}>
                 Est.
               </TextLeft>
               <TextRight inverted size={12}>
                 {statements.byMonth[month].ie}
               </TextRight>
-            </WrapperTetx>
+            </WrapperText>
           </WrapperDetails>
           <WrapperBody>
             <ScrollWrapperState horizontal={true}>
@@ -159,7 +173,7 @@ export const StatementOfPayment = enhance(
                           {height: 40, backgroundColor: '#DEDEDE'},
                           index % 2 && {backgroundColor: '#FFFFFF'}
                         ]}
-                        textStyle={{textAlign: 'center', fontWeight: '100'}}
+                        textStyle={{textAlign: 'left', fontWeight: '100', marginLeft: 6}}
                       />
                     ))}
                   </TableWrapper>
@@ -208,7 +222,7 @@ const ScrollWrapperState = ScrollWrapper.extend`
   padding-top: 8;
 `;
 
-const WrapperTetx = styled.View`
+const WrapperText = styled.View`
   flex-direction: row;
   justify-content: space-between;
   padding-left: 20;
@@ -222,6 +236,7 @@ const TextLeft = Text.extend`
   position: absolute;
   left: 0;
   width: 30%;
+  font-weight: bold;
 `;
 const TextRight = Text.extend`
   position: absolute;

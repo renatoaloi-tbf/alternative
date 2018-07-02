@@ -147,7 +147,7 @@ const LoginForm = enhance(
 		handleSubmit,
 		submit
 	}) => {
-		console.log(handleSubmit);
+		console.log("Login.js - enhance", handleSubmit);
 		return (
 			<WrapperLogin loading={isLoading}>
 				<LogoNestleWrapper>

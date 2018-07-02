@@ -39,7 +39,7 @@ const enhance = compose(
       }
     },
     onChange: e => {
-      console.log(e);
+      console.log("FilterCore.js - onChange", e);
       if (typeof onChange === 'function') {
         onChange(e);
       }
@@ -59,7 +59,7 @@ const enhance = compose(
   })),
   withHandlers({
     onChangeInit: ({range, setRange, onChange}) => e => {
-      console.log(e);
+      console.log("FilterCore.js - onChangeInit", e);
       setRange({...range, startDate: e.value});
       onChange({...range, startDate: e.value});
     },
@@ -86,7 +86,7 @@ export const FilterCore = enhance(
     isClose,
     inverted
   }) => {
-    console.log(range);
+    console.log("FilterCore.js - enhance", range);
     return (
       <Wrapper>
         {!isVisible && (
