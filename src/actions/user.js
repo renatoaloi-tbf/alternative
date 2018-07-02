@@ -26,7 +26,9 @@ export const login = (user, password) => {
     console.log("users.js - config", config);
     try {
       const url = `${apiUrl}/auth/authenticate`;
+      //const url = `${apiUrl}`;
       const res = await fetch(url, config);
+      //const res = await fetch(url);
       const repo = await res.json();
       if (repo.status === 401) {
         return fail(repo);
