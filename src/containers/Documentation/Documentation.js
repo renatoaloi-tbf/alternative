@@ -153,7 +153,7 @@ export const Documentation = enhance(
             <DocumentationItem
               warningLigth
               icon="alert"
-              route="StatementOfPayment"
+              route="In62"
               description="Resultados fora do pradão - IN62"
             />
           </WrapperItem>
