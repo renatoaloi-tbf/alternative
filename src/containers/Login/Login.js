@@ -201,7 +201,13 @@ const LoginForm = enhance(
 								Ao criar seu cadastro você concorda com os Termos de Uso e
 							</Text>
 						</Button>
-						<Button icon>
+						<Button onPress={() => {
+							Navigation.startSingleScreenApp({
+								screen: {
+									screen: 'PrivacyPolicy',
+									navigatorStyle: navigatorStyle
+								}
+							})}} icon>
 							<Text secondary align="center" size={12}>
 							Política de Privacidade da Nestlé
 							</Text>

@@ -12,6 +12,7 @@ import {NotificationModal} from '~/components/shared';
 import In62 from '../In62/In62';
 import PriceMinimum from '../../components/PriceMinimum/PriceMinimum';
 import UseTerms from '../UseTerms/UseTerms';
+import PrivacyPolicy from '../PrivacyPolicy/PrivacyPolicy';
 
 
 export const registeredScreens = [];
@@ -30,6 +31,7 @@ export const registerScreens = (store, Provider) => {
   registerComponent('In62', In62);
   registerComponent('PriceMinimum', PriceMinimum);
   registerComponent('UseTerms', UseTerms);
+  registerComponent('PrivacyPolicy', PrivacyPolicy);
 
   function registerComponent(name, screen) {
     // TODO: remover isso

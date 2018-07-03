@@ -44,10 +44,10 @@ export const Menu = enhance(({user}) => {
           icon="file-document"
         />
         <MenuItem
-          route="http://milk-web.brazilsouth.cloudapp.azure.com:3000/privacy-policy"
+          route="PrivacyPolicy"
           name="Política de privacidade"
           icon="lock"
-          link={true}
+          link={false}
         />
         <MenuItem
           route="UseTerms"
