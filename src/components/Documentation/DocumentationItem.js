@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { Component } from 'react';
 import styled, {css} from 'styled-components/native';
 import {compose, setPropTypes, withHandlers, pure} from 'recompose';
 import {string} from 'prop-types';
-import {TouchableOpacity} from 'react-native';
+import {TouchableOpacity, Image} from 'react-native';
 
 import {Text, Icon, IconUri} from '~/components/shared';
 import {getNavigatorContext} from '~/enhancers';
@@ -33,15 +33,50 @@ const enhance = compose(
   pure
 );
 
-const DocumentationItemEnchance = enhance(props => {
+class CardIcon extends Component {
+  render(){
+    switch (this.props.icon) {
+    case 'statement':
+      return(
+        <Image source={require('../../images/ic_receipt_black_24px.png')} 
+        style={{ height: 70, width: 70, marginTop: 10 }} />
+      );
+    case 'currency-usd':
+      return(
+        <Image source={require('../../images/ic_attach_money_black_24px.png')} 
+        style={{ height: 70, width: 70, marginTop: 10 }} />
+      );
+    case 'onenote':
+      return(
+        <Image source={require('../../images/ic_nf.png')} 
+        style={{ height: 70, width: 70, marginTop: 10 }} />
+      );
+    case 'note':
+      return(
+        <Image source={require('../../images/ic_ir.png')} 
+        style={{ height: 70, width: 70, marginTop: 10 }} />
+      );
+    case 'alert':
+      return(
+        <Image source={require('../../images/ic_warning_black_24px.png')} 
+        style={{ height: 70, width: 70, marginTop: 10 }} />
+      );
+    default:
+      return false;
+    }
+  }
+}
+
+const DocumentationItemEnhance = enhance(props => {
   return (
     <TouchableOpacityDefault {...props}>
       <WrapperIcon>
-        <IconDefault size={50} opacity={0.57} name={props.icon} />
+        <CardIcon icon={props.icon} />
       </WrapperIcon>
       <Body>
         <WrapperDescription>
-          <Text align="center" inverted size={20}>
+          <Text align="center" inverted size={21} 
+                style={{fontWeight: 'bold', margin: 8}}>
             {props.description}
           </Text>
         </WrapperDescription>
@@ -61,7 +96,7 @@ const DocumentationItemEnchance = enhance(props => {
   );
 });
 
-export const DocumentationItem = styled(DocumentationItemEnchance)``;
+export const DocumentationItem = styled(DocumentationItemEnhance)``;
 
 const TouchableOpacityDefault = styled.View`
   align-items: center;
@@ -75,7 +110,6 @@ const TouchableOpacityDefault = styled.View`
     css`
       background-color: #00cdff;
     `}
-
 
   ${props =>
     props.danger &&

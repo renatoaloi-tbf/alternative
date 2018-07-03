@@ -163,13 +163,13 @@ const WrapperRecentNumbers = styled.View`
 
 const TitleRecentNumbers = styled.View`
   align-items: center;
-  padding-top: 5;
-  padding-bottom: 10;
+  padding-top: 2;
+  padding-bottom: 5;
 `;
 
 const Users = styled.View`
   align-items: center;
-  padding-bottom: 10;
+  padding-bottom: 5;
   padding-top: 15;
 `;
 

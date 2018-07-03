@@ -133,6 +133,12 @@ export const Documentation = enhance(
               />
             )}
             <DocumentationItem
+              info
+              route="StatementOfPayment"
+              icon="statement"
+              description="Demonstrativo de pagamento"
+            />
+            <DocumentationItem
               light
               route="PriceMinimum"
               icon="currency-usd"

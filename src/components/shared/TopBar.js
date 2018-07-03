@@ -55,7 +55,7 @@ const Title = Text.extend`
   justify-content: center;
   font-weight: 500;
   left: 50%;
-  width: 150;
+  width: 160;
   position: absolute;
   margin-left: -45;
 `;

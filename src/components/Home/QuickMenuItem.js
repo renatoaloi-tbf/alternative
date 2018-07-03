@@ -1,8 +1,8 @@
-import React from 'react';
+import React, {Component} from 'react';
 import styled, {css} from 'styled-components/native';
 import {compose, setPropTypes, withHandlers, pure} from 'recompose';
 import {string} from 'prop-types';
-import {TouchableOpacity} from 'react-native';
+import {TouchableOpacity, Image} from 'react-native';
 
 import {Text, Icon, IconUri} from '~/components/shared';
 import {getNavigatorContext} from '~/enhancers';
@@ -26,11 +26,40 @@ const enhance = compose(
   pure
 );
 
-const QuickMenuItemEnchance = enhance(props => {
+class CardIcon extends Component {
+  render(){
+    switch (this.props.icon) {
+    case 'certificate':
+      return(
+        <Image source={require('../../images/ic_quality.png')} 
+        style={{ height: 50, width: 50, marginTop: 10 }} />
+      );
+    case 'beaker':
+      return(
+        <Image source={require('../../images/ic_bottle.png')} 
+        style={{ height: 50, width: 50, marginTop: 10 }} />
+      );
+    case 'currency-usd':
+      return(
+        <Image source={require('../../images/ic_attach_money_black_24px.png')} 
+        style={{ height: 50, width: 50, marginTop: 10 }} />
+      );
+    case 'file-document':
+      return(
+        <Image source={require('../../images/ic_description_black_24px.png')} 
+        style={{ height: 50, width: 50, marginTop: 10 }} />
+      );
+    default:
+      return false;
+    }
+  }
+}
+
+const QuickMenuItemEnhance = enhance(props => {
   return (
     <TouchableOpacityDefault {...props} onPress={props.goTo}>
       <WrapperIcon>
-        <IconDefault size={50} opacity={0.57} name={props.icon} />
+        <CardIcon icon={props.icon} />
       </WrapperIcon>
       <Bottom>
         <Text inverted size={22} weight="700">
@@ -41,7 +70,7 @@ const QuickMenuItemEnchance = enhance(props => {
   );
 });
 
-export const QuickMenuItem = styled(QuickMenuItemEnchance)``;
+export const QuickMenuItem = styled(QuickMenuItemEnhance)``;
 
 const TouchableOpacityDefault = styled(TouchableOpacity)`
   align-items: center;
