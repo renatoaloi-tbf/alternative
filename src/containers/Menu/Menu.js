@@ -58,7 +58,7 @@ export const Menu = enhance(({user}) => {
         <MenuItem
           name="Manual do produtor"
           icon="book-open"
-          route="http://www.google.com.br"
+          route="http://milk-web.brazilsouth.cloudapp.azure.com:3000/manual-do-produtor"
           link={true}
         />
         <WrapperExit>
