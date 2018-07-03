@@ -99,7 +99,8 @@ android {
 
     defaultConfig {
         applicationId "com.leiteria"
-        minSdkVersion 21
+        //minSdkVersion 21
+        minSdkVersion 16
         targetSdkVersion 22
         versionCode 1
         versionName "1.0"
@@ -148,16 +149,16 @@ android {
     }
 }
 
-configurations.all {
+/*configurations.all {
     resolutionStrategy {
-        /*eachDependency { DependencyResolveDetails details ->
-            if (details.requested.name == 'android-jsc') {
-                details.useTarget group: details.requested.group, name: 'android-jsc-intl', version: 'r224109'
-            }
-        }*/
+        // eachDependency { DependencyResolveDetails details ->
+        //     if (details.requested.name == 'android-jsc') {
+        //         details.useTarget group: details.requested.group, name: 'android-jsc-intl', version: 'r224109'
+        //     }
+        // }
         force 'org.webkit:android-jsc:r224109'
     }
-}
+}*/
 
 dependencies {
     compile fileTree(dir: "libs", include: ["*.jar"])

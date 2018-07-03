@@ -35,6 +35,10 @@ import {
   Text
 } from '~/components/shared';
 
+import Intl from 'intl';
+
+require( 'intl/locale-data/jsonp/pt' );
+
 const enhance = compose(
   connect(
     ({statements, researched}) => ({statements, researched}),

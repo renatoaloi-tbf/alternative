@@ -136,6 +136,13 @@ allprojects {
 }
 ```
 
+Caso aconteça o problema "Could not expand ZIP", executar os comandos abaixo:
+
+```
+cd android
+gradlew clean
+```
+
 #### Execute o App no Emulador
 
 Execute os comandos abaixo para executar o aplicativo no emulador:
@@ -183,6 +190,20 @@ http://localhost:8081/debugger-ui/
 ```
 
 Tecle ```CTRL + Shift + J``` no teclado para abrir o console de depuração do Google Chrome.
+
+### Gerar APK
+
+Seguir os passos desse tutorial: https://facebook.github.io/react-native/docs/signed-apk-android.html
+
+Caso dê o problema abaixo:
+
+> react native unable to process incoming event 'progress complete' (progress complete event)
+
+Rodar o comando abaixo no CMD do Windows:
+
+```
+gradlew --console plain assembleRelease
+```
 
 --------------
 
