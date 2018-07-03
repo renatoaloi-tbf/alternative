@@ -58,7 +58,7 @@ const enhance = compose(
 
 export const Home = enhance(({openMenu, user}) => {
   return (
-    <ScrollWrapperState>
+    
       <Wrapper secondary>
         <TopBar
           title="Home"
@@ -77,56 +77,56 @@ export const Home = enhance(({openMenu, user}) => {
             <AvatarDefault source={ImagesApp['avatarBlue']} />
           </Border>
         </WrapperAvatar>
-        <WrapperCard>
-          <Card>
-            <Users>
-              <Text align="center" size={21} info>
-                {user.name}
-              </Text>
-              <City size={11} info>
-                {user.city}
-              </City>
-            </Users>
-            <TitleRecentNumbers>
-              <Text size="11" secondary>
-                Números recentes:
-              </Text>
-            </TitleRecentNumbers>
-            <WrapperRecentNumbers>
-              <RecentNumbers result={`${new Intl.NumberFormat('pt-BR', { style: 'decimal' }).format(user.recent.lastPickup.volume)}L`} description="Última coleta" />
-              <RecentNumbers result={`${new Intl.NumberFormat('pt-BR', { style: 'decimal' }).format(user.recent.currentMonth.volume)}L`} description={`Total ${moment(user.recent.currentMonth.period, 'MM/YYYY').format('MMMM')}`} />
-              <RecentNumbers  result={`${new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(user.recent.lastMonth.price)}/L`} description={`${moment(user.recent.currentMonth.period, 'MM/YYYY').format('MMMM')}`} />
-            </WrapperRecentNumbers>
-          </Card>
-          <WrapperQuickMenu>
-            <QuickMenuItem
-              route="Quality"
-              info
-              icon="certificate"
-              description="Qualidade"
-            />
-            <QuickMenuItem
-              route="Volume"
-              success
-              icon="beaker"
-              description="Volume"
-            />
-            <QuickMenuItem
-              route="Price"
-              warning
-              icon="currency-usd"
-              description="Preço"
-            />
-            <QuickMenuItem
-              route="Documentation"
-              danger
-              icon="file-document"
-              description="Documentos"
-            />
-          </WrapperQuickMenu>
-        </WrapperCard>
+          <WrapperCard>
+            <Card>
+              <Users>
+                <Text align="center" size={21} info>
+                  {user.name}
+                </Text>
+                <City size={11} info>
+                  {user.city}
+                </City>
+              </Users>
+              <TitleRecentNumbers>
+                <Text size="11" secondary>
+                  Números recentes:
+                </Text>
+              </TitleRecentNumbers>
+              <WrapperRecentNumbers>
+                <RecentNumbers result={`${new Intl.NumberFormat('pt-BR', { style: 'decimal' }).format(user.recent.lastPickup.volume)}L`} description="Última coleta" />
+                <RecentNumbers result={`${new Intl.NumberFormat('pt-BR', { style: 'decimal' }).format(user.recent.currentMonth.volume)}L`} description={`Total ${moment(user.recent.currentMonth.period, 'MM/YYYY').format('MMMM')}`} />
+                <RecentNumbers  result={`${new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(user.recent.lastMonth.price)}/L`} description={`${moment(user.recent.currentMonth.period, 'MM/YYYY').format('MMMM')}`} />
+              </WrapperRecentNumbers>
+            </Card>
+            <WrapperQuickMenu>
+              <QuickMenuItem
+                route="Quality"
+                info
+                icon="certificate"
+                description="Qualidade"
+              />
+              <QuickMenuItem
+                route="Volume"
+                success
+                icon="beaker"
+                description="Volume"
+              />
+              <QuickMenuItem
+                route="Price"
+                warning
+                icon="currency-usd"
+                description="Preço"
+              />
+              <QuickMenuItem
+                route="Documentation"
+                danger
+                icon="file-document"
+                description="Documentos"
+              />
+            </WrapperQuickMenu>
+          </WrapperCard>
       </Wrapper>
-    </ScrollWrapperState>
+    
   );
 });
 
@@ -153,7 +153,7 @@ const WrapperCard = styled.View`
   box-shadow: 0px 0.5px 1px #e0e0e0;
   position: absolute;
   width: 100%;
-  top: 120;
+  top: 100;
 `;
 
 const WrapperRecentNumbers = styled.View`
@@ -163,7 +163,7 @@ const WrapperRecentNumbers = styled.View`
 
 const TitleRecentNumbers = styled.View`
   align-items: center;
-  padding-top: 10;
+  padding-top: 5;
   padding-bottom: 10;
 `;
 
@@ -235,6 +235,3 @@ const WrapperQuickMenu = styled.View`
   justify-content: space-between;
 `;
 
-const ScrollWrapperState = ScrollWrapper.extend`
-  background-color: ${props => props.theme.bg};
-`;
