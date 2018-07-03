@@ -210,46 +210,45 @@ const styles = StyleSheet.create({
         height: 50
     },
     title: {
-        fontSize: 20,
+        fontSize: 15,
         fontWeight: "900",
         color: "#000000"
     },
     subTitle: {
         marginTop: 10,
-        fontSize: 15
+        fontSize: 10
     },
-    gridHead: { flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginTop: 30 },
-    gridHeadTextView: { width: 115, height: 50 },
+    gridHead: { flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginTop: 10 },
+    gridHeadTextView: { width: 80, height: 40 },
     gridHeadText: { color: "#000000" },
 
     gridBody: { flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginBottom: 10 },
-    gridBodyTextView: { width: 115, height: 20 },
+    gridBodyTextView: { width: 80, height: 15 },
     styleIcon: { alignSelf: 'flex-end', color: '#6d6d6d' },
     alertColor: { color: '#ffbd00' },
 
     bottomView: {
         width: '100%',
-        height: 90,
+        height: 190,
         backgroundColor: '#FFFFFF',
         position: 'absolute',
-        top: 570,
+        top: 500,
         flexDirection: 'row',
         borderRightWidth: 20,
         borderRightColor: 'rgba(52, 52, 52, 0.8)',
         borderLeftWidth: 20,
         borderLeftColor: 'rgba(52, 52, 52, 0.8)',
-        borderBottomWidth: 30,
+        borderBottomWidth: 130,
         borderBottomColor: 'rgba(52, 52, 52, 0.8)'
     },
     buttonStyle: {
         backgroundColor: '#ffffff',
-        width: 185.9,
+        width: 160,
         borderTopWidth: 1,
         borderColor: '#efefef',
         borderRightWidth: 2,
         alignItems: 'center',
         paddingTop: 15,
-        
     }
 
 })
