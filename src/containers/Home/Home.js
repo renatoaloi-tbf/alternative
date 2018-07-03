@@ -1,4 +1,5 @@
 import React from 'react';
+import { View, Image as ReactImage, YellowBox } from 'react-native';
 import styled from 'styled-components/native';
 import {
   compose,
@@ -20,12 +21,16 @@ import {
   Button,
   IconUri,
   DrawerButton,
-  Image
+  Image,
+  ScrollWrapper
 } from '~/components/shared';
 import {RecentNumbers, QuickMenuItem} from '~/components/Home';
 import {ImagesApp} from '~/config';
 import {login} from '~/actions';
 import {isNumber} from '~/utils';
+
+import Intl from 'intl';
+require( 'intl/locale-data/jsonp/pt' );
 
 const enhance = compose(
   connect(
@@ -53,68 +58,84 @@ const enhance = compose(
 
 export const Home = enhance(({openMenu, user}) => {
   return (
-    <Wrapper secondary>
-      <TopBar
-        title="Home"
-        rightComponent={<Icon inverted name="bell" />}
-        leftComponent={<DrawerButton />}
-      />
-      <WrapperAvatar>
-        <Border>
-          <AvatarDefault source={ImagesApp['avatarBlue']} />
-        </Border>
-      </WrapperAvatar>
-      <WrapperCard>
-        <Card>
-          <Users>
-            <Text align="center" size={21} info>
-              {user.name}
-            </Text>
-            <City size={11} info>
-              {user.city}
-            </City>
-          </Users>
-          <TitleRecentNumbers>
-            <Text size="11" secondary>
-              Números recentes:
-            </Text>
-          </TitleRecentNumbers>
-          <WrapperRecentNumbers>
-            <RecentNumbers result={`${isNumber(user.recent.lastPickup.volume)}L`} description="Última coleta" />
-            <RecentNumbers result={`${isNumber(user.recent.currentMonth.volume)}L`} description={`Total ${moment(user.recent.currentMonth.period, 'MM/YYYY').format('MMMM')}`} />
-            <RecentNumbers  result={`R$ ${user.recent.lastMonth.price}L`} description={`${moment(user.recent.currentMonth.period, 'MM/YYYY').format('MMMM')}`} />
-          </WrapperRecentNumbers>
-        </Card>
-        <WrapperQuickMenu>
-          <QuickMenuItem
-            route="Quality"
-            info
-            icon="certificate"
-            description="Qualidade"
-          />
-          <QuickMenuItem
-            route="Volume"
-            success
-            icon="beaker"
-            description="Volume"
-          />
-          <QuickMenuItem
-            route="Price"
-            warning
-            icon="currency-usd"
-            description="Preço"
-          />
-          <QuickMenuItem
-            route="Documentation"
-            danger
-            icon="file-document"
-            description="Documentos"
-          />
-        </WrapperQuickMenu>
-      </WrapperCard>
-    </Wrapper>
+    <ScrollWrapperState>
+      <Wrapper secondary>
+        <TopBar
+          title="Home"
+          rightComponent={<Icon inverted name="bell" />}
+          leftComponent={<DrawerButton />}
+        />
+        <WrapperAvatar >
+          <ViewPin>
+            <ReactImage source={require('../../images/medalha-gold-v2.png')} 
+                        style={{width: 24, height: 24}} />
+            <View style={{ paddingLeft: 4}} >
+              <Text style={{color: '#febd00'}}>Ouro</Text>
+            </View>
+          </ViewPin>
+          <Border>
+            <AvatarDefault source={ImagesApp['avatarBlue']} />
+          </Border>
+        </WrapperAvatar>
+        <WrapperCard>
+          <Card>
+            <Users>
+              <Text align="center" size={21} info>
+                {user.name}
+              </Text>
+              <City size={11} info>
+                {user.city}
+              </City>
+            </Users>
+            <TitleRecentNumbers>
+              <Text size="11" secondary>
+                Números recentes:
+              </Text>
+            </TitleRecentNumbers>
+            <WrapperRecentNumbers>
+              <RecentNumbers result={`${new Intl.NumberFormat('pt-BR', { style: 'decimal' }).format(user.recent.lastPickup.volume)}L`} description="Última coleta" />
+              <RecentNumbers result={`${new Intl.NumberFormat('pt-BR', { style: 'decimal' }).format(user.recent.currentMonth.volume)}L`} description={`Total ${moment(user.recent.currentMonth.period, 'MM/YYYY').format('MMMM')}`} />
+              <RecentNumbers  result={`${new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(user.recent.lastMonth.price)}/L`} description={`${moment(user.recent.currentMonth.period, 'MM/YYYY').format('MMMM')}`} />
+            </WrapperRecentNumbers>
+          </Card>
+          <WrapperQuickMenu>
+            <QuickMenuItem
+              route="Quality"
+              info
+              icon="certificate"
+              description="Qualidade"
+            />
+            <QuickMenuItem
+              route="Volume"
+              success
+              icon="beaker"
+              description="Volume"
+            />
+            <QuickMenuItem
+              route="Price"
+              warning
+              icon="currency-usd"
+              description="Preço"
+            />
+            <QuickMenuItem
+              route="Documentation"
+              danger
+              icon="file-document"
+              description="Documentos"
+            />
+          </WrapperQuickMenu>
+        </WrapperCard>
+      </Wrapper>
+    </ScrollWrapperState>
   );
 });
+
+const ViewPin = styled.View`
+  padding-left: 60;
+  flex-direction: row;
+  z-index: 10; 
+  position: absolute;
+`;
 
 const Card = styled.View`
   background-color: ${props => props.theme.bg};
@@ -212,4 +233,8 @@ const WrapperQuickMenu = styled.View`
   flex-direction: row;
   flex-wrap: wrap;
   justify-content: space-between;
+`;
+
+const ScrollWrapperState = ScrollWrapper.extend`
+  background-color: ${props => props.theme.bg};
 `;
