@@ -50,10 +50,10 @@ export const Menu = enhance(({user}) => {
           link={true}
         />
         <MenuItem
-          route="http://milk-web.brazilsouth.cloudapp.azure.com:3000/terms-of-use"
+          route="UseTerms"
           name="Termos de uso"
           icon="comment-text"
-          link={true}
+          link={false}
         />
         <MenuItem
           name="Manual do produtor"
