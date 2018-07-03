@@ -154,7 +154,7 @@ export const Documentation = enhance(
               warningLigth
               icon="alert"
               route="In62"
-              description="Resultados fora do pradão - IN62"
+              description="Resultados fora do padrão - IN62"
             />
           </WrapperItem>
         </ScrollWrapperStyle>
