@@ -1,44 +1,66 @@
 import React, { Component } from 'react';
 import { Modal, Text, TouchableHighlight, View, StyleSheet, Button } from 'react-native';
 import { Icon } from '../../components/shared/Icon';
-import {navigatorStyle} from '~/config';
-import { Documentation } from '~/containers/Documentation';
+import { navigatorStyle } from '~/config';
 
 export default class In62 extends Component {
-    
+
     state = {
         modalVisible: true,
+        latitude: null,
+        longitude: null,
+        error: null
     };
 
     constructor(props) {
         super(props);
-        
-        console.log('props', props.navigator);
         this.setModalVisible = this.setModalVisible.bind(this);
-    }
-    
-
-    setModalVisible() {
-        //console.log(this.state.modalVisible)
-        this.setState({modalVisible: false});
-        
     }
 
     closeModal() {
-        this.props.navigator.push({
-            screen: 'Documentation',
-            navigatorStyle
-          })
+        this.navigation();
         this.setModalVisible();
     }
 
-    
+    estouCiente() {
+        this.getLocation();
+
+    }
+
+    setModalVisible() {
+        this.setState({ modalVisible: false });
+    }
+
+    navigation() {
+        this.props.navigator.push({
+            screen: 'Documentation',
+            navigatorStyle
+        });
+    }
+
+    getLocation() {
+        navigator.geolocation.getCurrentPosition((position) => {
+            this.setState({
+                latitude: position.coords.latitude,
+                longitude: position.coords.longitude,
+                error: null
+            })
+            this.navigation();
+            this.setModalVisible();
+        }, (error) => {
+            this.setState({ error: null }),
+                { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
+        });
+
+    }
+
+
 
     render() {
         return (
             <View style={styles.container}>
                 <Modal
-                    
+
                     animationType="slide"
                     transparent={false}
                     visible={this.state.modalVisible}
@@ -161,7 +183,7 @@ export default class In62 extends Component {
 
                         <TouchableHighlight style={styles.buttonStyle}
                             onPress={() => {
-                                this.closeModal();
+                                this.estouCiente();
                             }}>
                             <Text>Estou ciente</Text>
                         </TouchableHighlight>
@@ -180,9 +202,9 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         backgroundColor: '#ede3f2',
         padding: 0,
-        
+
     },
-    
+
     modal1: {
         alignItems: 'center',
         backgroundColor: '#ffbd00',
@@ -193,7 +215,7 @@ const styles = StyleSheet.create({
         borderRightWidth: 20,
         borderRightColor: 'rgba(52, 52, 52, 0.8)',
         borderLeftWidth: 20,
-        borderLeftColor: 'rgba(52, 52, 52, 0.8)' 
+        borderLeftColor: 'rgba(52, 52, 52, 0.8)'
     },
     text: {
         color: '#3f2949',
