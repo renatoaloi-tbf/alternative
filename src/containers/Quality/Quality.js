@@ -346,11 +346,13 @@ const WrapperBody = styled.View`
 	padding-left: 8;
 	padding-right: 8;
 	padding-bottom: 8;
+	
 `;
 
 const WrapperBar = styled.View`
 	flex: 1;
 	background-color: ${props => props.theme.bg};
+	border-radius: ${props => props.theme.borderRadius};
 `;
 const WrapperHeader = styled.View`
 	padding-right: 8;

@@ -4,6 +4,8 @@ import android.app.Application;
 
 import com.facebook.react.ReactInstanceManager;
 import com.facebook.react.ReactApplication;
+import com.nikolaiwarner.RNTextInputReset.RNTextInputResetPackage;
+import com.horcrux.svg.SvgPackage;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.react.shell.MainReactPackage;
@@ -28,6 +30,8 @@ public class MainApplication extends NavigationApplication {
   protected List<ReactPackage> getPackages() {
     return Arrays.<ReactPackage>asList(
         new MainReactPackage(),
+            new RNTextInputResetPackage(),
+            new SvgPackage(),
         new VectorIconsPackage(),
         new ReactNativeWheelPickerPackage(),
         new MPAndroidChartPackage(),

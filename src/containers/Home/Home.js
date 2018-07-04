@@ -80,15 +80,15 @@ export const Home = enhance(({openMenu, user}) => {
           <WrapperCard>
             <Card>
               <Users>
-                <Text align="center" size={21} info>
+                <Text align="center" size={20} info>
                   {user.name}
                 </Text>
-                <City size={11} info>
+                <City size={12} info>
                   {user.city}
                 </City>
               </Users>
               <TitleRecentNumbers>
-                <Text size="11" secondary>
+                <Text size="12" secondary>
                   Números recentes:
                 </Text>
               </TitleRecentNumbers>
@@ -141,7 +141,7 @@ const Card = styled.View`
   background-color: ${props => props.theme.bg};
   padding-left: 20;
   padding-right: 20;
-  border-radius: 2;
+  border-radius: ${props => props.theme.borderRadius};
   padding-top: 50;
   elevation: 0.3;
 `;

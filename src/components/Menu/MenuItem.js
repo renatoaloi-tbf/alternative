@@ -94,8 +94,8 @@ export const MenuItem = enhance(({name, icon, goTo, activated}) => {
 
 const Wrapper = styled.View`
 	padding-left: 25;
-	padding-top: 5%;
-	padding-bottom: 5%;
+	padding-top: 4%;
+	padding-bottom: 4%;
 `;
 const TouchableOpacity = styled(TouchableOpacityNative)`
 	flex-direction: row;

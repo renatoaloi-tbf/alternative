@@ -180,6 +180,7 @@ const WrapperBar = styled.View`
   height: 250;
   background-color: ${props => props.theme.bg};
   padding-top: 1;
+  border-radius: ${props => props.theme.borderRadius};
 `;
 
 const ScrollWrapperStyle = ScrollWrapper.extend`

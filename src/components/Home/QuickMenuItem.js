@@ -62,7 +62,7 @@ const QuickMenuItemEnhance = enhance(props => {
         <CardIcon icon={props.icon} />
       </WrapperIcon>
       <Bottom>
-        <Text inverted size={22} weight="700">
+        <Text inverted size={20} weight={'bold'}>
           {props.description}
         </Text>
       </Bottom>
@@ -77,8 +77,9 @@ const TouchableOpacityDefault = styled(TouchableOpacity)`
   width: 49%;
   border-radius: ${props => props.theme.borderRadius};
   margin-top: 8;
-  box-shadow: 0px 0.5px 1px #e0e0e0;
+  box-shadow: 1px 0px 3px #0f0f0f;
   elevation: 3;
+  
   ${props =>
     props.danger &&
     css`
@@ -107,7 +108,7 @@ const TouchableOpacityDefault = styled(TouchableOpacity)`
 const Wrapper = styled.View`
   align-items: center;
   width: 49%;
-  border-radius: 3;
+  border-radius: ${props => props.theme.borderRadius};
   margin-top: 8;
   box-shadow: 0px 0.5px 1px #e0e0e0;
   shadow-color: #000;
