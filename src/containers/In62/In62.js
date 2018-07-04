@@ -67,7 +67,7 @@ export default class In62 extends Component {
                     onRequestClose={() => {
                         this.closeModal();
                     }}>
-                    <View style={styles.modal1}>
+                    <View style={ styles.modal1 }>
                         <Icon size={100} opacity={0.00} color="#FFFFFF" name="alert" />
                     </View>
                     <View style={styles.modal2}>

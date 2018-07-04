@@ -19,7 +19,8 @@ import {
   statements,
   volume,
   researched,
-  user
+  user,
+  backend
 } from '../reducers';
 
 const config = {
@@ -36,7 +37,10 @@ const appReducer = persistCombineReducers(config, {
   volume,
   researched,
   form,
-  user
+  user,
+  backend
+}, () => { 
+  console.log('rehydration complete!', store.getState());
 });
 
 var middlewares = compose(applyMiddleware(ReduxThunk));

@@ -23,7 +23,7 @@ export const RecentNumbers = enhance(({
 }) => {
 	return (
 	   	<Wrapper>
-	   		<Text info size={20}>{result}</Text>
+	   		<Text info size={20} weight={'bold'}>{result}</Text>
 			<Bottom>
 				<Text secondary size={13}>{description}</Text>	
 			</Bottom>

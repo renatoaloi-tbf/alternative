@@ -23,7 +23,7 @@ export const TopBar = compose(
     <StatusBarBackgroundColor />
     <Wrapper>
       {leftComponent}
-      <Title size={23} inverted>
+      <Title size={20} inverted font={'MarkaziText'} >
         {title}
       </Title>
     </Wrapper>
@@ -50,14 +50,14 @@ const Wrapper = styled.View`
 `;
 
 const Title = Text.extend`
-  align-items: center;
-  text-align: center;
-  justify-content: center;
-  font-weight: 500;
-  left: 50%;
-  width: 160;
-  position: absolute;
-  margin-left: -45;
+align-items: center;
+text-align: center;
+justify-content: center;
+font-weight: 500;
+left: 50%;
+width: 160;
+position: absolute;
+margin-left: -45;
 `;
 
 const Image = styled.Image`

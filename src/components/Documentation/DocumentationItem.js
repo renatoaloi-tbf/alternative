@@ -66,7 +66,7 @@ class CardIcon extends Component {
     }
   }
 }
-
+//
 const DocumentationItemEnhance = enhance(props => {
   return (
     <TouchableOpacityDefault {...props}>
@@ -75,8 +75,7 @@ const DocumentationItemEnhance = enhance(props => {
       </WrapperIcon>
       <Body>
         <WrapperDescription>
-          <Text align="center" inverted size={21} 
-                style={{fontWeight: 'bold', margin: 8}}>
+          <Text align="center" inverted size={20} style={{ margin: 4}}>
             {props.description}
           </Text>
         </WrapperDescription>
@@ -101,9 +100,10 @@ export const DocumentationItem = styled(DocumentationItemEnhance)``;
 const TouchableOpacityDefault = styled.View`
   align-items: center;
   width: 49%;
-  border-radius: 3;
+  border-radius: ${props => props.theme.borderRadius};
   margin-top: 8;
-  box-shadow: 0px 0.5px 1px #e0e0e0;
+  box-shadow: 1px 0px 3px #0f0f0f;
+  elevation: 3;
 
   ${props =>
     props.light &&
@@ -143,11 +143,9 @@ const TouchableOpacityDefault = styled.View`
 const Wrapper = styled.View`
   align-items: center;
   width: 49%;
-  border-radius: 3;
+  border-radius: ${props => props.theme.borderRadius};
   margin-top: 8;
   box-shadow: 0px 0.5px 1px #e0e0e0;
-
-  
 
   ${props =>
     props.danger &&

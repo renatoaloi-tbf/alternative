@@ -124,6 +124,7 @@ const renderInputText = ({
 				onFocus={onFocus}
 				value={value}
 				{...restInput}
+				style={{ borderRadius: 5 }}
 			/>
 			<WrapperFieldError>
 				{touched && error ? (
@@ -158,7 +159,7 @@ const LoginForm = enhance(
 				</LogoAppWrapper>
 				<WrapperLogo>
 					<WrapperBody>
-						<PasswordText align="center" secondary size={15}>
+						<PasswordText align="center" secondary size={15} >
 							Entre com seu usuário e senha:
 						</PasswordText>
 						<Field
@@ -174,7 +175,7 @@ const LoginForm = enhance(
 							component={renderInputText}
 						/>
 
-						<ButtonLogin info onPress={handleSubmit(submit)}>
+						<ButtonLogin info onPress={handleSubmit(submit)} style={{ borderRadius: 5 }}>
 							<Text weight="800" inverted>
 								ENTRAR
 							</Text>

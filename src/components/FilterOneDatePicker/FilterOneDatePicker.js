@@ -95,6 +95,7 @@ const WrapperView = styled.View`
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
+  border-radius: ${props => props.theme.borderRadius};
 `;
 
 const Content = styled.View``;

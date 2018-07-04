@@ -62,7 +62,6 @@ const enhance = compose(
       var tax = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 2 }).format(item.tax);
       var ded = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(item.ded);
       
-      
       return [item.desc, qtd + 'L', vl, total, tax, ded];
     })
   })),

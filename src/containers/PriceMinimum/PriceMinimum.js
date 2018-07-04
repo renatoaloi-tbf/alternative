@@ -194,7 +194,7 @@ const WrapperItem = styled.View`
   padding-right: 8;
   padding-left: 8;
   padding-bottom: 8;
-  border-radius: 2px;
+  border-radius: ${props => props.theme.borderRadius};
   border: 1px solid #ededed;
   box-shadow: 0px 1px 3px #101010;
 `;
@@ -203,7 +203,7 @@ const WrapperSeparator = styled.View`
   padding-right: 8;
   padding-left: 8;
   padding-bottom: 8;
-  border-radius: 2px;
+  border-radius: ${props => props.theme.borderRadius};
   border: 1px solid #ededed;
   box-shadow: 0px 1px 3px #101010;
 `;

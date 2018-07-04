@@ -188,6 +188,7 @@ const WrapperView = styled.View`
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
+  border-radius: ${props => props.theme.borderRadius};
 `;
 
 const IconStyleLeft = styled.View`
@@ -227,6 +228,7 @@ const DetailsCalender = styled.View`
     css`
       background-color: ${props => props.theme.successMenu};
     `};
+  border-radius: ${props => props.theme.borderRadius};
 `;
 
 const RangeText = Text.extend`
