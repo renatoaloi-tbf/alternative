@@ -42,14 +42,26 @@ const enhance = compose(
 	withState('isVisible', 'setVisible', false),
 	withState('types', 'setTpes', [
 		{
-			name: 'CCS',
-			value: 'ccs',
+			name: 'Gordura',
+			value: 'fat',
 			measure: 'g/100',
 			selected: true
 		},
 		{
-			name: 'ESD',
-			value: 'esd',
+			name: 'Proteína',
+			value: 'prot',
+			measure: 'g/100',
+			selected: false
+		},
+		{
+			name: 'CBT',
+			value: 'cbt',
+			measure: 'g/100',
+			selected: false
+		},
+		{
+			name: 'CCS',
+			value: 'ccs',
 			measure: 'g/100',
 			selected: false
 		},
@@ -60,29 +72,11 @@ const enhance = compose(
 			selected: false
 		},
 		{
-			name: 'FAT',
-			value: 'fat',
+			name: 'ESD',
+			value: 'esd',
 			measure: 'g/100',
 			selected: false
 		},
-		{
-			name: 'LACT',
-			value: 'lact',
-			measure: 'g/100',
-			selected: false
-		},
-		{
-			name: 'PROT',
-			value: 'prot',
-			measure: 'g/100',
-			selected: false
-		},
-		{
-			name: 'UFC',
-			value: 'ufc',
-			measure: 'g/100',
-			selected: false
-		}
 	]),
 	withState('range', 'setRange', {
 		startDate: moment().subtract(1, 'years'),

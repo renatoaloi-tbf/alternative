@@ -4,6 +4,7 @@ import {compose, withProps, setPropTypes, lifecycle} from 'recompose';
 import {BarChart as BarChartNative} from 'react-native-charts-wrapper';
 import {array, func} from 'prop-types';
 import {processColor} from 'react-native';
+import moment from 'moment';
 
 // Local
 
@@ -17,6 +18,9 @@ const enhancer = compose(
   }),
   withProps(({values, valueFormatter, onSelect}) => ({
     data: (() => {
+      console.log('Dados da tela de qualidade', values);
+      console.log('Dados da tela de qualidade valueFormatter', valueFormatter);
+      
       return {
         dataSets: [
           {
@@ -39,12 +43,16 @@ const enhancer = compose(
       };
     })(),
     xAxis: (() => {
+      let novoFormato = [];
+      valueFormatter.forEach(element => {
+        novoFormato.push(moment(element, 'MM/YYYY').format('MMM').toUpperCase());
+      });
       return {
         axisMinimum: 0,
         axisLineWidth: 0,
         limitLine: 115,
         drawGridLines: false,
-        valueFormatter: [...valueFormatter],
+        valueFormatter: [...novoFormato],
         granularityEnabled: true,
         granularity: 1,
         position: 'BOTTOM'
