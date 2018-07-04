@@ -1,7 +1,7 @@
 import React from 'react';
 import {isEqual} from 'lodash';
 import styled from 'styled-components/native';
-import {object, func} from 'prop-types';
+import {object, func, number} from 'prop-types';
 import {
   compose,
   setPropTypes,
@@ -20,7 +20,7 @@ const enhance = compose(
     type: object.isRequired,
     onPress: func.isRequired
   }),
-  withProps(({onPress, type}) => ({
+  withProps(({onPress, type, value}) => ({
     onPress: e => {
       if (typeof onPress === 'function') {
         onPress(type);
@@ -30,6 +30,13 @@ const enhance = compose(
 );
 
 export const ItemQuality = enhance(({type, onPress}) => {
+  let valor;
+  if (type.valor != null) {
+    valor = type.valor;
+  }
+  else {
+    valor = 0;
+  }
   return (
     <Wrapper>
       {!type.selected && (
@@ -41,7 +48,7 @@ export const ItemQuality = enhance(({type, onPress}) => {
             </DescriptioType>
           </WrapperDescription>
           <WrapperValue>
-            <Text size={30}>0000</Text>
+            <Text size={30}>{valor}</Text>
           </WrapperValue>
         </WrapperContent>
       )}
@@ -57,7 +64,7 @@ export const ItemQuality = enhance(({type, onPress}) => {
           </WrapperDescription>
           <WrapperValue>
             <Text inverted size={30}>
-              0000
+            {valor}
             </Text>
           </WrapperValue>
         </WrapperContentSelected>

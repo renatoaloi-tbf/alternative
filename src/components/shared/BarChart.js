@@ -17,10 +17,16 @@ const enhancer = compose(
     onSelect: func
   }),
   withProps(({values, valueFormatter, onSelect}) => ({
-    data: (() => {
-      console.log('Dados da tela de qualidade', values);
-      console.log('Dados da tela de qualidade valueFormatter', valueFormatter);
+    data: (() => {  
       
+      let trataCores = [];
+      values.forEach(valor => {
+        if (valor.y < 46 && moment(valueFormatter[0], 'MM/YYYY', true).isValid())
+          trataCores.push(processColor('#ffbd00'));
+        else 
+          trataCores.push(processColor('#0096FF'));
+        
+      });
       return {
         dataSets: [
           {
@@ -31,7 +37,7 @@ const enhancer = compose(
               highlightAlpha: 50,
               drawValues: false,
               axisDependency: 'left',
-              color: processColor('#0096FF'),
+              colors: trataCores,
               barShadowColor: processColor('lightgrey'),
               highlightColor: processColor('red')
             }
@@ -44,9 +50,19 @@ const enhancer = compose(
     })(),
     xAxis: (() => {
       let novoFormato = [];
+      let count = 0;
       valueFormatter.forEach(element => {
-        novoFormato.push(moment(element, 'MM/YYYY').format('MMM').toUpperCase());
+        
+        if (moment(element, 'MM/YYYY').isValid()) {
+          novoFormato.push(moment(element, 'MM/YYYY').format('MMM').toUpperCase());
+        }
+        else if (moment(element, 'DD/MM/YYYY').isValid()){
+          count = count + 1;
+          novoFormato.push(moment(element, 'DD/MM/YYYY').format('MMM').toUpperCase() + ' '+ count);
+        }
+        
       });
+      
       return {
         axisMinimum: 0,
         axisLineWidth: 0,

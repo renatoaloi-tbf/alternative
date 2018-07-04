@@ -34,6 +34,8 @@ import {
 	getDetailsDayQuality
 } from '~/actions';
 
+import Intl from 'intl';
+require( 'intl/locale-data/jsonp/pt' );
 const enhance = compose(
 	connect(
 		({quality, researched}) => ({quality, researched, getDetailsDayQuality}),
@@ -45,37 +47,43 @@ const enhance = compose(
 			name: 'Gordura',
 			value: 'fat',
 			measure: 'g/100',
-			selected: true
+			selected: true,
+			valor: null
 		},
 		{
 			name: 'Proteína',
 			value: 'prot',
 			measure: 'g/100',
-			selected: false
+			selected: false,
+			valor: null
 		},
 		{
 			name: 'CBT',
 			value: 'cbt',
 			measure: 'g/100',
-			selected: false
+			selected: false,
+			valor: null
 		},
 		{
 			name: 'CCS',
 			value: 'ccs',
 			measure: 'g/100',
-			selected: false
+			selected: false,
+			valor: null
 		},
 		{
 			name: 'EST',
 			value: 'est',
 			measure: 'g/100',
-			selected: false
+			selected: false,
+			valor: null
 		},
 		{
 			name: 'ESD',
 			value: 'esd',
 			measure: 'g/100',
-			selected: false
+			selected: false,
+			valor: null
 		},
 	]),
 	withState('range', 'setRange', {
@@ -182,13 +190,64 @@ const enhance = compose(
 			if (e && !isEmpty(e)) {
 				const month = researched.searchQuality.byIndex[e.x];
 				const type = find(types, item => item.selected);
+				
 				if (quality.groupByMonth[month]) {
 					setClose(true);
 					setFilter(false);
 					const dateFormat = moment(month, 'MM/YYYY').format('MMMM/YYYY');
 					setSearchMonth(dateFormat);
 					setSearchToMonth(true);
-					getDetailsDayQuality(quality.groupByMonth[month], type.value);
+					let valoresMes = getDetailsDayQuality(quality.groupByMonth[month], type.value);
+					
+					let fat, prot, cbt, ccs, est, esd;
+
+					var totalFat = valoresMes.payload.qualities.reduce(function(tot, elemento) {
+						return tot + elemento.fat;
+					},0);
+
+					var totalProt = valoresMes.payload.qualities.reduce(function(tot, elemento) {
+						return tot + elemento.prot;
+					},0);
+
+					var totalCbt = valoresMes.payload.qualities.reduce(function(tot, elemento) {
+						return tot + elemento.cbt;
+					},0);
+
+					var totalCcs = valoresMes.payload.qualities.reduce(function(tot, elemento) {
+						return tot + elemento.ccs;
+					},0);
+
+					var totalEst = valoresMes.payload.qualities.reduce(function(tot, elemento) {
+						return tot + elemento.est;
+					},0);
+
+					var totalEsd = valoresMes.payload.qualities.reduce(function(tot, elemento) {
+						return tot + elemento.esd;
+					},0);
+
+					fat = totalFat/valoresMes.payload.qualities.length;
+					prot = totalProt/valoresMes.payload.qualities.length;
+					cbt = totalCbt/valoresMes.payload.qualities.length;
+					ccs = totalCcs/valoresMes.payload.qualities.length;
+					est = totalEst/valoresMes.payload.qualities.length;
+					esd = totalEsd/valoresMes.payload.qualities.length;
+					
+					types[0].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 4 }).format(fat);
+					types[1].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 4 }).format(prot);
+					types[2].valor = '0000';
+					types[3].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 4 }).format(ccs);
+					types[4].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 4 }).format(est);
+					types[5].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 4 }).format(esd);
+					
+				}
+				else {
+					getDetailsDayQuality(month, type.value);
+					types[0].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 4 }).format(month.fat);
+					types[1].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 4 }).format(month.prot);
+					types[2].valor = '0000';
+					types[3].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 4 }).format(month.ccs);
+					types[4].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 4 }).format(month.est);
+					types[5].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 4 }).format(month.esd);
 				}
 			}
 		},
