@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components/native';
-import {Navigation} from 'react-native-navigation';
+import { Navigation } from 'react-native-navigation';
 import {
 	compose,
 	withHandlers,
@@ -9,11 +9,11 @@ import {
 	withState,
 	lifecycle
 } from 'recompose';
-import {func, object} from 'prop-types';
-import {connect} from 'react-redux';
-import {reduxForm, Field, SubmissionError} from 'redux-form';
+import { func, object } from 'prop-types';
+import { connect } from 'react-redux';
+import { reduxForm, Field, SubmissionError } from 'redux-form';
 // import {  } from 'redux-form'
-import {Linking} from 'react-native';
+import { Linking } from 'react-native';
 import {
 	Wrapper,
 	Text,
@@ -23,16 +23,16 @@ import {
 	Button,
 	Image
 } from '~/components/shared';
-import {HomeRedirect} from '~/containers/Home';
-import {login} from '~/actions';
+import { HomeRedirect } from '~/containers/Home';
+import { login } from '~/actions';
 // QuickMenuItem
-import {theme, navigatorStyle, ImagesApp, Avatar} from '~/config';
-import {withNotifications} from '~/enhancers';
+import { theme, navigatorStyle, ImagesApp, Avatar } from '~/config';
+import { withNotifications } from '~/enhancers';
 
 const enhance = compose(
 	connect(
-		({user}) => ({user}),
-		{login}
+		({ user }) => ({ user }),
+		{ login }
 	),
 	withNotifications,
 	withState('userName', 'setUserName', ''),
@@ -57,6 +57,12 @@ const enhance = compose(
 					animationType: 'parallax'
 				}
 			});
+		},
+		goTo: ({ navigator, route }) => () => {
+			navigator.push({
+				screen: route,
+				navigatorStyle
+			});
 		}
 	}),
 	withHandlers({
@@ -71,7 +77,7 @@ const enhance = compose(
 			showErrorNotification
 		}) => async () => {
 			setLoading(true);
-			const {token} = await login(userName, password);
+			const { token } = await login(userName, password);
 			setLoading(false);
 			if (token) {
 				loginSuccess();
@@ -96,7 +102,7 @@ const enhance = compose(
 				});
 			}
 			setLoading(true);
-			const {token} = await login(values.user, values.password);
+			const { token } = await login(values.user, values.password);
 			setLoading(false);
 			if (token) {
 				loginSuccess();
@@ -111,8 +117,8 @@ const enhance = compose(
 const renderInputText = ({
 	placeholder,
 	secureTextEntry,
-	input: {onChange, value, onBlur, onFocus, ...restInput},
-	meta: {touched, error}
+	input: { onChange, value, onBlur, onFocus, ...restInput },
+	meta: { touched, error }
 }) => {
 	return (
 		<WrapperField>
@@ -145,7 +151,8 @@ const LoginForm = enhance(
 		setPassword,
 		isLoading,
 		handleSubmit,
-		submit
+		submit,
+		navigator
 	}) => {
 		console.log("Login.js - enhance", handleSubmit);
 		return (
@@ -191,29 +198,27 @@ const LoginForm = enhance(
 					</Password>
 					<Info>
 						<Button onPress={() => {
-							Navigation.startSingleScreenApp({
-								screen: {
-									screen: 'UseTerms',
-									navigatorStyle: navigatorStyle
-								}
-							})}} icon>
+							navigator.push({
+								screen: 'UseTerms',
+								navigatorStyle: navigatorStyle
+							})
+						}} icon>
 							<Text secondary align="center" size={12}>
 								Ao criar seu cadastro você concorda com os Termos de Uso e
 							</Text>
 						</Button>
 						<Button onPress={() => {
-							Navigation.startSingleScreenApp({
-								screen: {
+							navigator.push({
 									screen: 'PrivacyPolicy',
 									navigatorStyle: navigatorStyle
-								}
-							})}} icon>
+							})
+						}} icon>
 							<Text secondary align="center" size={12}>
-							Política de Privacidade da Nestlé
+								Política de Privacidade da Nestlé
 							</Text>
 						</Button>
 					</Info>
-					
+
 				</WrapperFooter>
 			</WrapperLogin>
 		);
