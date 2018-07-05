@@ -49,7 +49,8 @@ var middlewares = compose(applyMiddleware(ReduxThunk));
 // const persistedReducer = persistReducer(persistConfig, appReducer);
 
 export const configureStore = () => {
-  const store = createStore(appReducer, devToolsEnhancer(), middlewares);
+  //const store = createStore(appReducer, devToolsEnhancer(), middlewares);
+  const store = createStore(appReducer, undefined, middlewares);
   console.log("configureStore.js - getData1", store.getState());
   let persistor = persistStore(store);
   console.log("configureStore.js - getData2", persistor.getState());

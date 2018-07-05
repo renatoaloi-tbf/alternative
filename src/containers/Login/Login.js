@@ -1,4 +1,5 @@
 import React from 'react';
+//import { NetInfo } from 'react-native';
 import styled from 'styled-components/native';
 import { Navigation } from 'react-native-navigation';
 import {
@@ -31,7 +32,7 @@ import { withNotifications } from '~/enhancers';
 
 const enhance = compose(
 	connect(
-		({ user }) => ({ user }),
+		({ user, backend }) => ({ user, backend }),
 		{ login }
 	),
 	withNotifications,
@@ -74,22 +75,45 @@ const enhance = compose(
 			setLoading,
 			user,
 			loginSuccess,
-			showErrorNotification
+			showErrorNotification,
+			backend
 		}) => async () => {
+			//const isConnected = await NetInfo.isConnected.fetch();
+			//if (isConnected)
+			//{
 			setLoading(true);
 			const { token } = await login(userName, password);
 			setLoading(false);
 			if (token) {
 				loginSuccess();
 			} else {
-				showErrorNotification('Usuário ou senha incorretos');
+				// Verificando se existem dados persistidos
+				var loginOk = false;
+				if (backend.valor != '')
+				{
+					const json = JSON.parse(backend.valor);
+					console.log('Login.js - json', json);
+					if (json.token)
+					{
+						loginOk = true;
+						loginSuccess();
+					}
+				}
+				if (!loginOk)
+					showErrorNotification('Usuário ou senha incorretos');
 			}
+			//}
+			//else
+			//{
+				//showErrorNotification('Sem conexão!');
+			//}
 		},
 		submit: ({
 			setLoading,
 			loginSuccess,
 			showErrorNotification,
-			login
+			login,
+			backend
 		}) => async values => {
 			if (!values.user) {
 				throw new SubmissionError({
@@ -104,10 +128,24 @@ const enhance = compose(
 			setLoading(true);
 			const { token } = await login(values.user, values.password);
 			setLoading(false);
+
 			if (token) {
 				loginSuccess();
 			} else {
-				showErrorNotification('Usuário ou senha incorretos');
+				// Verificando se existem dados persistidos
+				var loginOk = false;
+				if (backend.valor != '')
+				{
+					const json = JSON.parse(backend.valor);
+					console.log('Login.js - json', json);
+					if (json.token)
+					{
+						loginOk = true;
+						loginSuccess();
+					}
+				}
+				if (!loginOk)
+					showErrorNotification('Usuário ou senha incorretos');
 			}
 
 		}
