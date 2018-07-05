@@ -14,6 +14,7 @@ import PriceMinimum from '~/containers/PriceMinimum';
 import UseTerms from '../UseTerms/UseTerms';
 import PrivacyPolicy from '../PrivacyPolicy/PrivacyPolicy';
 import GraficoTeste from '../GraficoTeste/GraficoTeste';
+import {Password} from '~/containers/Password';
 
 export const registeredScreens = [];
 
@@ -33,6 +34,7 @@ export const registerScreens = (store, Provider) => {
   registerComponent('UseTerms', UseTerms);
   registerComponent('PrivacyPolicy', PrivacyPolicy);
   registerComponent('GraficoTeste', GraficoTeste)
+  registerComponent('Password', Password);
 
   function registerComponent(name, screen) {
     // TODO: remover isso

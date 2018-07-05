@@ -148,6 +148,14 @@ const enhance = compose(
 					showErrorNotification('Usuário ou senha incorretos');
 			}
 
+		},
+		forgotPassword: ({
+			navigator
+		}) => () => {
+			navigator.push({
+				screen: 'Password',
+				navigatorStyle
+			});
 		}
 	})
 );
@@ -191,7 +199,8 @@ const LoginForm = enhance(
 		isLoading,
 		handleSubmit,
 		submit,
-		navigator
+		navigator,
+		forgotPassword
 	}) => {
 		console.log("Login.js - enhance", handleSubmit);
 		return (
@@ -229,7 +238,7 @@ const LoginForm = enhance(
 				</WrapperLogo>
 				<WrapperFooter>
 					<Password>
-						<Button icon onPress={() => Linking.openURL('http://www.google.com.br')}>
+						<Button icon onPress={handleSubmit(forgotPassword)}>
 							<Text secondary align="center" size={12}>
 								Esqueceu sua senha?
 							</Text>
