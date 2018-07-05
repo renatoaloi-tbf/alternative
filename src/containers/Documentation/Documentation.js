@@ -122,7 +122,7 @@ export const Documentation = enhance(
             />
           </WrapperHeader>
           <WrapperItem>
-            {isStatements && (
+            {/* {isStatements && (
               <DocumentationItem
                 month={searchPeriod}
                 info
@@ -131,7 +131,7 @@ export const Documentation = enhance(
                 description="Demonstrativo de pagamento"
                 value={count}
               />
-            )}
+            )} */}
             <DocumentationItem
               info
               route="StatementOfPayment"
@@ -187,6 +187,7 @@ const WrapperItem = styled.View`
   padding-right: 8;
   padding-left: 8;
   padding-bottom: 8;
+  border-radius: ${props => props.theme.borderRadius};
 `;
 
 const WrapperBody = styled.View`

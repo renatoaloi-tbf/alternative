@@ -13,6 +13,9 @@ import {
 } from 'recompose';
 import moment from 'moment';
 
+import Intl from 'intl';
+require( 'intl/locale-data/jsonp/pt' );
+
 // locals
 import {getNavigatorContext} from '~/enhancers';
 import {Text} from '~/components/shared';
@@ -41,7 +44,7 @@ export const PriceDetails = enhance(({pricePeriod, pricePeriodAfter}) => {
               {pricePeriod.period}
             </Text>
             <Text inverted size={28}>
-              R$ {pricePeriod.y}
+              {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(pricePeriod.y)}
             </Text>
           </WrapperContentSelected>
           <WrapperContent>
@@ -49,7 +52,7 @@ export const PriceDetails = enhance(({pricePeriod, pricePeriodAfter}) => {
               {pricePeriodAfter.period}
             </Text>
             <Text size={28} secondary>
-              R$ {pricePeriodAfter.y}
+              {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(pricePeriodAfter.y)}
             </Text>
           </WrapperContent>
         </StyleTotal>

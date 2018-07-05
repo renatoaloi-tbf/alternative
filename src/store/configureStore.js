@@ -19,7 +19,8 @@ import {
   statements,
   volume,
   researched,
-  user
+  user,
+  backend
 } from '../reducers';
 
 const config = {
@@ -36,7 +37,10 @@ const appReducer = persistCombineReducers(config, {
   volume,
   researched,
   form,
-  user
+  user,
+  backend
+}, () => { 
+  console.log('rehydration complete!', store.getState());
 });
 
 var middlewares = compose(applyMiddleware(ReduxThunk));
@@ -45,7 +49,8 @@ var middlewares = compose(applyMiddleware(ReduxThunk));
 // const persistedReducer = persistReducer(persistConfig, appReducer);
 
 export const configureStore = () => {
-  const store = createStore(appReducer, devToolsEnhancer(), middlewares);
+  //const store = createStore(appReducer, devToolsEnhancer(), middlewares);
+  const store = createStore(appReducer, undefined, middlewares);
   console.log("configureStore.js - getData1", store.getState());
   let persistor = persistStore(store);
   console.log("configureStore.js - getData2", persistor.getState());

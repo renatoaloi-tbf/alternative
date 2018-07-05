@@ -10,11 +10,10 @@ import {Quality} from '~/containers/Quality';
 import {Menu} from '~/containers/Menu';
 import {NotificationModal} from '~/components/shared';
 import In62 from '../In62/In62';
-import PriceMinimum from '../../components/PriceMinimum/PriceMinimum';
+import PriceMinimum from '~/containers/PriceMinimum';
 import UseTerms from '../UseTerms/UseTerms';
 import PrivacyPolicy from '../PrivacyPolicy/PrivacyPolicy';
 import GraficoTeste from '../GraficoTeste/GraficoTeste';
-
 
 export const registeredScreens = [];
 
