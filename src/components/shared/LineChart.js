@@ -4,7 +4,8 @@ import {compose, withProps, setPropTypes, lifecycle} from 'recompose';
 import {LineChart as LineChartNative} from 'react-native-charts-wrapper';
 import {array, func} from 'prop-types';
 import {processColor} from 'react-native';
-
+import Intl from 'intl';
+require( 'intl/locale-data/jsonp/pt' );
 // Local
 
 import {EmptyText} from '~/components/shared';
@@ -17,13 +18,15 @@ const enhancer = compose(
   }),
   withProps(({values, valueFormatter, onSelect}) => ({
     data: (() => {
+      valuesEmReais = values.map(function(x){ return {y: x.y, marker: 'R$ ' + new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 2 }).format(x.y)}});
       if (!values.length) return {};
       return {
         dataSets: [
           {
-            values: [...values],
+            values: valuesEmReais,
             label: 'Qualidade',
             config: {
+              drawValues: false,
               lineWidth: 3,
               drawCubicIntensity: 0.4,
               circleRadius: 5,
@@ -37,7 +40,7 @@ const enhancer = compose(
               fillGradient: {
                 colors: [processColor('#0093FF'), processColor('transparent')],
                 positions: [0.2, 0.1],
-                orientation: 'TR_BL'
+                orientation: 'RIGHT_LEFT',
               }
             }
           }
@@ -45,6 +48,7 @@ const enhancer = compose(
       };
     })(),
     xAxis: (() => {
+      valueFormatterUpper = valueFormatter.map(function(x){ return x.toUpperCase() });
       if (!valueFormatter.length) return {};
       return {
         left: {
@@ -61,32 +65,33 @@ const enhancer = compose(
         right: {
           enabled: false
         },
-        valueFormatter: [...valueFormatter],
+        valueFormatter: [...valueFormatterUpper],
         granularityEnabled: true,
         granularity: 1,
         position: 'BOTTOM'
       };
     })(),
     yAxis: (() => {
+      valuesEmReais = values.map(function(x){ return new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 2 }).format(x.y)});
       return {
         left: {
-          drawLabels: true,
+          drawLabels: false,
           drawAxisLine: false,
           axisMinimum: 0,
           drawGridLines: true,
           zeroLine: {
-            enabled: true,
+            enabled: false,
             lineWidth: 1.3
           }
         },
         right: {
-          drawLabels: false,
-          drawAxisLine: false,
+          drawLabels: true,
+          drawAxisLine: true,
           drawGridLines: false,
           zeroLine: {
             enabled: true,
             lineWidth: 1.2
-          }
+          },
         }
       };
     })(),

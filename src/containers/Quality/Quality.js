@@ -22,7 +22,8 @@ import {
 	DrawerButton,
 	BarChart,
 	FlatList,
-	EmptyText
+	EmptyText,
+	BarChartLine
 } from '~/components/shared';
 import {DatePickerModal} from '~/components/DatePickerModal';
 import {FilterCore} from '~/components/FilterCore';
@@ -328,10 +329,11 @@ export const Quality = enhance(
 				<WrapperBody>
 					<WrapperBar>
 						{!researched.searchQuality.items.lenght && (
-							<BarChart
+							<BarChartLine
 								values={researched.searchQuality.items}
 								valueFormatter={researched.searchQuality.period}
 								onSelect={onSelect}
+								media={70}
 							/>
 						)}
 					</WrapperBar>

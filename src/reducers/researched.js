@@ -85,6 +85,7 @@ const getVolumeData = (state, { payload }) => {
   );
   newState.searchVolume.average =
     newState.searchVolume.total / newState.searchVolume.items.length;
+
   return newState;
 };
 
@@ -125,7 +126,6 @@ const getDetailsDayQuality = (state, { payload }) => {
 const getPriceData = (state, { payload }) => {
   const newState = cloneDeep(INITIAL_STATE);
   const { prices, year } = payload;
-  debugger;
   const pricesYear = prices[year];
 
   newState.searchPrice.items = map(moment.months(), (item, index) => {

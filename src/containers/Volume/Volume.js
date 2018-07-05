@@ -23,11 +23,14 @@ import {
   Icon,
   DrawerButton,
   BarChart,
-  ScrollWrapper
+  ScrollWrapper,
+  BarChartLine
 } from '~/components/shared';
 
 import {VolumeDetails, VolumeAverage} from '~/components/Volume';
 import {FilterCore} from '~/components/FilterCore';
+import Intl from 'intl';
+require( 'intl/locale-data/jsonp/pt' );
 
 const enhance = compose(
   connect(
@@ -157,10 +160,12 @@ export const Volume = enhance(
             />
           </WrapperVolumeAverage>
           <WrapperBar>
-            <BarChart
+            <BarChartLine
               onSelect={onSelect}
               values={researched.searchVolume.items}
               valueFormatter={researched.searchVolume.period}
+              media={70}
+              tipo={"volume"}
             />
           </WrapperBar>
           <WrapperDetails>

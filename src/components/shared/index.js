@@ -22,3 +22,5 @@ export * from './PickerYear';
 export * from './LineChart';
 export * from './NotificationModal';
 export * from './LargeTopBar';
+export * from './BarChartLine';
+

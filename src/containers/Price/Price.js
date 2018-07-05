@@ -66,8 +66,10 @@ const enhance = compose(
       });
     },
     handlerClick: ({researched, setPeriodPrice, year}) => e => {
-      const pricePeriod = researched.searchPrice.byIndex[e.x];
-      let pricePeriodAfter = researched.searchPrice.byIndex[e.x + 1];
+      
+      const pricePeriod = researched.searchPrice.byIndex[e.x] ? researched.searchPrice.byIndex[e.x] : researched.searchPrice.byIndex[0];
+      let pricePeriodAfter = researched.searchPrice.byIndex[e.x + 1] ? researched.searchPrice.byIndex[e.x + 1] : researched.searchPrice.byIndex[1];
+      
       const pd = moment().month(e + 1);
       pricePeriodAfter = pricePeriodAfter
         ? pricePeriodAfter

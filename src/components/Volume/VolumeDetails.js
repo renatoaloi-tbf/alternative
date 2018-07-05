@@ -11,6 +11,8 @@ import {
   pure
 } from 'recompose';
 import moment from 'moment';
+import Intl from 'intl';
+require( 'intl/locale-data/jsonp/pt' );
 
 // locals
 import {getNavigatorContext} from '~/enhancers';
@@ -48,7 +50,7 @@ export const VolumeDetails = enhance(({details}) => {
           Volume Coletado
         </TextLeft>
         <TextRight size={12} secondary>
-          {details.volume ? details.volume : 0} L
+          {details.volume ? new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 2 }).format(details.volume) : 0} L
         </TextRight>
       </WrapperTetx>
       <WrapperTetx>
@@ -56,7 +58,7 @@ export const VolumeDetails = enhance(({details}) => {
           Temperatura
         </TextLeft>
         <TextRight size={12} secondary>
-          {details.temperature ? details.temperature : 0}
+          {details.temperature ? new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 4 }).format(details.temperature) : 0}
         </TextRight>
       </WrapperTetx>
       <WrapperTetx>
@@ -96,7 +98,7 @@ export const VolumeDetails = enhance(({details}) => {
           Total Volume Rejeitado
         </TextLeft>
         <TextRight size={12} secondary>
-          {details.rejected_volume ? details.rejected_volume : 0} L
+          {details.rejected_volume ? Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 2 }).format(details.rejected_volume) : 0} L
         </TextRight>
       </WrapperTetx>
     </Wrapper>
