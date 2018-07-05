@@ -59,11 +59,12 @@ const enhancer = compose(
           axisMinimum: 0,
           zeroLine: {
             enabled: true,
-            lineWidth: 1.3
+            lineWidth: 0.5
           }
         },
         right: {
-          enabled: false
+          enabled: false,
+          drawGridLines: false
         },
         valueFormatter: [...valueFormatterUpper],
         granularityEnabled: true,
@@ -76,22 +77,15 @@ const enhancer = compose(
       return {
         left: {
           drawLabels: false,
-          drawAxisLine: false,
+          drawAxisLine: true,
           axisMinimum: 0,
-          drawGridLines: true,
-          zeroLine: {
-            enabled: false,
-            lineWidth: 1.3
-          }
+          drawGridLines: false
         },
         right: {
           drawLabels: true,
           drawAxisLine: true,
           drawGridLines: false,
-          zeroLine: {
-            enabled: true,
-            lineWidth: 1.2
-          },
+          
         }
       };
     })(),
