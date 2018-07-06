@@ -47,7 +47,7 @@ const enhance = compose(
             
             setLoading(true);
 
-            console.log("Password.js - submit", values.user);
+            if (__DEV__) console.log("Password.js - submit", values.user);
             try {
 
                 const url = `${apiUrl}/auth/recoverPassword?user=${values.user}`;
@@ -55,8 +55,8 @@ const enhance = compose(
                 const res = await fetch(url);
                 const repo = await res.json();
 
-                console.log("Password.js - res", res);
-                console.log("Password.js - repo", repo);
+                if (__DEV__) console.log("Password.js - res", res);
+                if (__DEV__) console.log("Password.js - repo", repo);
 
                 if (res.status === 200) {
                     showSuccessNotification('Senha resetada com sucesso! Siga as instruções recebidas no seu e-mail...');
@@ -68,7 +68,7 @@ const enhance = compose(
 
             } catch (e) {
 
-                console.log("Password.js - e", e);
+                if (__DEV__) console.log("Password.js - e", e);
 
                 showErrorNotification('Erro processando o seu pedido.');
             }

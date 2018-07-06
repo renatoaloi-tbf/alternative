@@ -5,7 +5,7 @@ import {navigatorStyle, drawer} from '~/config';
 export const withNavigations = compose(
   lifecycle({
     componentWillMount() {
-      console.log("withNavigation.js - componentWillMount", this);
+      if (__DEV__) console.log("withNavigation.js - componentWillMount", this);
       this.props.navigator.setOnNavigatorEvent(
         this.onNavigatorEvent.bind(this)
       );

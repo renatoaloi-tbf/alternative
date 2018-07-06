@@ -96,7 +96,7 @@ export default class GraficoTeste extends Component {
       this.setState({...this.state, selectedEntry: JSON.stringify(entry)})
     }
 
-    console.log(event.nativeEvent)
+    if (__DEV__) console.log(event.nativeEvent)
   }
 
   render() {
@@ -114,7 +114,7 @@ export default class GraficoTeste extends Component {
             data={this.state.data}
             xAxis={this.state.xAxis}
             onSelect={this.handleSelect.bind(this)}
-            onChange={(event) => console.log(event.nativeEvent)}
+            onChange={(event) => {if (__DEV__) console.log(event.nativeEvent)}}
             marker={this.state.marker}
             highlights={this.state.highlights}
             style={styles.container}/>

@@ -23,7 +23,7 @@ const getStatements = (state, {payload}) => {
       newState.byMonthExt[date] = dateExt;
     }
   });
-  console.log("statements.js - getStatements", newState);
+  if (__DEV__) console.log("statements.js - getStatements", newState);
   return newState;
 };
 

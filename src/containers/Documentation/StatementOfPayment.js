@@ -76,8 +76,8 @@ const enhance = compose(
 
 export const StatementOfPayment = enhance(
   ({statements, month, header, widthArr, data}) => {
-    console.log("StatementOfPayment.js - statements", statements);
-    console.log("StatementOfPayment.js - month", month);
+    if (__DEV__) console.log("StatementOfPayment.js - statements", statements);
+    if (__DEV__) console.log("StatementOfPayment.js - month", month);
     return (
       <Wrapper secondary>
         <TopBar

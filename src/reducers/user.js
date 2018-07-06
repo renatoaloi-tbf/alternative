@@ -30,7 +30,7 @@ const getLogin = (state, {payload}) => {
   newState.token = token;
   newState.cpf_cnpj = cpf_cnpj;
   newState.isLogin = true;
-  console.log("user.js - getLogin", newState);
+  if (__DEV__) console.log("user.js - getLogin", newState);
   return newState;
 };
 

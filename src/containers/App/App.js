@@ -24,11 +24,7 @@ export class AppSrc {
     startApp() {
         Navigation.startSingleScreenApp({
             screen: {
-<<<<<<< HEAD
                 screen: `${ __DEV__ ? 'Login' : 'Login' }`,
-=======
-                screen: `${ __DEV__ ? 'Documentation' : 'Login' }`,
->>>>>>> 58095086766da190bbd38ae72cad50bbf9a63cf0
                 navigatorStyle: navigatorStyle
             }
         });

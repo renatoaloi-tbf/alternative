@@ -8,7 +8,7 @@ export const fetchLogger = () => {
   global._fetch = fetch;
   global.fetch = function(uri, options, ...args) {
     return global._fetch(uri, options, ...args).then(response => {
-      console.log("fetchLogger.js - fetchLogger", {request: {uri, options, ...args}, response});
+      if (__DEV__) console.log("fetchLogger.js - fetchLogger", {request: {uri, options, ...args}, response});
       return response;
     });
   };
