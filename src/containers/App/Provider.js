@@ -7,7 +7,7 @@ import {PersistGate} from 'redux-persist/es/integration/react';
 import {theme} from '~/config';
 
 export const Provider = persistor => props => {
-  console.log("Provider.js - persistor", persistor.getState());
+  if (__DEV__) console.log("Provider.js - persistor", persistor.getState());
   return (
     <ProviderRedux store={props.store}>
       <PersistGate persistor={persistor}>

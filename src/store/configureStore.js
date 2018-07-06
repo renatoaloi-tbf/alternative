@@ -40,7 +40,7 @@ const appReducer = persistCombineReducers(config, {
   user,
   backend
 }, () => { 
-  console.log('rehydration complete!', store.getState());
+  if (__DEV__) console.log('rehydration complete!', store.getState());
 });
 
 var middlewares = compose(applyMiddleware(ReduxThunk));
@@ -51,8 +51,8 @@ var middlewares = compose(applyMiddleware(ReduxThunk));
 export const configureStore = () => {
   //const store = createStore(appReducer, devToolsEnhancer(), middlewares);
   const store = createStore(appReducer, undefined, middlewares);
-  console.log("configureStore.js - getData1", store.getState());
+  if (__DEV__) console.log("configureStore.js - getData1", store.getState());
   let persistor = persistStore(store);
-  console.log("configureStore.js - getData2", persistor.getState());
+  if (__DEV__) console.log("configureStore.js - getData2", persistor.getState());
   return {persistor, store};
 };

@@ -67,47 +67,6 @@ const enhance = compose(
 		}
 	}),
 	withHandlers({
-		loginIn: ({
-			navigator,
-			userName,
-			password,
-			login,
-			setLoading,
-			user,
-			loginSuccess,
-			showErrorNotification,
-			backend
-		}) => async () => {
-			//const isConnected = await NetInfo.isConnected.fetch();
-			//if (isConnected)
-			//{
-			setLoading(true);
-			const { token } = await login(userName, password);
-			setLoading(false);
-			if (token) {
-				loginSuccess();
-			} else {
-				// Verificando se existem dados persistidos
-				var loginOk = false;
-				if (backend.valor != '')
-				{
-					const json = JSON.parse(backend.valor);
-					console.log('Login.js - json', json);
-					if (json.token)
-					{
-						loginOk = true;
-						loginSuccess();
-					}
-				}
-				if (!loginOk)
-					showErrorNotification('Usuário ou senha incorretos');
-			}
-			//}
-			//else
-			//{
-				//showErrorNotification('Sem conexão!');
-			//}
-		},
 		submit: ({
 			setLoading,
 			loginSuccess,
@@ -129,21 +88,28 @@ const enhance = compose(
 			const { token } = await login(values.user, values.password);
 			setLoading(false);
 
-			if (token) {
+			if (token && token !== 401) {
 				loginSuccess();
 			} else {
+
+				if (__DEV__) console.log('token', token);
+
 				// Verificando se existem dados persistidos
 				var loginOk = false;
-				if (backend.valor != '')
+				if (token !== 401)
 				{
-					const json = JSON.parse(backend.valor);
-					console.log('Login.js - json', json);
-					if (json.token)
+					if (backend.valor != '')
 					{
-						loginOk = true;
-						loginSuccess();
+						const json = JSON.parse(backend.valor);
+						if (__DEV__) console.log('Login.js - json', json);
+						if (json.token)
+						{
+							loginOk = true;
+							loginSuccess();
+						}
 					}
 				}
+
 				if (!loginOk)
 					showErrorNotification('Usuário ou senha incorretos');
 			}
@@ -191,7 +157,6 @@ const renderInputText = ({
 
 const LoginForm = enhance(
 	({
-		loginIn,
 		userName,
 		setUserName,
 		password,
@@ -202,7 +167,7 @@ const LoginForm = enhance(
 		navigator,
 		forgotPassword
 	}) => {
-		console.log("Login.js - enhance", handleSubmit);
+		if (__DEV__) console.log("Login.js - enhance", handleSubmit);
 		return (
 			<WrapperLogin loading={isLoading}>
 				<LogoNestleWrapper>
@@ -220,6 +185,7 @@ const LoginForm = enhance(
 							name="user"
 							component={renderInputText}
 							placeholder="Usuário"
+							value={userName}
 						/>
 
 						<Field
@@ -227,6 +193,7 @@ const LoginForm = enhance(
 							name="password"
 							placeholder="Senha"
 							component={renderInputText}
+							value={password}
 						/>
 
 						<ButtonLogin info onPress={handleSubmit(submit)} style={{ borderRadius: 5 }}>

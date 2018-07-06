@@ -34,7 +34,7 @@ const enhance = compose(
 );
 
 export const PriceDetails = enhance(({pricePeriod, pricePeriodAfter}) => {
-  console.log('Periodo preço', pricePeriod);
+  if (__DEV__) console.log('Periodo preço', pricePeriod);
   return (
     <Wrapper>
       {pricePeriod && (

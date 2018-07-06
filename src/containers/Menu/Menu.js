@@ -28,7 +28,7 @@ const enhance = compose(
 );
 
 export const Menu = enhance(({user}) => {
-  console.log("Menu.js - enhance", user);
+  if (__DEV__) console.log("Menu.js - enhance", user);
   return (
     <Wrapper>
       <StatusBarBackgroundColor />

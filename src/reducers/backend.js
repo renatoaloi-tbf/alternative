@@ -10,8 +10,8 @@ const getBackend = (state, {payload}) => {
   
   newState.valor = JSON.stringify(payload);
   
-  console.log("backend.js - payload", payload);
-  console.log("backend.js - getBackend", newState);
+  if (__DEV__) console.log("backend.js - payload", payload);
+  if (__DEV__) console.log("backend.js - getBackend", newState);
   return newState;
 };
 
@@ -20,7 +20,7 @@ export const backend = (state = INITIAL_STATE, action) => {
     case 'LOGIN_SUCCESS':
       return getBackend(state, action);
     default:
-      console.log("backend.js - default", state);
+      if (__DEV__) console.log("backend.js - default", state);
       return state;
   }
 };

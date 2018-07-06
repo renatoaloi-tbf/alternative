@@ -20,7 +20,7 @@ const enhancer = compose(
     }),
     withProps(({ values, valueFormatter, onSelect, media, tipo }) => ({
         data: (() => {
-            console.log('valueFormatter[0]', valueFormatter[0]);
+            if (__DEV__) console.log('valueFormatter[0]', valueFormatter[0]);
             let trataCores = [];
             let arrayMedia = [];
             values.forEach(valor => {

@@ -38,7 +38,7 @@ const INITIAL_STATE = {
 const getData = (state, { payload }) => {
   const newState = cloneDeep(INITIAL_STATE);
   const { qualities, range, type } = payload;
-  console.log("researched.js - getData1", range);
+  if (__DEV__) console.log("researched.js - getData1", range);
   const list = [];
   newState.searchQuality.period = dateDiffList(range.startDate, range.endDate);
   forEach(newState.searchQuality.period, (item, index) => {
@@ -50,7 +50,7 @@ const getData = (state, { payload }) => {
     }
   });
   newState.searchQuality.items = map(list, item => ({ y: item[type] }));
-  console.log("researched.js - getData2", newState);
+  if (__DEV__) console.log("researched.js - getData2", newState);
   return newState;
 };
 
@@ -152,12 +152,12 @@ const getPriceData = (state, { payload }) => {
         .format('MMMM')}/${year}`
     };
   });
-  console.log("researched.js - getPriceData", newState);
+  if (__DEV__) console.log("researched.js - getPriceData", newState);
   return newState;
 };
 
 export const researched = (state = INITIAL_STATE, action) => {
-  console.log("researched.js - action.type", action.type);
+  if (__DEV__) console.log("researched.js - action.type", action.type);
   switch (action.type) {
     case 'SEARCH_QUALITY':
       return getData(state, action);
