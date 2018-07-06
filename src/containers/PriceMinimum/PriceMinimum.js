@@ -9,11 +9,12 @@ import {
     Icon,
     DrawerButton,
     ScrollWrapper,
-    Text
+    Text,
+    TextInput
   } from '~/components/shared';
-import { TextInput } from 'react-native';
+//import { TextInput } from 'react-native';
 
-class PriceMinimum extends Component {
+export default class PriceMinimum extends Component {
     render() {
         return (
             <Wrapper secondary>
@@ -141,7 +142,7 @@ const StyledViewFooter = StyledView.extend`
     /* border: 1px solid red; */
 `;
 
-const StyledTextInput = styled.TextInput`
+const StyledTextInput = TextInput.extend`
     text-align: center;
     margin-top: 18;
     margin-right: 18;
@@ -152,6 +153,11 @@ const StyledTextInput = styled.TextInput`
     border: 1px solid #0196ff;
     color: #0196ff;
     font-size: 18;
+
+    padding-top: 16;
+    padding-bottom: 15;
+    padding-left: 8;
+    padding-right: 8;
 
     ${props =>
         props.blue &&
@@ -277,4 +283,3 @@ const Indicativo2 = Indicativo.extend`
   margin-left: 2px;
 `;
 
-export default PriceMinimum;
