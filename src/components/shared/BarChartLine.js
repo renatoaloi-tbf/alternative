@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components/native';
 import { compose, withProps, setPropTypes, lifecycle } from 'recompose';
 import { CombinedChart as BarChartNative } from 'react-native-charts-wrapper';
-import { array, func, number, string } from 'prop-types';
+import { array, func, number, string, object } from 'prop-types';
 import { processColor } from 'react-native';
 import moment from 'moment';
 
@@ -14,13 +14,15 @@ const enhancer = compose(
     setPropTypes({
         values: array.isRequired,
         valueFormatter: array.isRequired,
+        valueFormatterIndex: object,
         onSelect: func,
         media: number,
         tipo: string
     }),
-    withProps(({ values, valueFormatter, onSelect, media, tipo }) => ({
+    withProps(({ values, valueFormatter, valueFormatterIndex, onSelect, media, tipo }) => ({
         data: (() => {
-            console.log('valueFormatter[0]', valueFormatter[0]);
+            console.log('values', values);
+
             let trataCores = [];
             let arrayMedia = [];
             values.forEach(valor => {
@@ -99,6 +101,7 @@ const enhancer = compose(
 
         })(),
         xAxis: (() => {
+            console.log('valueFormatterIndex', Object.values(valueFormatterIndex));
             let novoFormato = [];
             if (tipo != "volume") {
                 let count = 0;
@@ -113,10 +116,8 @@ const enhancer = compose(
                 });
             }
             else {
-                let count = 0;
-                valueFormatter.forEach(element => {
-                    count = count + 1;
-                    novoFormato.push(count.toString());
+                Object.values(valueFormatterIndex).forEach(element => {
+                    novoFormato.push(moment(element.searchDate).locale('pt-br').format('DD').toUpperCase());
                 });
             }
 
@@ -165,7 +166,7 @@ const enhancer = compose(
                     xValue: 0,
                     yValue: 1
                 };
-            } 
+            }
             else {
                 if (tipo == 'volume') {
                     return {

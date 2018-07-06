@@ -22,6 +22,7 @@ const enhance = compose(
     average: number,
     total: number,
     month: string,
+    lastMonth: string,
     collected: number,
     isCollected: bool
   }),
@@ -39,7 +40,7 @@ const enhance = compose(
 );
 
 export const VolumeAverage = enhance(
-  ({total, average, month, collected, isCollected}) => {
+  ({total, average, month, collected, isCollected, lastMonth}) => {
     return (
       <Wrapper>
         <WrapperContentSelected>
@@ -65,7 +66,7 @@ export const VolumeAverage = enhance(
         </WrapperContentSelected>
         <WrapperContent>
           <Text size={12} secondary>
-            Média diária {month}
+            Média diária {lastMonth}
           </Text>
           <Text size={30} secondary>
             {average ? average.toLocaleString() : 0} L

@@ -91,11 +91,14 @@ const enhance = compose(
     }) => e => {
       if (!isEmpty(e)) {
         const volume = researched.searchVolume.byIndex[e.x];
+
+        console.log('MES', moment().subtract(1, 'month').format('MMMM'))
         setCollected(volume.volume);
         setIsCollected(true);
         setSearchMonth(moment(volume.start_date).format('LL'));
         // setRange({label: });
         const details = researched.searchVolume.byIndex[e.x];
+        console.log('VOLUME', researched.searchVolume);
         setDetails(details);
         setClose(true);
       }
@@ -152,8 +155,9 @@ export const Volume = enhance(
           </WrapperHeader>
           <WrapperVolumeAverage>
             <VolumeAverage
-              average={researched.searchVolume.average}
+              average={researched.searchVolume.averageLastMonth}
               month={researched.searchVolume.currentMonth}
+              lastMonth={researched.searchVolume.lastMonth}
               total={researched.searchVolume.total}
               collected={collected}
               isCollected={isCollected}
@@ -164,6 +168,7 @@ export const Volume = enhance(
               onSelect={onSelect}
               values={researched.searchVolume.items}
               valueFormatter={researched.searchVolume.period}
+              valueFormatterIndex={researched.searchVolume.byIndex}
               media={70}
               tipo={"volume"}
             />

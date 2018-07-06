@@ -20,8 +20,10 @@ const INITIAL_STATE = {
     period: [],
     byIndex: {},
     average: 0,
+    averageLastMonth: 0,
     total: 0,
-    currentMonth: moment().format('MMMM')
+    currentMonth: moment().format('MMMM'),
+    lastMonth: moment().subtract(1, 'month').format('MMMM')
   },
   searchVolume: {
     items: [],
@@ -73,18 +75,32 @@ const getVolumeData = (state, { payload }) => {
   const filterVolumes = filter(volumes, item =>
     ra.contains(moment(item.searchDate))
   );
+
   forEach(filterVolumes, (item, index) => {
     newState.searchVolume.byIndex[index] = item;
   });
   newState.searchVolume.items = map(filterVolumes, item => ({ y: item.volume }));
   newState.searchVolume.period = setArray(newState.searchVolume.items.length);
   newState.searchVolume.currentMonth = start.format('MMMM');
+  newState.searchVolume.lastMonth = start.subtract(1, 'month').format('MMMM');
   newState.searchVolume.total = reduce(
     map(filterVolumes, item => item.volume),
     (prev, next) => prev + next
   );
+
   newState.searchVolume.average =
     newState.searchVolume.total / newState.searchVolume.items.length;
+
+  const filterMesAnterior = volumes.filter(item => {
+    return moment(item.searchDate).format('MMMM') == newState.searchVolume.lastMonth 
+  });
+
+  const totalLastMonth = reduce(
+    map(filterMesAnterior, item => item.volume),
+    (prev, next) => prev + next
+  );
+
+  newState.searchVolume.averageLastMonth = totalLastMonth / filterMesAnterior.length;
 
   return newState;
 };
