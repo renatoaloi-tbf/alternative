@@ -23,7 +23,8 @@ const enhance = compose(
     onChange: func,
     apply: func,
     isClose: bool,
-    inverted: bool
+    inverted: bool,
+    comparacao: func
   }),
   defaultProps({
     inverted: true
@@ -31,7 +32,7 @@ const enhance = compose(
   withState('isVisible', 'setVisible', false),
   withState('compare', 'setCompare', false),
   withState('range', 'setRange', {}),
-  withProps(({setVisible, onChange, apply, close, open}) => ({
+  withProps(({setVisible, onChange, apply, close, open, comparacao}) => ({
     open: e => {
       setVisible(true);
       if (typeof open === 'function') {
@@ -55,17 +56,28 @@ const enhance = compose(
       if (typeof apply === 'function') {
         apply(e);
       }
+    },
+    comparacao: e => {
+      if (typeof comparacao === 'function') {
+        comparacao(e);
+      }
     }
   })),
   withHandlers({
     onChangeInit: ({range, setRange, onChange}) => e => {
       if (__DEV__) console.log("FilterCore.js - onChangeInit", e);
+      if (__DEV__) console.log("FilterCore.js - onChangeInit range", range);
       setRange({...range, startDate: e.value});
       onChange({...range, startDate: e.value});
     },
     onChangeEnd: ({range, setRange, onChange}) => e => {
+      if (__DEV__) console.log("FilterCore.js - onChangeEnd range", range);
       setRange({...range, endDate: e.value});
       onChange({...range, endDate: e.value});
+    },
+    setComparacao: ({comparacao, setCompare}) => e => {
+      setCompare(e);
+      comparacao(e);
     }
   })
 );
@@ -78,7 +90,7 @@ export const FilterCore = enhance(
     isVisible,
     close,
     compare,
-    setCompare,
+    setComparacao,
     onChangeInit,
     onChangeEnd,
     range,
@@ -161,8 +173,8 @@ export const FilterCore = enhance(
                     Comparar com ano antetior
                   </TextCheckBox>
                 }
-                onClick={() => setCompare(!compare)}
-                isChecked={!compare}
+                onClick={() => setComparacao(!compare)}
+                isChecked={compare}
               />
             </WrapperCompareText>
           </DetailsCalender>

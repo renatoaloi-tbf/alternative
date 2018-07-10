@@ -30,6 +30,11 @@ const INITIAL_STATE = {
     period: [],
     byIndex: {}
   },
+  searchVolumeAnoAnterior: {
+    items: [],
+    period: [],
+    byIndex: {}
+  },
   searchPrice: {
     items: [],
     period: [],
@@ -92,7 +97,7 @@ const getVolumeData = (state, { payload }) => {
     newState.searchVolume.total / newState.searchVolume.items.length;
 
   const filterMesAnterior = volumes.filter(item => {
-    return moment(item.searchDate).format('MMMM') == newState.searchVolume.lastMonth 
+    return moment(item.searchDate).format('MMMM') == newState.searchVolume.lastMonth
   });
 
   const totalLastMonth = reduce(
@@ -105,10 +110,99 @@ const getVolumeData = (state, { payload }) => {
   return newState;
 };
 
+
+const getVolumeDataAnoAnterior = (state, { payload }) => {
+
+  const newState = cloneDeep(INITIAL_STATE);
+  const { range, volumes, rangeAnterior, volumesAnteriores } = payload;
+
+  /**
+   * VOLUME DO ANO ATUAL
+   */
+  const start = moment(range.startDate, 'MM/YYYY').startOf('month');
+  const end = moment(range.endDate, 'MM/YYYY').endOf('month');
+  const ra = moment.range(start, end);
+  const filterVolumes = filter(volumes, item =>
+    ra.contains(moment(item.searchDate))
+  );
+
+  forEach(filterVolumes, (item, index) => {
+    newState.searchVolume.byIndex[index] = item;
+  });
+  newState.searchVolume.items = map(filterVolumes, item => ({ y: item.volume }));
+  newState.searchVolume.period = setArray(newState.searchVolume.items.length);
+  newState.searchVolume.currentMonth = start.format('MMMM');
+  newState.searchVolume.lastMonth = start.subtract(1, 'month').format('MMMM');
+  newState.searchVolume.total = reduce(
+    map(filterVolumes, item => item.volume),
+    (prev, next) => prev + next
+  );
+
+  newState.searchVolume.average =
+    newState.searchVolume.total / newState.searchVolume.items.length;
+
+  const filterMesAnterior = volumes.filter(item => {
+    return moment(item.searchDate).format('MMMM') == newState.searchVolume.lastMonth
+  });
+
+  const totalLastMonth = reduce(
+    map(filterMesAnterior, item => item.volume),
+    (prev, next) => prev + next
+  );
+
+  newState.searchVolume.averageLastMonth = totalLastMonth / filterMesAnterior.length;
+
+
+  /**
+   * VOLUME DO ANO ANTERIOR
+   */
+  const startAnterior = moment(rangeAnterior.startDate, 'MM/YYYY').startOf('month');
+  const endAnterior = moment(rangeAnterior.endDate, 'MM/YYYY').endOf('month');
+  const raAnterior = moment.range(startAnterior, endAnterior);
+  console.log('RANGE ANO ANTERIOR', raAnterior);
+  
+  const filterVolumesAnteriores = filter(volumesAnteriores, item =>
+    raAnterior.contains(moment(item.searchDate))
+  );
+
+  console.log('FILTER VOLUMES ANO ANTERIOR', filterVolumesAnteriores);
+
+  forEach(filterVolumesAnteriores, (item, index) => {
+    newState.searchVolumeAnoAnterior.byIndex[index] = item;
+  });
+  newState.searchVolumeAnoAnterior.items = map(filterVolumesAnteriores, item => ({ y: item.volume }));
+  newState.searchVolumeAnoAnterior.period = setArray(newState.searchVolumeAnoAnterior.items.length);
+  newState.searchVolumeAnoAnterior.currentMonth = startAnterior.format('MMMM');
+  newState.searchVolumeAnoAnterior.lastMonth = startAnterior.subtract(1, 'month').format('MMMM');
+  newState.searchVolumeAnoAnterior.total = reduce(
+    map(filterVolumesAnteriores, item => item.volume),
+      (prev, next) => prev + next
+    );
+
+
+
+  /* newState.searchVolumeAnoAnterior.average =
+    newState.searchVolumeAnoAnterior.total / newState.searchVolumeAnoAnterior.items.length;
+
+  const filterMesAnterior = volumes.filter(item => {
+    return moment(item.searchDate).format('MMMM') == newState.searchVolumeAnoAnterior.lastMonth
+  });
+
+  const totalLastMonthAnterior = reduce(
+    map(filterMesAnterior, item => item.volume),
+    (prev, next) => prev + next
+  );
+
+  newState.searchVolumeAnoAnterior.averageLastMonth = totalLastMonthAnterior / filterMesAnterior.length; */
+
+  return newState;
+};
+
 const close = () => {
   const newState = cloneDeep(INITIAL_STATE);
   return newState;
 };
+
 const getDetailsDayQuality = (state, { payload }) => {
   const newState = cloneDeep(INITIAL_STATE);
   const { qualities, type } = payload;
@@ -179,6 +273,8 @@ export const researched = (state = INITIAL_STATE, action) => {
       return getData(state, action);
     case 'SEARCH_VOLUME':
       return getVolumeData(state, action);
+    case 'SEARCH_VOLUME_ANO_ANTERIOR':
+      return getVolumeDataAnoAnterior(state, action);
     case 'DETAILS_DAY_QUALITY':
       return getDetailsDayQuality(state, action);
     case 'PRICES_YEAR':

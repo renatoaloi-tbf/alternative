@@ -1,8 +1,8 @@
 import React from 'react';
 import styled from 'styled-components/native';
-import { compose, withProps, setPropTypes, lifecycle } from 'recompose';
+import { compose, withProps, setPropTypes, lifecycle, withState } from 'recompose';
 import { CombinedChart as BarChartNative } from 'react-native-charts-wrapper';
-import { array, func, number, string, object } from 'prop-types';
+import { array, func, number, string, object, bool } from 'prop-types';
 import { processColor } from 'react-native';
 import moment from 'moment';
 
@@ -17,21 +17,31 @@ const enhancer = compose(
         valueFormatterIndex: object,
         onSelect: func,
         media: number,
-        tipo: string
+        tipo: string,
+        anoAnterior: bool
     }),
-    withProps(({ values, valueFormatter, valueFormatterIndex, onSelect, media, tipo }) => ({
+    withProps(({ values, valueFormatter, valueFormatterIndex, onSelect, media, tipo, anoAnterior }) => ({
+        
         data: (() => {
             if (__DEV__) console.log('valueFormatter[0]', valueFormatter[0]);
+            if (__DEV__) console.log('anoAnterior', anoAnterior);
             let trataCores = [];
             let arrayMedia = [];
-            values.forEach(valor => {
-                arrayMedia.push(media);
-                if (valor.y < media && moment(valueFormatter[0], 'MM/YYYY', true).isValid())
-                    trataCores.push(processColor('#ffbd00'));
-                else
-                    trataCores.push(processColor('#0096FF'));
-
-            });
+            if (__DEV__) console.log('VALORES ATUAIS', values);
+            if (values.length > 0) {
+                values.forEach(valor => {
+                    arrayMedia.push(media);
+                    if (valor.y < media && moment(valueFormatter[0], 'MM/YYYY', true).isValid())
+                        trataCores.push(processColor('#ffbd00'));
+                    else
+                        trataCores.push(processColor('#0096FF'));
+    
+                });
+            }
+            else {
+                values.push(0);
+            }
+            
             if (moment(valueFormatter[0], 'MM/YYYY', true).isValid() || tipo == 'volume') {
                 return {
                     barData: {

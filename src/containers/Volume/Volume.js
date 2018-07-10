@@ -8,14 +8,14 @@ import {
   withState,
   lifecycle
 } from 'recompose';
-import {func, object} from 'prop-types';
-import {connect} from 'react-redux';
-import {size, isEmpty} from 'lodash';
+import { func, object } from 'prop-types';
+import { connect } from 'react-redux';
+import { size, isEmpty } from 'lodash';
 import moment from 'moment';
 // Local
 
-import {FilterOneDatePicker} from '~/components/FilterOneDatePicker';
-import {getSearchVolume, closeSearchQuality} from '~/actions';
+import { FilterOneDatePicker } from '~/components/FilterOneDatePicker';
+import { getSearchVolume, closeSearchQuality, getSearchVolumeAnoAnterior } from '~/actions';
 import {
   Wrapper,
   TopBar,
@@ -27,19 +27,23 @@ import {
   BarChartLine
 } from '~/components/shared';
 
-import {VolumeDetails, VolumeAverage} from '~/components/Volume';
-import {FilterCore} from '~/components/FilterCore';
+import { VolumeDetails, VolumeAverage } from '~/components/Volume';
+import { FilterCore } from '~/components/FilterCore';
 import Intl from 'intl';
-require( 'intl/locale-data/jsonp/pt' );
+require('intl/locale-data/jsonp/pt');
 
 const enhance = compose(
   connect(
-    ({volume, researched}) => ({volume, researched}),
-    {getSearchVolume, closeSearchQuality}
+    ({ volume, researched }) => ({ volume, researched }),
+    { getSearchVolume, getSearchVolumeAnoAnterior, closeSearchQuality }
   ),
   withState('range', 'setRange', {
     startDate: moment().subtract(1, 'month'),
     endDate: moment()
+  }),
+  withState('rangeAnoAnterior', 'setRangeAnoAnterior', {
+    startDate: moment().subtract(1, 'month').subtract(1, 'year'),
+    endDate: moment().subtract(1, 'year')
   }),
   withState('details', 'setDetails', {}),
   withState('isFilter', 'setFilter', true),
@@ -47,7 +51,25 @@ const enhance = compose(
   withState('collected', 'setCollected', 0),
   withState('isCollected', 'setIsCollected', false),
   withState('searchMonth', 'setSearchMonth', ''),
+  withState('anoAnterior', 'setAnoAnterior', false),
   withHandlers({
+    handlerComparacao: ({
+      setAnoAnterior,
+      rangeAnoAnterior,
+      volume,
+      setRangeAnoAnterior,
+      getSearchVolumeAnoAnterior,
+      range,
+      setRange,
+      getSearchVolume
+    }) => (e) => {
+      setAnoAnterior(e);
+
+      setRange(range);
+      //getSearchVolume(range, volume.all);
+      setRangeAnoAnterior(rangeAnoAnterior);
+      getSearchVolumeAnoAnterior(range, volume.all, rangeAnoAnterior, volume.all);
+    },
     handlerClose: ({
       setDetails,
       closeSearchQuality,
@@ -70,14 +92,34 @@ const enhance = compose(
         ).format('MMM/YYYY')}`
       );
       getSearchVolume(range, volume.all);
-      setRange({...range});
+      setRange({ ...range });
       setIsCollected(false);
       setDetails({});
     },
-    onChange: ({setRange, getSearchVolume, volume, setFilter}) => e => {
+    onChange: ({
+      setRange,
+      getSearchVolume,
+      volume,
+      setFilter,
+      anoAnterior,
+      setRangeAnoAnterior,
+      getSearchVolumeAnoAnterior
+    }) => e => {
       if (size(e) === 2) {
-        setRange(e);
-        getSearchVolume(e, volume.all);
+        if (anoAnterior) {
+          rangeAnterior = {
+            startDate: moment(e.startDate, 'MM/YYYY').subtract(1, 'year').format('MM/YYYY'),
+            endDate: moment(e.endDate, 'MM/YYYY').subtract(1, 'year').format('MM/YYYY')
+          }
+          setRangeAnoAnterior(rangeAnterior);
+          getSearchVolumeAnoAnterior(e, volume.all, rangeAnterior, volume.all);
+          console.log('RANGEEEE ATUAL NO ONCHANGE COM ANO ANTERIOR', rangeAnterior);
+        }
+        else {
+          setRange(e);
+          getSearchVolume(e, volume.all);
+        }
+
       }
     },
     onSelect: ({
@@ -92,13 +134,11 @@ const enhance = compose(
       if (!isEmpty(e)) {
         const volume = researched.searchVolume.byIndex[e.x];
 
-        console.log('MES', moment().subtract(1, 'month').format('MMMM'))
         setCollected(volume.volume);
         setIsCollected(true);
         setSearchMonth(moment(volume.start_date).format('LL'));
-        // setRange({label: });
+
         const details = researched.searchVolume.byIndex[e.x];
-        console.log('VOLUME', researched.searchVolume);
         setDetails(details);
         setClose(true);
       }
@@ -106,7 +146,7 @@ const enhance = compose(
   }),
   lifecycle({
     componentWillMount() {
-      const {startDate, endDate} = this.props.range;
+      const { startDate, endDate } = this.props.range;
       this.props.setSearchMonth(
         `${moment(startDate, 'MM/YYYY').format('MMM/YYYY')} - ${moment(
           endDate,
@@ -131,8 +171,11 @@ export const Volume = enhance(
     isCollected,
     onChange,
     isClose,
-    searchMonth
+    searchMonth,
+    handlerComparacao,
+    anoAnterior
   }) => {
+    console.log('researched TESTE VOLUME ANTERIOR', researched);
     return (
       <Wrapper secondary>
         <TopBar
@@ -151,6 +194,7 @@ export const Volume = enhance(
               close={handlerClose}
               value={searchMonth}
               inverted={false}
+              comparacao={handlerComparacao}
             />
           </WrapperHeader>
           <WrapperVolumeAverage>
@@ -171,6 +215,7 @@ export const Volume = enhance(
               valueFormatterIndex={researched.searchVolume.byIndex}
               media={70}
               tipo={"volume"}
+              anoAnterior={anoAnterior}
             />
           </WrapperBar>
           <WrapperDetails>

@@ -25,6 +25,18 @@ export const getSearchVolume = (range, volumes) => {
   };
 };
 
+export const getSearchVolumeAnoAnterior = (range, volumes, rangeAnterior, volumesAnteriores) => {
+  return {
+    type: 'SEARCH_VOLUME_ANO_ANTERIOR',
+    payload: {
+      range,
+      volumes,
+      rangeAnterior,
+      volumesAnteriores
+    }
+  };
+};
+
 export const getDetailsDayQuality = (qualities, type) => {
   return {
     type: 'DETAILS_DAY_QUALITY',
