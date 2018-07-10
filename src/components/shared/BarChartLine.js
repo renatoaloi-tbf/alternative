@@ -100,7 +100,6 @@ const enhancer = compose(
 
         })(),
         xAxis: (() => {
-            console.log('valueFormatterIndex', Object.values(valueFormatterIndex));
             let novoFormato = [];
             if (tipo != "volume") {
                 let count = 0;

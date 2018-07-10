@@ -334,6 +334,7 @@ export const Quality = enhance(
 								valueFormatter={researched.searchQuality.period}
 								onSelect={onSelect}
 								media={70}
+              					tipo={"quality"}
 							/>
 						)}
 					</WrapperBar>
