@@ -29,6 +29,12 @@ const enhance = compose(
 
 export const DocumentationModal = enhance(
   ({title, onPress, buttonText, open, close, visible}) => {
+      const tableData = {
+          tableHead: [ 'Análise', 'Leite Fornecido', 'Padrão' ],
+          tableRows: [
+              [ 'Gordura', '3,94', 'check', 'Máx 4,0' ]
+          ]
+      }
     return (
       <Modal visible={visible} close={close}>
         <WrapperModal>
