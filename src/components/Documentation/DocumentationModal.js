@@ -36,7 +36,7 @@ const enhance = compose(
 export const DocumentationModal = enhance(
   ({title, onPress, buttonText, open, close, visible}) => {
       const tableData = {
-          tableHead: [ 'Análise', 'Leite Fornecido', 'Padrão' ],
+          tableHead: [ 'Análise', 'Resultado', 'Padrão' ],
           tableRows: [
             [ 'Gordura', '3.94', '4.0' ],
               [ 'Proteína', '8.52', '5.0' ],
@@ -55,8 +55,8 @@ export const DocumentationModal = enhance(
                 <Icon size={100} opacity={0.00} color="#FFFFFF" name="alert" style={{ marginTop: 15, marginBottom: 15 }} />
             </TopBar>
             <Body style={{ borderWidth: 0, borderColor: 'green', borderStyle: 'solid' }}>
-                <Titulo size={20} weight={'bold'}>Resultados de análises do leite fora das especificações</Titulo>
-                <SubTitulo size={14} color={'#777777'}>Parâmetro da IN62 de Janeiro de 2018</SubTitulo>
+                <Titulo size={18} weight={'bold'}>Resultados de análises fora das especificações da IN62</Titulo>
+                <SubTitulo size={14} color={'#777777'}>Mês de Referência Janeiro de 2018</SubTitulo>
                 <View>
                   <Table borderStyle={{borderWidth: 0 }}>
                     <Row data={tableData.tableHead} style={{ marginBottom: 5 }} textStyle={{ color: '#000000', fontWeight: 'bold' }} />
@@ -92,6 +92,9 @@ export const DocumentationModal = enhance(
                                   let cellval = 0;
                                   switch(cellIndex)
                                   {
+                                    case 0: 
+                                      cell = isOffSpecs ? cellData + '*' : cellData;
+                                      break;
                                     case 1:
                                       rowLeite = cellData;
                                       cellval = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 2 }).format(cellData);
@@ -122,7 +125,7 @@ export const DocumentationModal = enhance(
                     }
                   </Table>
                 </View>
-                <Legenda size={14} color={'#777777'}>*(média do leite fornecido)</Legenda>
+                <Legenda size={14} color={'#777777'}>*(o resultado da média geométrica dos últimos três meses está fora dos padrões da IN62 de 29 de Dezembro de 2011.)</Legenda>
             </Body>
             <Footer style={{ borderWidth: 0, borderColor: 'purple', borderStyle: 'solid' }}>
               <BotaoEsquerda onPress={onPress}>
@@ -188,7 +191,7 @@ const TopBar = styled.View`
 
 const Body = styled.View`
   background-color: #ffffff;
-  padding-top: 20;
+  padding-top: 15;
   padding-left: 20;
   padding-right: 20;
 `;
