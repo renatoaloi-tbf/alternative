@@ -12,7 +12,7 @@ import {
 } from 'recompose';
 import {isArray} from 'lodash';
 import CheckBox from 'react-native-check-box';
-
+import moment from 'moment';
 import {Text, Button, Modal, Icon, Select} from '~/components/shared';
 
 const enhance = compose(
@@ -32,6 +32,7 @@ const enhance = compose(
   withState('isVisible', 'setVisible', false),
   withState('compare', 'setCompare', false),
   withState('range', 'setRange', {}),
+  withState('valueComparacao', 'setValueComparacao', ''),
   withProps(({setVisible, onChange, apply, close, open, comparacao}) => ({
     open: e => {
       setVisible(true);
@@ -75,7 +76,11 @@ const enhance = compose(
       setRange({...range, endDate: e.value});
       onChange({...range, endDate: e.value});
     },
-    setComparacao: ({comparacao, setCompare}) => e => {
+    setComparacao: ({comparacao, setCompare, range, setValueComparacao}) => e => {
+      console.log('RANGE Filter core', range)
+      let comparacaoStart = moment(range.startDate, 'MM/YYYY').subtract(1, 'year').format('MMM/YYYY');
+      let comparacaoEnd = moment(range.endDate, 'MM/YYYY').subtract(1, 'year').format('MMM/YYYY');
+      setValueComparacao("("+comparacaoStart + " - "+ comparacaoEnd+")");
       setCompare(e);
       comparacao(e);
     }
@@ -96,7 +101,8 @@ export const FilterCore = enhance(
     range,
     apply,
     isClose,
-    inverted
+    inverted,
+    valueComparacao
   }) => {
     if (__DEV__) console.log("FilterCore.js - enhance", range);
     return (
@@ -106,7 +112,7 @@ export const FilterCore = enhance(
             <TextStyle>
               <WrapperLeft>
                 {!isFilter && <Icon name="calendar-range" inverted size={25} />}
-                {isFilter && <Text>{value}</Text>}
+                {isFilter && <Text>{value} {valueComparacao}</Text>}
                 {!isFilter && <TextSelect inverted>{value}</TextSelect>}
               </WrapperLeft>
             </TextStyle>

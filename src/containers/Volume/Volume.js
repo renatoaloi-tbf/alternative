@@ -10,8 +10,10 @@ import {
 } from 'recompose';
 import { func, object } from 'prop-types';
 import { connect } from 'react-redux';
-import { size, isEmpty } from 'lodash';
-import moment from 'moment';
+import { size, isEmpty, filter, map, reduce } from 'lodash';
+import Moment from 'moment';
+import { extendMoment } from 'moment-range';
+const moment = extendMoment(Moment);
 // Local
 
 import { FilterOneDatePicker } from '~/components/FilterOneDatePicker';
@@ -52,6 +54,7 @@ const enhance = compose(
   withState('isCollected', 'setIsCollected', false),
   withState('searchMonth', 'setSearchMonth', ''),
   withState('anoAnterior', 'setAnoAnterior', false),
+  withState('changed', 'setChanged', { rangeAtual: null, rangeAnoAnterior: null }),
   withHandlers({
     handlerComparacao: ({
       setAnoAnterior,
@@ -61,14 +64,31 @@ const enhance = compose(
       getSearchVolumeAnoAnterior,
       range,
       setRange,
-      getSearchVolume
+      setIsCollected,
+      changed,
+      researched,
+      setCollected
     }) => (e) => {
-      setAnoAnterior(e);
+      console.log('VOLUME ALL', volume.all);
+      console.log('CHANGED', changed);
 
-      setRange(range);
-      //getSearchVolume(range, volume.all);
-      setRangeAnoAnterior(rangeAnoAnterior);
-      getSearchVolumeAnoAnterior(range, volume.all, rangeAnoAnterior, volume.all);
+      setIsCollected(e);
+      //
+      if (changed.rangeAtual != null && changed.rangeAnoAnterior != null) {
+        setRange(changed.rangeAtual);
+        setRangeAnoAnterior(changed.rangeAnoAnterior);
+        setAnoAnterior(e);
+        getSearchVolumeAnoAnterior(changed.rangeAtual, volume.all, changed.rangeAnoAnterior, volume.all);
+      }
+      else {
+        setRange(range);
+        setRangeAnoAnterior(rangeAnoAnterior);
+        setAnoAnterior(e);
+        getSearchVolumeAnoAnterior(range, volume.all, rangeAnoAnterior, volume.all);
+      }
+      setCollected(researched.searchVolume.total);
+      console.log('RESEARCHED VOLUME', researched);
+
     },
     handlerClose: ({
       setDetails,
@@ -103,14 +123,16 @@ const enhance = compose(
       setFilter,
       anoAnterior,
       setRangeAnoAnterior,
-      getSearchVolumeAnoAnterior
+      getSearchVolumeAnoAnterior,
+      setChanged,
     }) => e => {
       if (size(e) === 2) {
+        rangeAnterior = {
+          startDate: moment(e.startDate, 'MM/YYYY').subtract(1, 'year').format('MM/YYYY'),
+          endDate: moment(e.endDate, 'MM/YYYY').subtract(1, 'year').format('MM/YYYY')
+        }
+        setChanged({ rangeAtual: e, rangeAnoAnterior: rangeAnterior });
         if (anoAnterior) {
-          rangeAnterior = {
-            startDate: moment(e.startDate, 'MM/YYYY').subtract(1, 'year').format('MM/YYYY'),
-            endDate: moment(e.endDate, 'MM/YYYY').subtract(1, 'year').format('MM/YYYY')
-          }
           setRangeAnoAnterior(rangeAnterior);
           getSearchVolumeAnoAnterior(e, volume.all, rangeAnterior, volume.all);
           console.log('RANGEEEE ATUAL NO ONCHANGE COM ANO ANTERIOR', rangeAnterior);
@@ -129,9 +151,68 @@ const enhance = compose(
       setCollected,
       setIsCollected,
       setClose,
-      setSearchMonth
+      setSearchMonth,
+      anoAnterior
     }) => e => {
+      console.log('TÁ CLICANDO', researched.searchVolume);
+      console.log('TÁ CLICANDO e', e);
       if (!isEmpty(e)) {
+        if (anoAnterior) {
+          if (researched.searchVolumeAnoAnterior.items.length == 0) {
+            researched.searchVolumeAnoAnterior.diferenca_percent = '+100';
+          }
+          else {
+            let mesTouchStart, mesTouchEnd, mesTouchStartAtual, mesTouchEndAtual;
+            e.x = parseInt(e.x);
+            //const ra = moment.range(start, end);
+            mesTouchStart = moment(researched.searchVolume.byIndex[e.x].start_date).startOf('month').subtract(1, 'year').format('YYYY-MM-DD');
+            mesTouchEnd = moment(researched.searchVolume.byIndex[e.x].start_date).endOf('month').subtract(1, 'year').format('YYYY-MM-DD');
+            mesTouchStartAtual = moment(researched.searchVolume.byIndex[e.x].start_date).startOf('month').format('YYYY-MM-DD');
+            mesTouchEndAtual = moment(researched.searchVolume.byIndex[e.x].start_date).endOf('month').format('YYYY-MM-DD');
+            const ra = moment.range(mesTouchStart, mesTouchEnd);
+            const raAtual = moment.range(mesTouchStartAtual, mesTouchEndAtual);
+
+            const filterVolumesAnterior = filter(Object.values(researched.searchVolumeAnoAnterior.byIndex), item =>
+              ra.contains(moment(item.start_date))
+            );
+
+            const filterVolumesAtual = filter(Object.values(researched.searchVolume.byIndex), item =>
+              raAtual.contains(moment(item.start_date))
+            );
+
+            let totalAnterior = reduce(
+              map(filterVolumesAnterior, item => item.volume),
+              (prev, next) => prev + next
+            );
+
+            let totalAtual = reduce(
+              map(filterVolumesAtual, item => item.volume),
+              (prev, next) => prev + next
+            );
+
+            let diferenca = totalAtual - totalAnterior;
+            let decimal = diferenca / totalAnterior;
+            let percentual = decimal * 100;
+            //researched.searchVolumeAnoAnterior.diferenca_percent
+
+            console.log('FILTER VOLUMES', filterVolumesAtual);
+            console.log('PERCENTUAL', percentual);
+
+
+
+            console.log('VOLUME SELECIONADO', researched.searchVolumeAnoAnterior);
+            console.log('MES SELECIONADO', mesTouchStart);
+            if (percentual > 0) {
+              researched.searchVolumeAnoAnterior.diferenca_percent = '+'+percentual.toFixed(2);
+            }
+            else {
+              researched.searchVolumeAnoAnterior.diferenca_percent = percentual.toFixed(2);
+            }
+             
+          }
+
+        }
+
         const volume = researched.searchVolume.byIndex[e.x];
 
         setCollected(volume.volume);
@@ -205,6 +286,9 @@ export const Volume = enhance(
               total={researched.searchVolume.total}
               collected={collected}
               isCollected={isCollected}
+              lastYear={researched.searchVolumeAnoAnterior.lastYear}
+              percentual={researched.searchVolumeAnoAnterior.diferenca_percent}
+              totalAnoAnterior={researched.searchVolumeAnoAnterior.total}
             />
           </WrapperVolumeAverage>
           <WrapperBar>
@@ -216,6 +300,7 @@ export const Volume = enhance(
               media={70}
               tipo={"volume"}
               anoAnterior={anoAnterior}
+              valuesAnoAnterior={researched.searchVolumeAnoAnterior.items}
             />
           </WrapperBar>
           <WrapperDetails>

@@ -159,8 +159,7 @@ const getVolumeDataAnoAnterior = (state, { payload }) => {
   const startAnterior = moment(rangeAnterior.startDate, 'MM/YYYY').startOf('month');
   const endAnterior = moment(rangeAnterior.endDate, 'MM/YYYY').endOf('month');
   const raAnterior = moment.range(startAnterior, endAnterior);
-  console.log('RANGE ANO ANTERIOR', raAnterior);
-  
+
   const filterVolumesAnteriores = filter(volumesAnteriores, item =>
     raAnterior.contains(moment(item.searchDate))
   );
@@ -170,30 +169,31 @@ const getVolumeDataAnoAnterior = (state, { payload }) => {
   forEach(filterVolumesAnteriores, (item, index) => {
     newState.searchVolumeAnoAnterior.byIndex[index] = item;
   });
+
   newState.searchVolumeAnoAnterior.items = map(filterVolumesAnteriores, item => ({ y: item.volume }));
   newState.searchVolumeAnoAnterior.period = setArray(newState.searchVolumeAnoAnterior.items.length);
   newState.searchVolumeAnoAnterior.currentMonth = startAnterior.format('MMMM');
   newState.searchVolumeAnoAnterior.lastMonth = startAnterior.subtract(1, 'month').format('MMMM');
+  newState.searchVolumeAnoAnterior.lastYear = startAnterior.subtract(1, 'month').format('YYYY');
   newState.searchVolumeAnoAnterior.total = reduce(
     map(filterVolumesAnteriores, item => item.volume),
-      (prev, next) => prev + next
-    );
-
-
-
-  /* newState.searchVolumeAnoAnterior.average =
-    newState.searchVolumeAnoAnterior.total / newState.searchVolumeAnoAnterior.items.length;
-
-  const filterMesAnterior = volumes.filter(item => {
-    return moment(item.searchDate).format('MMMM') == newState.searchVolumeAnoAnterior.lastMonth
-  });
-
-  const totalLastMonthAnterior = reduce(
-    map(filterMesAnterior, item => item.volume),
     (prev, next) => prev + next
   );
 
-  newState.searchVolumeAnoAnterior.averageLastMonth = totalLastMonthAnterior / filterMesAnterior.length; */
+  //Calculando direferença percentual entre os anos
+  if (!newState.searchVolumeAnoAnterior.total) {
+    newState.searchVolumeAnoAnterior.diferenca_percent = "+"+100;
+    newState.searchVolumeAnoAnterior.total = 0;
+  }
+  else {
+    if (!newState.searchVolume.total)
+      newState.searchVolume.total = 0;
+    let diferenca = newState.searchVolume.total - newState.searchVolumeAnoAnterior.total;
+    let decimal = diferenca / newState.searchVolumeAnoAnterior.total;
+    let percentual = decimal * 100;
+    newState.searchVolumeAnoAnterior.diferenca_percent = percentual > 0 ? "+"+percentual.toFixed(2) : percentual.toFixed(2);
+  }
+
 
   return newState;
 };

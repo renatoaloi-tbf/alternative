@@ -18,95 +18,256 @@ const enhancer = compose(
         onSelect: func,
         media: number,
         tipo: string,
-        anoAnterior: bool
+        anoAnterior: bool,
+        valuesAnoAnterior: array
     }),
-    withProps(({ values, valueFormatter, valueFormatterIndex, onSelect, media, tipo, anoAnterior }) => ({
-        
+    withProps(({ values, valueFormatter, valueFormatterIndex, onSelect, media, tipo, anoAnterior, valuesAnoAnterior }) => ({
+
         data: (() => {
             if (__DEV__) console.log('valueFormatter[0]', valueFormatter[0]);
             if (__DEV__) console.log('anoAnterior', anoAnterior);
-            let trataCores = [];
-            let arrayMedia = [];
-            if (__DEV__) console.log('VALORES ATUAIS', values);
+
+            let trataCores = [], trataCoresAnoAnterior = [], arrayMedia = [];
+
             if (values.length > 0) {
-                values.forEach(valor => {
-                    arrayMedia.push(media);
-                    if (valor.y < media && moment(valueFormatter[0], 'MM/YYYY', true).isValid())
-                        trataCores.push(processColor('#ffbd00'));
-                    else
+                if (anoAnterior) {
+                    if (valuesAnoAnterior.length > 0) {
+                        valuesAnoAnterior.forEach(vaa => {
+                            values.push({ y: 0 });
+                            if (vaa.y < media && moment(valueFormatter[0], 'MM/YYYY', true).isValid())
+                                trataCoresAnoAnterior.push(processColor('#ffbd00'));
+                            else
+                                trataCoresAnoAnterior.push(processColor('#00cdff'));
+                        });
+
+                        values.forEach(valor => {
+                            arrayMedia.push(media);
+                            if (valor.y < media && moment(valueFormatter[0], 'MM/YYYY', true).isValid())
+                                trataCores.push(processColor('#ffbd00'));
+                            else
+                                trataCores.push(processColor('#0096FF'));
+                        })
+                    }
+                    else {
+                        for (let index = 0; index < 15; index++) {
+                            valuesAnoAnterior.push({ y: 0 });
+                            values.push({ y: 0 });
+                            trataCores.push(processColor('#0096FF'));
+                            arrayMedia.push(media);
+                        }
+                    }
+                }
+                else {
+                    values.forEach(valor => {
+                        arrayMedia.push(media);
+                        if (valor.y < media && moment(valueFormatter[0], 'MM/YYYY', true).isValid())
+                            trataCores.push(processColor('#ffbd00'));
+                        else
+                            trataCores.push(processColor('#0096FF'));
+                    });
+                }
+            }
+            else {
+                console.log('Teste passando aqui');
+                //QUANDO NÃO EXISTIR VALOR PARA O RANGE ATUAL
+                if (anoAnterior) {
+                    if (valuesAnoAnterior.length > 0) {
+                        valuesAnoAnterior.forEach(vaa => {
+                            values.push({ y: 0 });
+                            if (vaa.y < media && moment(valueFormatter[0], 'MM/YYYY', true).isValid())
+                                trataCoresAnoAnterior.push(processColor('#ffbd00'));
+                            else
+                                trataCoresAnoAnterior.push(processColor('#00cdff'));
+                        });
+
+                        values.forEach(valor => {
+                            arrayMedia.push(media);
+                            if (valor.y < media && moment(valueFormatter[0], 'MM/YYYY', true).isValid())
+                                trataCores.push(processColor('#ffbd00'));
+                            else
+                                trataCores.push(processColor('#0096FF'));
+                        })
+                    }
+                    else {
+                        for (let index = 0; index < 15; index++) {
+                            valuesAnoAnterior.push({ y: 0 });
+                            values.push({ y: 0 });
+                            trataCores.push(processColor('#0096FF'));
+                            arrayMedia.push(media);
+                        }
+                    }
+                }
+                else {
+                    for (let index = 0; index < 15; index++) {
+                        arrayMedia.push(media);
+                        values.push({ y: 0 });
                         trataCores.push(processColor('#0096FF'));
-    
-                });
+                    }
+                }
+            }
+
+
+            if (anoAnterior) {
+                if (moment(valueFormatter[0], 'MM/YYYY', true).isValid() || tipo == 'volume') {
+                    return {
+                        barData: {
+                            dataSets: [
+                                {
+                                    values: [...valuesAnoAnterior],
+                                    label: 'Qualidade Ano anterior',
+
+                                    config: {
+                                        barSpacePercent: 100,
+                                        highlightAlpha: 50,
+                                        drawValues: false,
+                                        axisDependency: 'left',
+                                        colors: trataCoresAnoAnterior,
+                                        barShadowColor: processColor('lightgrey'),
+                                        highlightColor: processColor('red')
+                                    }
+                                },
+                                {
+                                    values: [...values],
+                                    label: 'Qualidade',
+
+                                    config: {
+                                        barSpacePercent: 100,
+                                        highlightAlpha: 50,
+                                        drawValues: false,
+                                        axisDependency: 'left',
+                                        colors: trataCores,
+                                        barShadowColor: processColor('lightgrey'),
+                                        highlightColor: processColor('red')
+                                    }
+                                }
+
+                            ],
+                            config: {
+                                barWidth: 0.5,
+                                group: {
+                                    fromX: 0,
+                                    groupSpace: 0.2,
+                                    barSpace: 0,
+                                }
+                            }
+                        },
+                        lineData: {
+                            dataSets: [
+                                {
+                                    values: [...arrayMedia],
+                                    label: 'Média',
+                                    config: {
+                                        drawValues: false,
+                                        valueTextSize: 10,
+                                        valueTextColor: processColor('#ffbd00'),
+                                        colors: [processColor('#ffbd00')],
+                                        mode: "CUBIC_BEZIER",
+                                        drawCircles: false,
+                                        circleRadius: 10,
+                                        lineWidth: 4,
+                                        axisDependency: "left",
+                                    }
+                                }],
+                        }
+                    };
+                }
+                else {
+                    console.log('OPA ELSE');
+                    return {
+                        barData: {
+                            dataSets: [{
+                                values: [...values],
+                                label: 'Qualidade',
+
+                                config: {
+                                    barSpacePercent: 100,
+                                    highlightAlpha: 50,
+                                    drawValues: false,
+                                    axisDependency: 'left',
+                                    colors: trataCores,
+                                    barShadowColor: processColor('lightgrey'),
+                                    highlightColor: processColor('red'),
+
+                                }
+
+                            }],
+                            config: {
+                                barWidth: 0.5
+                            }
+                        }
+                    };
+                }
             }
             else {
-                values.push(0);
-            }
-            
-            if (moment(valueFormatter[0], 'MM/YYYY', true).isValid() || tipo == 'volume') {
-                return {
-                    barData: {
-                        dataSets: [{
-                            values: [...values],
-                            label: 'Qualidade',
+                if (moment(valueFormatter[0], 'MM/YYYY', true).isValid() || tipo == 'volume') {
+                    return {
+                        barData: {
+                            dataSets: [{
+                                values: [...values],
+                                label: 'Qualidade',
 
+                                config: {
+                                    barSpacePercent: 100,
+                                    highlightAlpha: 50,
+                                    drawValues: false,
+                                    axisDependency: 'left',
+                                    colors: trataCores,
+                                    barShadowColor: processColor('lightgrey'),
+                                    highlightColor: processColor('red')
+                                }
+                            }],
                             config: {
-                                barSpacePercent: 100,
-                                highlightAlpha: 50,
-                                drawValues: false,
-                                axisDependency: 'left',
-                                colors: trataCores,
-                                barShadowColor: processColor('lightgrey'),
-                                highlightColor: processColor('red')
+                                barWidth: 0.5
                             }
-                        }],
-                        config: {
-                            barWidth: 0.5
+                        },
+                        lineData: {
+                            dataSets: [{
+                                values: [...arrayMedia],
+                                label: 'Média',
+                                config: {
+                                    drawValues: false,
+                                    valueTextSize: 10,
+                                    valueTextColor: processColor('#ffbd00'),
+                                    colors: [processColor('#ffbd00')],
+                                    mode: "CUBIC_BEZIER",
+                                    drawCircles: false,
+                                    circleRadius: 10,
+                                    lineWidth: 4,
+                                    axisDependency: "left",
+                                }
+                            }],
                         }
-                    },
-                    lineData: {
-                        dataSets: [{
-                            values: [...arrayMedia],
-                            label: 'Média',
+                    };
+                }
+                else {
+                    console.log('OPA ELSE');
+                    return {
+                        barData: {
+                            dataSets: [{
+                                values: [...values],
+                                label: 'Qualidade',
+
+                                config: {
+                                    barSpacePercent: 100,
+                                    highlightAlpha: 50,
+                                    drawValues: false,
+                                    axisDependency: 'left',
+                                    colors: trataCores,
+                                    barShadowColor: processColor('lightgrey'),
+                                    highlightColor: processColor('red'),
+
+                                }
+
+                            }],
                             config: {
-                                drawValues: false,
-                                valueTextSize: 10,
-                                valueTextColor: processColor('#ffbd00'),
-                                colors: [processColor('#ffbd00')],
-                                mode: "CUBIC_BEZIER",
-                                drawCircles: false,
-                                circleRadius: 10,
-                                lineWidth: 4,
-                                axisDependency: "left",
+                                barWidth: 0.5
                             }
-                        }],
-                    }
-                };
-            }
-            else {
-                return {
-                    barData: {
-                        dataSets: [{
-                            values: [...values],
-                            label: 'Qualidade',
-
-                            config: {
-                                barSpacePercent: 100,
-                                highlightAlpha: 50,
-                                drawValues: false,
-                                axisDependency: 'left',
-                                colors: trataCores,
-                                barShadowColor: processColor('lightgrey'),
-                                highlightColor: processColor('red'),
-
-                            }
-
-                        }],
-                        config: {
-                            barWidth: 0.5
                         }
-                    }
-                };
+                    };
+                }
             }
+
+
 
         })(),
         xAxis: (() => {
@@ -124,9 +285,17 @@ const enhancer = compose(
                 });
             }
             else {
-                Object.values(valueFormatterIndex).forEach(element => {
-                    novoFormato.push(moment(element.searchDate).locale('pt-br').format('DD').toUpperCase());
-                });
+                if (anoAnterior) {
+                    Object.values(valueFormatterIndex).forEach(element => {
+                        novoFormato.push(moment(element.searchDate).locale('pt-br').format('MMM').toUpperCase());
+                    });    
+                }
+                else {
+                    Object.values(valueFormatterIndex).forEach(element => {
+                        novoFormato.push(moment(element.searchDate).locale('pt-br').format('DD').toUpperCase());
+                    });
+                }
+                
             }
 
 
