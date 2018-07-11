@@ -1,12 +1,14 @@
 import React, { Component } from 'react';
 import styled, {css} from 'styled-components/native';
-import {compose, setPropTypes, withHandlers, pure} from 'recompose';
-import {string} from 'prop-types';
+import {compose, setPropTypes, withHandlers, pure, withProps, withState} from 'recompose';
+import {string, func} from 'prop-types';
 import {TouchableOpacity, Image} from 'react-native';
 
 import {Text, Icon, IconUri} from '~/components/shared';
 import {getNavigatorContext} from '~/enhancers';
 import {navigatorStyle} from '~/config';
+
+import {DocumentationModal} from './';
 
 const enhance = compose(
   getNavigatorContext,
@@ -17,21 +19,77 @@ const enhance = compose(
     route: string.isRequired,
     demonstrative: string,
     month: string,
-    value: string
+    value: string,
+    onPress: func,
+    setVisible: func
   }),
+  withState('isVisible', 'setVisible', false),
   withHandlers({
-    goTo: ({navigator, route, month}) => () => {
-      navigator.push({
-        screen: route,
-        navigatorStyle,
-        passProps: {
-          month
-        }
-      });
+    onPress: ({onPress, setVisible}) => e => {
+      setVisible(false);
+      if (typeof onPress === 'function') {
+        onPress(e);
+      }
+    },
+    goTo: ({navigator, route, month, setVisible}) => () => {
+      if (route === 'In62')
+      {
+        setVisible(true);
+      }
+      else 
+      {
+        navigator.push({
+          screen: route,
+          navigatorStyle,
+          passProps: {
+            month
+          }
+        });
+      }
     }
-  }),
-  pure
+  })
 );
+
+const DocumentationItemEnhance = enhance(
+  props => {
+  return (
+
+      <TouchableOpacityDefault {...props}>
+        <WrapperIcon>
+          <CardIcon icon={props.icon} />
+        </WrapperIcon>
+        <Body>
+          <WrapperDescription>
+            <Text align="center" inverted size={20} style={{ margin: 4}}>
+              {props.description}
+            </Text>
+          </WrapperDescription>
+
+          <WrapperDemonstrative>
+            {props.value && (
+              <TextDemonstrative align="center" inverted size={13}>
+                {props.value}
+              </TextDemonstrative>
+            )}
+          </WrapperDemonstrative>
+        </Body>
+        <Footer onPress={props.goTo}>
+          <Text inverted>Visualizar</Text>
+        </Footer>
+
+        <DocumentationModal
+            close={props.onPress}
+            title="IN62"
+            buttonText="Estou Ciente"
+            visible={props.isVisible}
+          />
+
+      </TouchableOpacityDefault>
+      
+  );
+});
+
+export const DocumentationItem = styled(DocumentationItemEnhance)``;
 
 class CardIcon extends Component {
   render(){
@@ -66,36 +124,6 @@ class CardIcon extends Component {
     }
   }
 }
-//
-const DocumentationItemEnhance = enhance(props => {
-  return (
-    <TouchableOpacityDefault {...props}>
-      <WrapperIcon>
-        <CardIcon icon={props.icon} />
-      </WrapperIcon>
-      <Body>
-        <WrapperDescription>
-          <Text align="center" inverted size={20} style={{ margin: 4}}>
-            {props.description}
-          </Text>
-        </WrapperDescription>
-
-        <WrapperDemonstrative>
-          {props.value && (
-            <TextDemonstrative align="center" inverted size={13}>
-              {props.value}
-            </TextDemonstrative>
-          )}
-        </WrapperDemonstrative>
-      </Body>
-      <Footer onPress={props.goTo}>
-        <Text inverted>Visualizar</Text>
-      </Footer>
-    </TouchableOpacityDefault>
-  );
-});
-
-export const DocumentationItem = styled(DocumentationItemEnhance)``;
 
 const TouchableOpacityDefault = styled.View`
   align-items: center;
