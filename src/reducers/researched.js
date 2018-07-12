@@ -106,7 +106,7 @@ const getVolumeData = (state, { payload }) => {
   );
 
   newState.searchVolume.averageLastMonth = totalLastMonth / filterMesAnterior.length;
-
+  console.log('newState.searchVolume', newState.searchVolume);
   return newState;
 };
 
@@ -263,26 +263,28 @@ const getPriceData = (state, { payload }) => {
 
   const start = moment(range.startDate, 'MM/YYYY').startOf('month').format('YYYYMM');
   const end = moment(range.endDate, 'MM/YYYY').endOf('month').format('YYYYMM');
+
+
   const ra = moment.range(start, end);
-  const filterVolumes = filter(prices, item =>
+  const filterPrices = filter(prices, item =>
     ra.contains(moment(item._id.slice(0, -30)))
   );
   console.log('start PRICE', start);
   console.log('end PRICE', end);
-  console.log('filterVolumes PRICE', filterVolumes);
+  console.log('filterPrices PRICE', filterPrices);
+
   const pricesYear = prices[year];
   
-  filterVolumes.forEach(price => {
+  filterPrices.forEach(price => {
     price.y = price.price;
   });
   console.log('PRICES COM PRECO', moment.months());
 
 
-
-  newState.searchPrice.filter = filterVolumes;
+  newState.searchPrice.filter = filterPrices;
   newState.searchPrice.items = map(moment.months(), (item, index) => {
     const findPrice = find(
-      filterVolumes,
+      filterPrices,
       price => parseInt(price.month) === index + 1
     );
 
@@ -293,7 +295,7 @@ const getPriceData = (state, { payload }) => {
   });
 
   console.log('newState.searchPrice', newState.searchPrice);
-
+  
   newState.searchPrice.period = map(moment.months(), (item, index) =>
     moment()
       .month(index)

@@ -31,8 +31,7 @@ import {
 
 import { VolumeDetails, VolumeAverage } from '~/components/Volume';
 import { FilterCore } from '~/components/FilterCore';
-import Intl from 'intl';
-require('intl/locale-data/jsonp/pt');
+
 
 const enhance = compose(
   connect(
@@ -311,7 +310,7 @@ export const Volume = enhance(
     handlerComparacao,
     anoAnterior
   }) => {
-    console.log('researched TESTE VOLUME ANTERIOR', researched);
+    console.log('researched TESTE VOLUME ANTERIOR', researched.searchVolume.averageLastMonth);
     return (
       <Wrapper secondary>
         <TopBar
@@ -336,7 +335,7 @@ export const Volume = enhance(
           </WrapperHeader>
           <WrapperVolumeAverage>
             <VolumeAverage
-              average={researched.searchVolume.averageLastMonth}
+              average={parseFloat(researched.searchVolume.averageLastMonth)}
               month={researched.searchVolume.currentMonth}
               lastMonth={researched.searchVolume.lastMonth}
               total={researched.searchVolume.total}

@@ -65,7 +65,7 @@ export const VolumeAverage = enhance(
                   Total - {month}
                 </Text>
                 <Text inverted size={30}>
-                  {new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 0 }).format(total ? total : 0)} L
+                  { new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 0 }).format(total ? total : 0) } L
               </Text>
               </StyleTextMonth>
             )}
@@ -91,7 +91,7 @@ export const VolumeAverage = enhance(
                   Média diária {lastMonth}
                 </Text>
                 <Text size={30} secondary>
-                  {average ? average.toLocaleString() : 0} L
+                  { new Intl.NumberFormat('pt-BR', { style: 'decimal', maximumFractionDigits: 2 }).format(average ? average : 0)  } L
               </Text>
               </StyleTextMonth>
             )}
