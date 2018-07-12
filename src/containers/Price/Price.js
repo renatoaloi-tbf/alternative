@@ -60,6 +60,7 @@ const enhance = compose(
     }
   }),
   withState('periodPrice', 'setPeriodPrice', ({ researched }) => {
+    console.log('RESEARCHED PERIOD'. researched);
     return {
       pricePeriod: researched.searchPrice.byIndex[0],
       pricePeriodAfter: researched.searchPrice.byIndex[1]
@@ -71,30 +72,39 @@ const enhance = compose(
       getPrices,
       price,
       researched,
-      setPeriodPrice
+      setPeriodPrice,
+      setSearchMonth,
+      range
     }) => e => {
-      
+      setSearchMonth(
+        `${moment(range.startDate, 'MM/YYYY').format('MMM/YYYY')} - ${moment(range.endDate, 'MM/YYYY').format('MMM/YYYY')}`
+      );
       setYear(e);
-      getPrices(price.items, e);
-      const pricePeriod = researched.searchPrice.byIndex[0];
-      let pricePeriodAfter = researched.searchPrice.byIndex[1];
+      getPrices(researched.searchPrice.filter, range, moment().format('YYYY'));
+      console.log('Teste researched', Object.values(researched.searchPrice.byIndex));
+      let pricePeriod, pricePeriodAfter;
+      
+      Object.values(researched.searchPrice.byIndex).map(function(a) {
+        if (a.startDate == moment(a.period).format('MM/YYYY')) {
+          pricePeriod = a.period
+        }
+        if (a.endDate == moment(a.period).format('MM/YYYY')) {
+          pricePeriodAfter = a.endDate;
+        }
+        console.log('TESTE A', moment(a.period).format('MM/YYYY'));
+      })
+      
       const pd = moment().month(1);
-      pricePeriodAfter = pricePeriodAfter
-        ? pricePeriodAfter
-        : { y: 'Previsão', period: pd.format('MMMM/YYYY') };
+      pricePeriodAfter = pricePeriodAfter ? pricePeriodAfter : { y: 'Previsão', period: pd.format('MMMM/YYYY') };
       setPeriodPrice({
         pricePeriod,
         pricePeriodAfter
       });
     },
     handlerClick: ({ researched, setPeriodPrice, year }) => e => {
-
       const pricePeriod = researched.searchPrice.byIndex[e.x] ? researched.searchPrice.byIndex[e.x] : researched.searchPrice.byIndex[0];
       let pricePeriodAfter = researched.searchPrice.byIndex[e.x + 1] ? researched.searchPrice.byIndex[e.x + 1] : researched.searchPrice.byIndex[1];
-
-
       const pd = moment().month(e + 1);
-
       pricePeriodAfter = pricePeriodAfter
         ? pricePeriodAfter
         : { y: 'Previsão', period: pd.format('MMMM/YYYY') };
@@ -131,34 +141,13 @@ const enhance = compose(
       setDetails({});
     },
     onChange: ({ setRange, researched, setPeriodPrice, getPrices }) => e => {
-
       if (size(e) === 2) {
         setRange(e);
-        console.log('TEEEEEEESTEEEEEE' ,researched)
-        console.log('TEEEEEEESTEEEEEE START DATE' ,moment(e.startDate, 'MM/YYYY').format('MMMM/YYYY'))
-        console.log('TEEEEEEESTEEEEEE END DATE' ,e.endDate);
         const range = {
           startDate: e.startDate,
           endDate: e.endDate
         };
-        console.log('THIS YEAR aaa', moment().format('YYYY'));
-        getPrices(researched.searchPrice.items, range, moment().format('YYYY'));
-        /* var pricePeriodArray = Object.values(researched.searchPrice.byIndex).filter(function( obj ) {
-          
-          return obj.period == moment(e.startDate, 'MM/YYYY').format('MMMM/YYYY');
-        });
-
-        var pricePeriodAfterArray = Object.values(researched.searchPrice.byIndex).filter(function( obj ) {
-          return obj.period == moment(e.endDate, 'MM/YYYY').format('MMMM/YYYY');
-        });
-        const pricePeriod = pricePeriodArray[0];
-        let pricePeriodAfter = pricePeriodAfterArray[0];
-        console.log('Price Period',pricePeriod);
-        console.log('Price After', pricePeriodAfter);
-        setPeriodPrice({
-          pricePeriod,
-          pricePeriodAfter
-        }); */
+        getPrices(researched.searchPrice.filter, range, moment().format('YYYY'));
       }
     },
     onSelect: ({
