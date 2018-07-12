@@ -45,20 +45,6 @@ const enhance = compose(
   withState('isCollected', 'setIsCollected', false),
   withState('searchMonth', 'setSearchMonth', ''),
   withState('prices', 'setPrices', []),
-  lifecycle({
-    async componentWillMount() {
-      const { startDate, endDate } = this.props.range;
-      this.props.setSearchMonth(
-        `${moment().startOf('year').format('MMM/YYYY')} - ${moment().endOf('year').format('MMM/YYYY')}`
-      );
-      const range = {
-        startDate: moment().startOf('year'),
-        endDate: moment().endOf('year')
-      };
-      console.log('THIS PROPS ITENS', this.props.price)
-      await this.props.getPrices(this.props.price.items, range, this.props.year);
-    }
-  }),
   withState('periodPrice', 'setPeriodPrice', ({ researched }) => {
     console.log('RESEARCHED PERIOD'. researched);
     return {
@@ -66,6 +52,31 @@ const enhance = compose(
       pricePeriodAfter: researched.searchPrice.byIndex[1]
     };
   }),
+  lifecycle({
+    async componentWillMount() {
+      const { startDate, endDate } = this.props.range;
+      console.log('PROPS', this.props);
+      this.props.setSearchMonth(
+        `${moment().startOf('year').format('MMM/YYYY')} - ${moment().endOf('year').format('MMM/YYYY')}`
+      );
+      const range = {
+        startDate: moment().startOf('year'),
+        endDate: moment().endOf('year')
+      };
+      let pricePeriod, pricePeriodAfter;
+      pricePeriod = {y: 0, period: moment().startOf('year').format('MMMM/YYYY')};
+      pricePeriodAfter = {y: 0, period: moment().endOf('year').format('MMMM/YYYY')};
+      this.props.setPeriodPrice(
+        {
+          pricePeriod,
+          pricePeriodAfter
+        }
+      )
+      console.log('THIS PROPS ITENS', this.props.price)
+      await this.props.getPrices(this.props.price.items, range, this.props.year);
+    }
+  }),
+
   withHandlers({
     handlersPress: ({
       setYear,
@@ -80,28 +91,35 @@ const enhance = compose(
         `${moment(range.startDate, 'MM/YYYY').format('MMM/YYYY')} - ${moment(range.endDate, 'MM/YYYY').format('MMM/YYYY')}`
       );
       setYear(e);
+      console.log('OPA', e);
       getPrices(researched.searchPrice.filter, range, moment().format('YYYY'));
       console.log('Teste researched', Object.values(researched.searchPrice.byIndex));
-      let pricePeriod, pricePeriodAfter;
-      
-      Object.values(researched.searchPrice.byIndex).map(function(a) {
-        if (a.startDate == moment(a.period).format('MM/YYYY')) {
-          pricePeriod = a.period
+      let pricePeriod , pricePeriodAfter;
+
+      let myArrayPeriod = Object.values(researched.searchPrice.byIndex);
+      for (var i=0; i < myArrayPeriod.length; i++) {
+        if (myArrayPeriod[i].period === moment(range.startDate, 'MM/YYYY').format('MMMM/YYYY')) {
+            pricePeriod = myArrayPeriod[i];
         }
-        if (a.endDate == moment(a.period).format('MM/YYYY')) {
-          pricePeriodAfter = a.endDate;
+      }
+
+      let myArrayPeriodAfter = Object.values(researched.searchPrice.byIndex);
+      for (var i=0; i < myArrayPeriodAfter.length; i++) {
+        if (myArrayPeriodAfter[i].period === moment(range.endDate, 'MM/YYYY').format('MMMM/YYYY')) {
+          pricePeriodAfter = myArrayPeriodAfter[i];
         }
-        console.log('TESTE A', moment(a.period).format('MM/YYYY'));
-      })
+      }
+
+      pricePeriod = pricePeriod ? pricePeriod : {y: 0, period: moment(range.startDate, 'MM/YYYY').format('MMMM/YYYY')};
+      pricePeriodAfter = pricePeriodAfter ? pricePeriodAfter : { y: 'Previsão', period: moment(range.endDate, 'MM/YYYY').format('MMMM/YYYY') };
       
-      const pd = moment().month(1);
-      pricePeriodAfter = pricePeriodAfter ? pricePeriodAfter : { y: 'Previsão', period: pd.format('MMMM/YYYY') };
       setPeriodPrice({
         pricePeriod,
         pricePeriodAfter
       });
     },
     handlerClick: ({ researched, setPeriodPrice, year }) => e => {
+      console.log('teste click', researched);
       const pricePeriod = researched.searchPrice.byIndex[e.x] ? researched.searchPrice.byIndex[e.x] : researched.searchPrice.byIndex[0];
       let pricePeriodAfter = researched.searchPrice.byIndex[e.x + 1] ? researched.searchPrice.byIndex[e.x + 1] : researched.searchPrice.byIndex[1];
       const pd = moment().month(e + 1);
