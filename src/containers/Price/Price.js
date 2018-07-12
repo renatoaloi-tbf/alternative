@@ -47,7 +47,12 @@ const enhance = compose(
   lifecycle({
     async componentWillMount() {
       const { startDate, endDate } = this.props.range;
-      
+      this.props.setSearchMonth(
+        `${moment(startDate, 'MM/YYYY').format('MMM/YYYY')} - ${moment(
+          endDate,
+          'MM/YYYY'
+        ).format('MMM/YYYY')}`
+      );
       //this.props.getSearchVolume(this.props.range, this.props.volume.all);
       await this.props.getPrices(this.props.price.byYear, this.props.year);
     }
@@ -74,7 +79,6 @@ const enhance = compose(
       pricePeriodAfter = pricePeriodAfter
         ? pricePeriodAfter
         : { y: 'Previsão', period: pd.format('MMMM/YYYY') };
-      console.log('OPAAAAAA');
       setPeriodPrice({
         pricePeriod,
         pricePeriodAfter
@@ -127,8 +131,11 @@ const enhance = compose(
 
       if (size(e) === 2) {
         setRange(e);
-        
+        console.log('TEEEEEEESTEEEEEE' ,researched.searchPrice.byIndex)
+        console.log('TEEEEEEESTEEEEEE START DATE' ,moment(e.startDate, 'MM/YYYY').format('MMMM/YYYY'))
+        console.log('TEEEEEEESTEEEEEE END DATE' ,e.endDate)
         var pricePeriodArray = Object.values(researched.searchPrice.byIndex).filter(function( obj ) {
+          
           return obj.period == moment(e.startDate, 'MM/YYYY').format('MMMM/YYYY');
         });
 
@@ -137,8 +144,8 @@ const enhance = compose(
         });
         const pricePeriod = pricePeriodArray[0];
         let pricePeriodAfter = pricePeriodAfterArray[0];
-        console.log('Price Period',pricePeriod[0]);
-        console.log('Price After', pricePeriodAfter[0]);
+        console.log('Price Period',pricePeriod);
+        console.log('Price After', pricePeriodAfter);
         setPeriodPrice({
           pricePeriod,
           pricePeriodAfter
@@ -185,6 +192,7 @@ export const Price = enhance(
     isClose,
     searchMonth
   }) => {
+    console.log('RESEARCH', researched);
     return (
       <Wrapper secondary>
         <TopBar
@@ -196,7 +204,6 @@ export const Price = enhance(
           <WrapperHeader>
             <FilterCore
               onClose={handlersPress}
-              value={range.label}
               onChange={onChange}
               isFilter={isFilter}
               isClose={isClose}

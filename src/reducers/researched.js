@@ -165,10 +165,15 @@ const getVolumeDataAnoAnterior = (state, { payload }) => {
   );
 
   console.log('FILTER VOLUMES ANO ANTERIOR', filterVolumesAnteriores);
-
-  forEach(filterVolumesAnteriores, (item, index) => {
-    newState.searchVolumeAnoAnterior.byIndex[index] = item;
-  });
+  if (filterVolumesAnteriores.length > 0) {
+    forEach(filterVolumesAnteriores, (item, index) => {
+      newState.searchVolumeAnoAnterior.byIndex[index] = item;
+    });
+  }
+  else {
+    newState.searchVolumeAnoAnterior.byIndex = newState.searchVolume.byIndex;
+  }
+  
 
   newState.searchVolumeAnoAnterior.items = map(filterVolumesAnteriores, item => ({ y: item.volume }));
   newState.searchVolumeAnoAnterior.period = setArray(newState.searchVolumeAnoAnterior.items.length);
@@ -182,7 +187,13 @@ const getVolumeDataAnoAnterior = (state, { payload }) => {
 
   //Calculando direferença percentual entre os anos
   if (!newState.searchVolumeAnoAnterior.total) {
-    newState.searchVolumeAnoAnterior.diferenca_percent = "+"+100;
+    if (!newState.searchVolume.total) {
+      newState.searchVolumeAnoAnterior.diferenca_percent = ""+0;
+    }
+    else {
+      newState.searchVolumeAnoAnterior.diferenca_percent = "+"+100;
+    }
+    newState.searchVolume.total = 0;
     newState.searchVolumeAnoAnterior.total = 0;
   }
   else {

@@ -56,7 +56,7 @@ export const VolumeAverage = enhance(
                 Litros Coletados
               </Text>
               <Text inverted size={30}>
-                {new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 0 }).format(collected) } L
+                {new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 0 }).format(collected ? collected : 0) } L
               </Text>
             </StyleTextTotal>
           ) : (
@@ -65,7 +65,7 @@ export const VolumeAverage = enhance(
                   Total - {month}
                 </Text>
                 <Text inverted size={30}>
-                  {new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 0 }).format(total)} L
+                  {new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 0 }).format(total ? total : 0)} L
               </Text>
               </StyleTextMonth>
             )}

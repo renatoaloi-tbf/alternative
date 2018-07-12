@@ -191,7 +191,6 @@ const enhance = compose(
 			if (e && !isEmpty(e)) {
 				const month = researched.searchQuality.byIndex[e.x];
 				const type = find(types, item => item.selected);
-				
 				if (quality.groupByMonth[month]) {
 					setClose(true);
 					setFilter(false);
@@ -199,7 +198,7 @@ const enhance = compose(
 					setSearchMonth(dateFormat);
 					setSearchToMonth(true);
 					let valoresMes = getDetailsDayQuality(quality.groupByMonth[month], type.value);
-					
+
 					let fat, prot, cbt, ccs, est, esd;
 
 					var totalFat = valoresMes.payload.qualities.reduce(function(tot, elemento) {
@@ -239,16 +238,18 @@ const enhance = compose(
 					types[3].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 4 }).format(ccs);
 					types[4].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 4 }).format(est);
 					types[5].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 4 }).format(esd);
-					
 				}
 				else {
-					getDetailsDayQuality(month, type.value);
-					types[0].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 4 }).format(month.fat);
-					types[1].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 4 }).format(month.prot);
-					types[2].valor = '0000';
-					types[3].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 4 }).format(month.ccs);
-					types[4].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 4 }).format(month.est);
-					types[5].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 4 }).format(month.esd);
+					if (type.valor != null) {
+						getDetailsDayQuality(month, type.value);
+						types[0].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 4 }).format(month.fat);
+						types[1].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 4 }).format(month.prot);
+						types[2].valor = '0000';
+						types[3].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 4 }).format(month.ccs);
+						types[4].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 4 }).format(month.est);
+						types[5].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 4 }).format(month.esd);
+					}
+					
 				}
 			}
 		},
