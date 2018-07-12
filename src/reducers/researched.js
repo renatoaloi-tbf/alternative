@@ -246,12 +246,34 @@ const getDetailsDayQuality = (state, { payload }) => {
 
 const getPriceData = (state, { payload }) => {
   const newState = cloneDeep(INITIAL_STATE);
-  const { prices, year } = payload;
-  const pricesYear = prices[year];
+  const { prices, range, year } = payload;
+  console.log('RANGES PRICES', range);
+  console.log('PREÇOS', prices);
 
+  const start = moment(range.startDate, 'MM/YYYY').startOf('month').format('YYYYMM');
+  const end = moment(range.endDate, 'MM/YYYY').endOf('month').format('YYYYMM');
+  const ra = moment.range(start, end);
+  const filterVolumes = filter(prices, item =>
+    ra.contains(moment(item._id.slice(0, -30)))
+  );
+  console.log('start PRICE', start);
+  console.log('end PRICE', end);
+  console.log('filterVolumes PRICE', filterVolumes);
+  const pricesYear = prices[year];
+  
+  filterVolumes.forEach(price => {
+    price.y = price.price;
+  });
+  console.log('PRICES COM PRECO', moment.months());
+
+
+
+
+  
+  
   newState.searchPrice.items = map(moment.months(), (item, index) => {
     const findPrice = find(
-      pricesYear,
+      filterVolumes,
       price => parseInt(price.month) === index + 1
     );
 
@@ -260,6 +282,9 @@ const getPriceData = (state, { payload }) => {
     }
     return { y: 0 };
   });
+
+  console.log('newState.searchPrice', newState.searchPrice);
+
   newState.searchPrice.period = map(moment.months(), (item, index) =>
     moment()
       .month(index)
