@@ -112,6 +112,7 @@ const enhance = compose(
 			setFilter,
 			setClose
 		}) => () => {
+			console.log('fechei 1');
 			setRange({});
 			setFilter(true);
 			setClose(false);
@@ -121,6 +122,12 @@ const enhance = compose(
 				endDate: moment()
 			};
 			setRange({...range});
+
+			forEach(types, item => {
+				//item.selected = false;
+				item.valor = null;
+			});
+
 			const type = find(types, item => item.selected);
 			getSearchQuality(range, quality.groupByYear, type.value);
 		},
@@ -134,6 +141,7 @@ const enhance = compose(
 			getDetailsDayQuality,
 			searchMonth
 		}) => e => {
+			console.log('fechei 2');
 			forEach(types, item => {
 				if (item.value === e.value) {
 					item.selected = !e.selected;
@@ -188,10 +196,13 @@ const enhance = compose(
 			setClose,
 			setFilter
 		}) => e => {
+			console.log('Teste passando aqui 8');
 			if (e && !isEmpty(e)) {
+				console.log('Teste passando aqui 9');
 				const month = researched.searchQuality.byIndex[e.x];
 				const type = find(types, item => item.selected);
 				if (quality.groupByMonth[month]) {
+					console.log('Teste passando aqui 10');
 					setClose(true);
 					setFilter(false);
 					const dateFormat = moment(month, 'MM/YYYY').format('MMMM/YYYY');
@@ -240,7 +251,9 @@ const enhance = compose(
 					types[5].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 4 }).format(esd);
 				}
 				else {
+					console.log('Teste passando aqui 11', type.valor);
 					if (type.valor != null) {
+						console.log('Teste passando aqui 12');
 						getDetailsDayQuality(month, type.value);
 						types[0].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 4 }).format(month.fat);
 						types[1].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 4 }).format(month.prot);

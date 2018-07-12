@@ -27,9 +27,13 @@ const enhancer = compose(
             if (__DEV__) console.log('valueFormatter[0]', valueFormatter[0]);
             if (__DEV__) console.log('anoAnterior', anoAnterior);
 
+            console.log('values 1', values);
+            console.log('trataCores 1', trataCores);
+
             let trataCores = [], trataCoresAnoAnterior = [], arrayMedia = [];
 
             if (values.length > 0) {
+                console.log('Teste passando aqui 1');
                 if (anoAnterior) {
                     if (valuesAnoAnterior.length > 0) {
                         valuesAnoAnterior.forEach(vaa => {
@@ -69,7 +73,7 @@ const enhancer = compose(
                 }
             }
             else {
-                console.log('Teste passando aqui');
+                console.log('Teste passando aqui 2');
                 //QUANDO NÃO EXISTIR VALOR PARA O RANGE ATUAL
                 if (anoAnterior) {
                     if (valuesAnoAnterior.length > 0) {
@@ -108,8 +112,10 @@ const enhancer = compose(
                     }
                 }
             }
-
+            console.log('Teste passando aqui 3 ');
             if (anoAnterior) {
+                console.log('Teste passando aqui 4');
+
                 if (moment(valueFormatter[0], 'MM/YYYY', true).isValid() || tipo == 'volume') {
                     return {
                         barData: {
@@ -200,7 +206,11 @@ const enhancer = compose(
                 }
             }
             else {
+                console.log('Teste passando aqui 5');
                 if (moment(valueFormatter[0], 'MM/YYYY', true).isValid() || tipo == 'volume') {
+                    console.log('Teste passando aqui 6');
+                    console.log('values 6', values);
+                    console.log('trataCores 6', trataCores);
                     return {
                         barData: {
                             dataSets: [{
@@ -241,6 +251,9 @@ const enhancer = compose(
                     };
                 }
                 else {
+                    console.log('Teste passando aqui 7');
+                    console.log('values', values);
+                    console.log('trataCores', trataCores);
                     return {
                         barData: {
                             dataSets: [{
@@ -255,9 +268,7 @@ const enhancer = compose(
                                     colors: trataCores,
                                     barShadowColor: processColor('lightgrey'),
                                     highlightColor: processColor('red'),
-
                                 }
-
                             }],
                             config: {
                                 barWidth: 0.5
@@ -266,9 +277,6 @@ const enhancer = compose(
                     };
                 }
             }
-
-
-
         })(),
         xAxis: (() => {
             let novoFormato = [];
