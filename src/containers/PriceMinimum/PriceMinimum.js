@@ -169,7 +169,7 @@ export default class PriceMinimum extends Component {
                                     <Picker.Item  label="  Padrão" value="P" />
                                     <Picker.Item  label="  Nature" value="N" />
                                 </StyledPicker>
-                                <Icon style={{ position: 'absolute', zIndex: 20, top: 33, left: 85, color: '#6d6d6d' }} size={20} opacity={0.00} name="chevron-down" />
+                                <Icon style={{ position: 'absolute', zIndex: 20, top: 28, left: 85, color: '#6d6d6d' }} size={20} opacity={0.00} name="chevron-down" />
                             </View>
                             <StyledTextInput white>0,0390</StyledTextInput>
                         </ViewColumn2>
@@ -185,7 +185,7 @@ export default class PriceMinimum extends Component {
                                     <Picker.Item  label="  Sim" value="S" />
                                     <Picker.Item  label="  Não" value="N" />
                                 </StyledPicker>
-                                <Icon style={{ position: 'absolute', zIndex: 20, top: 33, left: 85, color: '#6d6d6d' }} size={20} opacity={0.00} name="chevron-down" />
+                                <Icon style={{ position: 'absolute', zIndex: 20, top: 28, left: 85, color: '#6d6d6d' }} size={20} opacity={0.00} name="chevron-down" />
                             </View>
                             <StyledTextInput white>0,0390</StyledTextInput>
                         </ViewColumn2>
@@ -227,21 +227,24 @@ const StyledPicker = styled.Picker`
     color: #707070;
     border: 1px solid #fafafa;
     border-radius: ${props => props.theme.borderRadius};
-    height: 50;
-    width: 120;
+    height: 40;
+    width: 112;
 `;
 
 const TextInputUnd = TextInput.extend`
-    margin-top: 18;
+    margin-top: 16;
     margin-right: 10;
     background-color: rgba(250,250,250,1.0);
     color: #707070;
     border: 1px solid #fafafa;
     border-radius: ${props => props.theme.borderRadius};
-    height: 50;
-    width: 110;
-    padding-top: 12;
-    padding-left: 20;
+    height: 40;
+    width: 112;
+    padding-left: 16;
+    /* text-align: center; */
+    text-align-vertical: center;
+    padding-top: 0;
+    padding-bottom: 0;
 `;
 
 const ViewColumn2 = styled.View`
@@ -265,17 +268,19 @@ const StyledViewFooter = StyledView.extend`
 
 const StyledTextInput = Text.extend`
     text-align: center;
-    margin-top: 18;
-    margin-right: 18;
+    margin-top: 16;
+    margin-right: 8;
     margin-bottom: 8;
-    height: 50;
-    width: 90;
+    height: 40;
+    width: 80;
     background-color: rgba(255,255,255,0.0);
     border: 1px solid #0196ff;
     color: #0196ff;
     font-size: 18;
     border-radius: ${props => props.theme.borderRadius};
-    padding-top: 12;
+    /* padding-top: 12; */
+    text-align: center;
+    text-align-vertical: center;
 
     ${props =>
         props.blue &&
@@ -368,11 +373,17 @@ const Message = Text.extend`
 `;
 
 const Column1 = Text.extend`
-  padding-top: 28;
+  /* padding-top: 28; */
   padding-left: 8;
-  padding-bottom: 8;
+  /* padding-bottom: 8; */
+  margin-top: 16;
+  margin-bottom: 8;
   font-size: 16;
   color: #000000;
+  text-align: center;
+  text-align-vertical: center;
+  /* border: 1px solid red; */
+  
   ${props =>
     props.inverted &&
     css`
@@ -381,7 +392,7 @@ const Column1 = Text.extend`
 `;
 
 const Column2 = Column1.extend`
-  padding-top: 32;
+  /* padding-top: 32; */
   font-size: 14;
   color: #707070;
   ${props =>
@@ -414,7 +425,7 @@ const Indicativo2 = Indicativo.extend`
   /* width: 150px; */
   /* margin-left: 2px; */
   width: 53%;
-  margin-right: 18;
+  margin-right: 8;
   border-radius: ${props => props.theme.borderRadius};
 `;
 

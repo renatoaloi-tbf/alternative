@@ -254,13 +254,18 @@ const enhance = compose(
 					console.log('Teste passando aqui 11', type.valor);
 					if (type.valor != null) {
 						console.log('Teste passando aqui 12');
-						getDetailsDayQuality(month, type.value);
-						types[0].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 4 }).format(month.fat);
-						types[1].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 4 }).format(month.prot);
-						types[2].valor = '0000';
-						types[3].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 4 }).format(month.ccs);
-						types[4].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 4 }).format(month.est);
-						types[5].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 4 }).format(month.esd);
+						if (month)
+						{
+							console.log('Teste passando aqui 13', month);
+							getDetailsDayQuality(month, type.value);
+							types[0].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 4 }).format(month.fat);
+							types[1].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 4 }).format(month.prot);
+							types[2].valor = '0000';
+							types[3].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 4 }).format(month.ccs);
+							types[4].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 4 }).format(month.est);
+							types[5].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 4 }).format(month.esd);
+						}
+						else console.log("erro do fat");
 					}
 					
 				}
