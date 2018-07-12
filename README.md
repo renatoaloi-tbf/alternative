@@ -191,6 +191,12 @@ http://localhost:8081/debugger-ui/
 
 Tecle ```CTRL + Shift + J``` no teclado para abrir o console de depuração do Google Chrome.
 
+Para testar no telefone, execute o comando abaixo para abrir o menu de depuração:
+
+```
+adb shell input keyevent 82
+```
+
 ### Gerar APK
 
 Seguir os passos desse tutorial: https://facebook.github.io/react-native/docs/signed-apk-android.html

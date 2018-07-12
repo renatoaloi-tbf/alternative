@@ -217,39 +217,41 @@ const close = () => {
 const getDetailsDayQuality = (state, { payload }) => {
   const newState = cloneDeep(INITIAL_STATE);
   const { qualities, type } = payload;
-  if (!qualities.length) {
-    console.log('passei aqui 14', qualities);
-    console.log('passei aqui 14 - type', type);
-    let arrayQuality = [];
-    arrayQuality.push(qualities);
+  if (qualities)
+  {
+    if (!qualities.length) {
+      console.log('passei aqui 14', qualities);
+      console.log('passei aqui 14 - type', type);
+      let arrayQuality = [];
+      arrayQuality.push(qualities);
 
-    newState.searchQuality.period = map(arrayQuality, item => item.period);
+      newState.searchQuality.period = map(arrayQuality, item => item.period);
 
-    /* forEach(arrayQuality, (item, index) => {
-      console.log('sem cbt ' + index, item[type]);
-    }); */
-    
+      /* forEach(arrayQuality, (item, index) => {
+        console.log('sem cbt ' + index, item[type]);
+      }); */
+      
 
-    newState.searchQuality.items = map(arrayQuality, item => ({
-      y: item[type] ? parseInt(item[type]) : 0
-    }));
-    forEach(arrayQuality, (item, index) => {
-      newState.searchQuality.byIndex[index] = item;
-    });
+      newState.searchQuality.items = map(arrayQuality, item => ({
+        y: item[type] ? parseInt(item[type]) : 0
+      }));
+      forEach(arrayQuality, (item, index) => {
+        newState.searchQuality.byIndex[index] = item;
+      });
+    }
+    else {
+      console.log('passei aqui 15', qualities);
+      console.log('passei aqui 15 - type', type);
+      newState.searchQuality.period = map(qualities, item => item.period);
+
+      newState.searchQuality.items = map(qualities, item => ({
+        y: item[type] ? parseInt(item[type]) : 0
+      }));
+      forEach(qualities, (item, index) => {
+        newState.searchQuality.byIndex[index] = item;
+      });
+    }
   }
-  else {
-    console.log('passei aqui 15', qualities);
-    console.log('passei aqui 15 - type', type);
-    newState.searchQuality.period = map(qualities, item => item.period);
-
-    newState.searchQuality.items = map(qualities, item => ({
-      y: item[type] ? parseInt(item[type]) : 0
-    }));
-    forEach(qualities, (item, index) => {
-      newState.searchQuality.byIndex[index] = item;
-    });
-  }
-
   return newState;
 };
 
