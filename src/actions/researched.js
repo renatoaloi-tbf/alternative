@@ -47,11 +47,12 @@ export const getDetailsDayQuality = (qualities, type) => {
   };
 };
 
-export const getPrices = (prices, year) => {
+export const getPrices = (prices, range, year) => {
   return {
     type: 'PRICES_YEAR',
     payload: {
       prices,
+      range, 
       year
     }
   };

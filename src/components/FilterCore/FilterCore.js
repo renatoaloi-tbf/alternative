@@ -1,6 +1,7 @@
-import React from 'react';
-import styled, {css} from 'styled-components/native';
-import {bool, string, func, number, oneOfType} from 'prop-types';
+import React from "react";
+import styled, { css } from "styled-components/native";
+import { bool, string, func, number, oneOfType } from "prop-types";
+import { Alert } from "react-native";
 import {
   compose,
   withProps,
@@ -9,11 +10,11 @@ import {
   withState,
   pure,
   withHandlers
-} from 'recompose';
-import {isArray} from 'lodash';
-import CheckBox from 'react-native-check-box';
-import moment from 'moment';
-import {Text, Button, Modal, Icon, Select} from '~/components/shared';
+} from "recompose";
+import { isArray } from "lodash";
+import CheckBox from "react-native-check-box";
+import moment from "moment";
+import { Text, Button, Modal, Icon, Select } from "~/components/shared";
 
 const enhance = compose(
   setPropTypes({
@@ -29,60 +30,85 @@ const enhance = compose(
   defaultProps({
     inverted: true
   }),
-  withState('isVisible', 'setVisible', false),
-  withState('compare', 'setCompare', false),
-  withState('range', 'setRange', {}),
-  withState('valueComparacao', 'setValueComparacao', ''),
-  withProps(({setVisible, onChange, apply, close, open, comparacao}) => ({
+  withState("isVisible", "setVisible", false),
+  withState("compare", "setCompare", false),
+  withState("range", "setRange", {}),
+  withState("valueComparacao", "setValueComparacao", ""),
+  withProps(({ setVisible, onChange, apply, close, open, comparacao }) => ({
     open: e => {
       setVisible(true);
-      if (typeof open === 'function') {
+      if (typeof open === "function") {
         open();
       }
     },
     onChange: e => {
       if (__DEV__) console.log("FilterCore.js - onChange", e);
-      if (typeof onChange === 'function') {
+      if (typeof onChange === "function") {
         onChange(e);
       }
     },
     onPress: e => {},
     close: e => {
-      if (typeof close === 'function') {
+      if (typeof close === "function") {
         close();
       }
     },
     apply: e => {
       setVisible(false);
-      if (typeof apply === 'function') {
+      if (typeof apply === "function") {
         apply(e);
       }
     },
     comparacao: e => {
-      if (typeof comparacao === 'function') {
+      if (typeof comparacao === "function") {
         comparacao(e);
       }
     }
   })),
   withHandlers({
-    onChangeInit: ({range, setRange, onChange}) => e => {
+    onChangeInit: ({ range, setRange, onChange }) => e => {
       if (__DEV__) console.log("FilterCore.js - onChangeInit", e);
       if (__DEV__) console.log("FilterCore.js - onChangeInit range", range);
-      setRange({...range, startDate: e.value});
-      onChange({...range, startDate: e.value});
+      setRange({ ...range, startDate: e.value });
+      onChange({ ...range, startDate: e.value });
     },
-    onChangeEnd: ({range, setRange, onChange}) => e => {
+    onChangeEnd: ({ range, setRange, onChange }) => e => {
       if (__DEV__) console.log("FilterCore.js - onChangeEnd range", range);
-      setRange({...range, endDate: e.value});
-      onChange({...range, endDate: e.value});
+      setRange({ ...range, endDate: e.value });
+      onChange({ ...range, endDate: e.value });
     },
-    setComparacao: ({comparacao, setCompare, range, setValueComparacao}) => e => {
-      console.log('RANGE Filter core', range)
-      let comparacaoStart = moment(range.startDate, 'MM/YYYY').subtract(1, 'year').format('MMM/YYYY');
-      let comparacaoEnd = moment(range.endDate, 'MM/YYYY').subtract(1, 'year').format('MMM/YYYY');
-      setValueComparacao("("+comparacaoStart + " - "+ comparacaoEnd+")");
-      setCompare(e);
-      comparacao(e);
+    setComparacao: ({
+      comparacao,
+      setCompare,
+      range,
+      setValueComparacao
+    }) => e => {
+      console.log("acao comparar", e);
+      console.log("RANGE Filter core", range);
+      if (!range.startDate) {
+        Alert.alert(
+          "Atenção",
+          "Por favor, selecione uma data antes de comparar",
+          [
+            {
+              text: "Ok",
+              onPress: () => {
+                setCompare(!e);
+              }
+            }
+          ]
+        );
+      } else {
+        let comparacaoStart = moment(range.startDate, "MM/YYYY")
+          .subtract(1, "year")
+          .format("MMM/YYYY");
+        let comparacaoEnd = moment(range.endDate, "MM/YYYY")
+          .subtract(1, "year")
+          .format("MMM/YYYY");
+        setValueComparacao("(" + comparacaoStart + " - " + comparacaoEnd + ")");
+        setCompare(e);
+        comparacao(e);
+      }
     }
   })
 );
@@ -112,7 +138,11 @@ export const FilterCore = enhance(
             <TextStyle>
               <WrapperLeft>
                 {!isFilter && <Icon name="calendar-range" inverted size={25} />}
-                {isFilter && <Text>{value} {valueComparacao}</Text>}
+                {isFilter && (
+                  <Text>
+                    {value} {valueComparacao}
+                  </Text>
+                )}
                 {!isFilter && <TextSelect inverted>{value}</TextSelect>}
               </WrapperLeft>
             </TextStyle>
@@ -176,7 +206,7 @@ export const FilterCore = enhance(
                 checkBoxColor="#fff"
                 rightTextView={
                   <TextCheckBox inverted>
-                    Comparar com ano antetior
+                    Comparar com ano anterior
                   </TextCheckBox>
                 }
                 onClick={() => setComparacao(!compare)}

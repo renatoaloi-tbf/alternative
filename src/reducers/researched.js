@@ -165,10 +165,15 @@ const getVolumeDataAnoAnterior = (state, { payload }) => {
   );
 
   console.log('FILTER VOLUMES ANO ANTERIOR', filterVolumesAnteriores);
-
-  forEach(filterVolumesAnteriores, (item, index) => {
-    newState.searchVolumeAnoAnterior.byIndex[index] = item;
-  });
+  if (filterVolumesAnteriores.length > 0) {
+    forEach(filterVolumesAnteriores, (item, index) => {
+      newState.searchVolumeAnoAnterior.byIndex[index] = item;
+    });
+  }
+  else {
+    newState.searchVolumeAnoAnterior.byIndex = newState.searchVolume.byIndex;
+  }
+  
 
   newState.searchVolumeAnoAnterior.items = map(filterVolumesAnteriores, item => ({ y: item.volume }));
   newState.searchVolumeAnoAnterior.period = setArray(newState.searchVolumeAnoAnterior.items.length);
@@ -182,7 +187,13 @@ const getVolumeDataAnoAnterior = (state, { payload }) => {
 
   //Calculando direferença percentual entre os anos
   if (!newState.searchVolumeAnoAnterior.total) {
-    newState.searchVolumeAnoAnterior.diferenca_percent = "+"+100;
+    if (!newState.searchVolume.total) {
+      newState.searchVolumeAnoAnterior.diferenca_percent = ""+0;
+    }
+    else {
+      newState.searchVolumeAnoAnterior.diferenca_percent = "+"+100;
+    }
+    newState.searchVolume.total = 0;
     newState.searchVolumeAnoAnterior.total = 0;
   }
   else {
@@ -235,12 +246,34 @@ const getDetailsDayQuality = (state, { payload }) => {
 
 const getPriceData = (state, { payload }) => {
   const newState = cloneDeep(INITIAL_STATE);
-  const { prices, year } = payload;
-  const pricesYear = prices[year];
+  const { prices, range, year } = payload;
+  console.log('RANGES PRICES', range);
+  console.log('PREÇOS', prices);
 
+  const start = moment(range.startDate, 'MM/YYYY').startOf('month').format('YYYYMM');
+  const end = moment(range.endDate, 'MM/YYYY').endOf('month').format('YYYYMM');
+  const ra = moment.range(start, end);
+  const filterVolumes = filter(prices, item =>
+    ra.contains(moment(item._id.slice(0, -30)))
+  );
+  console.log('start PRICE', start);
+  console.log('end PRICE', end);
+  console.log('filterVolumes PRICE', filterVolumes);
+  const pricesYear = prices[year];
+  
+  filterVolumes.forEach(price => {
+    price.y = price.price;
+  });
+  console.log('PRICES COM PRECO', moment.months());
+
+
+
+
+  
+  
   newState.searchPrice.items = map(moment.months(), (item, index) => {
     const findPrice = find(
-      pricesYear,
+      filterVolumes,
       price => parseInt(price.month) === index + 1
     );
 
@@ -249,6 +282,9 @@ const getPriceData = (state, { payload }) => {
     }
     return { y: 0 };
   });
+
+  console.log('newState.searchPrice', newState.searchPrice);
+
   newState.searchPrice.period = map(moment.months(), (item, index) =>
     moment()
       .month(index)

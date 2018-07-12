@@ -53,6 +53,7 @@ const enhancer = compose(
                             valuesAnoAnterior.push({ y: 0 });
                             values.push({ y: 0 });
                             trataCores.push(processColor('#0096FF'));
+                            trataCoresAnoAnterior.push(processColor('#00cdff'));
                             arrayMedia.push(media);
                         }
                     }
@@ -94,6 +95,7 @@ const enhancer = compose(
                             values.push({ y: 0 });
                             trataCores.push(processColor('#0096FF'));
                             arrayMedia.push(media);
+                            trataCoresAnoAnterior.push(processColor('#00cdff'));
                         }
                     }
                 }
@@ -102,10 +104,10 @@ const enhancer = compose(
                         arrayMedia.push(media);
                         values.push({ y: 0 });
                         trataCores.push(processColor('#0096FF'));
+                        arrayMedia.push(media);
                     }
                 }
             }
-
 
             if (anoAnterior) {
                 if (moment(valueFormatter[0], 'MM/YYYY', true).isValid() || tipo == 'volume') {
@@ -172,7 +174,6 @@ const enhancer = compose(
                     };
                 }
                 else {
-                    console.log('OPA ELSE');
                     return {
                         barData: {
                             dataSets: [{
@@ -240,7 +241,6 @@ const enhancer = compose(
                     };
                 }
                 else {
-                    console.log('OPA ELSE');
                     return {
                         barData: {
                             dataSets: [{
@@ -275,10 +275,10 @@ const enhancer = compose(
             if (tipo != "volume") {
                 let count = 0;
                 valueFormatter.forEach(element => {
-                    if (moment(element, 'MM/YYYY').isValid()) {
+                    if (moment(element, 'MM/YYYY', true).isValid()) {
                         novoFormato.push(moment(element, 'MM/YYYY').format('MMM').toUpperCase());
                     }
-                    else if (moment(element, 'DD/MM/YYYY').isValid()) {
+                    else if (moment(element, 'DD/MM/YY', true).isValid()) {
                         count = count + 1;
                         novoFormato.push(moment(element, 'DD/MM/YYYY').format('MMM').toUpperCase() + ' ' + count);
                     }

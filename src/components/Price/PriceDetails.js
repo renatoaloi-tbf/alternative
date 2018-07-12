@@ -22,7 +22,8 @@ import {Text} from '~/components/shared';
 
 const enhance = compose(
   setPropTypes({
-    pricePeriod: object
+    pricePeriod: object,
+    pricePeriodAfter: object
   }),
   withProps(({onPress, type}) => ({
     onPress: e => {
