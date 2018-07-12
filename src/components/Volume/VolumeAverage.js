@@ -1,7 +1,8 @@
 import React from 'react';
-import {isEqual} from 'lodash';
+import { isEqual } from 'lodash';
 import styled from 'styled-components/native';
-import {string, number, bool} from 'prop-types';
+import { string, number, bool } from 'prop-types';
+import {View} from 'react-native';
 import {
   compose,
   setPropTypes,
@@ -13,9 +14,11 @@ import {
 } from 'recompose';
 
 // locals
-import {getNavigatorContext} from '~/enhancers';
-import {Text} from '~/components/shared';
-import {isNumber} from '~/utils';
+import { getNavigatorContext } from '~/enhancers';
+import { Text } from '~/components/shared';
+import { isNumber } from '~/utils';
+import Intl from 'intl';
+require( 'intl/locale-data/jsonp/pt' );
 
 const enhance = compose(
   setPropTypes({
@@ -24,13 +27,16 @@ const enhance = compose(
     month: string,
     lastMonth: string,
     collected: number,
-    isCollected: bool
+    isCollected: bool,
+    lastYear: string,
+    percentual: string,
+    totalAnoAnterior: number
   }),
   defaultProps({
     average: 0,
     total: 0
   }),
-  withProps(({onPress, type}) => ({
+  withProps(({ onPress, type }) => ({
     onPress: e => {
       if (typeof onPress === 'function') {
         onPress(type);
@@ -40,7 +46,7 @@ const enhance = compose(
 );
 
 export const VolumeAverage = enhance(
-  ({total, average, month, collected, isCollected, lastMonth}) => {
+  ({ total, average, month, collected, isCollected, lastMonth, lastYear, percentual, totalAnoAnterior }) => {
     return (
       <Wrapper>
         <WrapperContentSelected>
@@ -50,27 +56,47 @@ export const VolumeAverage = enhance(
                 Litros Coletados
               </Text>
               <Text inverted size={30}>
-                {isNumber(collected)} L
+                {new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 0 }).format(collected) } L
               </Text>
             </StyleTextTotal>
           ) : (
-            <StyleTextMonth>
-              <Text size={12} inverted>
-                Total - {month}
+              <StyleTextMonth>
+                <Text size={12} inverted>
+                  Total - {month}
+                </Text>
+                <Text inverted size={30}>
+                  {new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 0 }).format(total)} L
               </Text>
-              <Text inverted size={30}>
-                {isNumber(total)} L
-              </Text>
-            </StyleTextMonth>
-          )}
+              </StyleTextMonth>
+            )}
         </WrapperContentSelected>
         <WrapperContent>
-          <Text size={12} secondary>
-            Média diária {lastMonth}
-          </Text>
-          <Text size={30} secondary>
-            {average ? average.toLocaleString() : 0} L
-          </Text>
+          {isCollected && percentual ? (
+            <StyleTextMonth>
+              <Text size={12} secondary>
+                Comparativo ({lastYear})
+              </Text>
+              <View style={{flexDirection: 'row'}}>
+                <Text size={30} style={{marginRight: 5}} secondary>
+                  {percentual}%
+              </Text>
+                <Text size={12} style={{top: 18}} secondary>
+                  ({new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 0 }).format(totalAnoAnterior)} L)
+              </Text>
+              </View>
+            </StyleTextMonth>
+          ) : (
+              <StyleTextMonth>
+                <Text size={12} secondary>
+                  Média diária {lastMonth}
+                </Text>
+                <Text size={30} secondary>
+                  {average ? average.toLocaleString() : 0} L
+              </Text>
+              </StyleTextMonth>
+            )}
+
+
         </WrapperContent>
       </Wrapper>
     );
