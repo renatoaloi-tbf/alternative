@@ -52,7 +52,7 @@ export const DocumentationModal = enhance(
       <Modal visible={visible} close={close}>
         <WrapperModal>
             <TopBar style={{ borderWidth: 0, borderColor: 'blue', borderStyle: 'solid' }}>
-                <Icon size={100} opacity={0.00} color="#FFFFFF" name="alert" style={{ marginTop: 15, marginBottom: 15 }} />
+                <Icon size={100} opacity={0.00} color="#FFFFFF" name="alert" style={{ marginTop: 10, marginBottom: 10 }} />
             </TopBar>
             <Body style={{ borderWidth: 0, borderColor: 'green', borderStyle: 'solid' }}>
                 <Titulo size={18} weight={'bold'}>Resultados de análises fora das especificações da IN62</Titulo>
