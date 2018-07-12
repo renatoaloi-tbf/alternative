@@ -87,12 +87,13 @@ const enhance = compose(
       setSearchMonth,
       range
     }) => e => {
+      
       setSearchMonth(
         `${moment(range.startDate, 'MM/YYYY').format('MMM/YYYY')} - ${moment(range.endDate, 'MM/YYYY').format('MMM/YYYY')}`
       );
       setYear(e);
       console.log('OPA', e);
-      getPrices(researched.searchPrice.filter, range, moment().format('YYYY'));
+      getPrices(researched.searchPrice.filter, range, moment(range.startDate, 'MM/YYYY').format('YYYY'));
       console.log('Teste researched', Object.values(researched.searchPrice.byIndex));
       let pricePeriod , pricePeriodAfter;
 
@@ -111,7 +112,7 @@ const enhance = compose(
       }
 
       pricePeriod = pricePeriod ? pricePeriod : {y: 0, period: moment(range.startDate, 'MM/YYYY').format('MMMM/YYYY')};
-      pricePeriodAfter = pricePeriodAfter ? pricePeriodAfter : { y: 'Previsão', period: moment(range.endDate, 'MM/YYYY').format('MMMM/YYYY') };
+      pricePeriodAfter = pricePeriodAfter ? pricePeriodAfter : { y: 0, period: moment(range.endDate, 'MM/YYYY').format('MMMM/YYYY') };
       
       setPeriodPrice({
         pricePeriod,
