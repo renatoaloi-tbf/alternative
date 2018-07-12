@@ -125,7 +125,7 @@ export const DocumentationModal = enhance(
                     }
                   </Table>
                 </View>
-                <Legenda size={14} color={'#777777'}>*(o resultado da média geométrica dos últimos três meses está fora dos padrões da IN62 de 29 de Dezembro de 2011.)</Legenda>
+                <Legenda size={12} color={'#777777'}>*(o resultado da média geométrica dos últimos três meses está fora dos padrões da IN62 de 29 de Dezembro de 2011.)</Legenda>
             </Body>
             <Footer style={{ borderWidth: 0, borderColor: 'purple', borderStyle: 'solid' }}>
               <BotaoEsquerda onPress={onPress}>
@@ -191,7 +191,7 @@ const TopBar = styled.View`
 
 const Body = styled.View`
   background-color: #ffffff;
-  padding-top: 15;
+  padding-top: 5;
   padding-left: 20;
   padding-right: 20;
 `;

@@ -239,7 +239,7 @@ const TextInputUnd = TextInput.extend`
     border: 1px solid #fafafa;
     border-radius: ${props => props.theme.borderRadius};
     height: 50;
-    width: 120;
+    width: 110;
     padding-top: 12;
     padding-left: 20;
 `;
@@ -371,7 +371,7 @@ const Column1 = Text.extend`
   padding-top: 28;
   padding-left: 8;
   padding-bottom: 8;
-  font-size: 18;
+  font-size: 16;
   color: #000000;
   ${props =>
     props.inverted &&
@@ -392,7 +392,7 @@ const Column2 = Column1.extend`
 `;
 
 const Indicativo = Text.extend`
-  font-size: 18;
+  font-size: 16;
   /* margin: 8px 8px 8px 8px; */
   padding: 6px 8px 6px 8px;
   text-align: center;
@@ -403,7 +403,7 @@ const Indicativo1 = Indicativo.extend`
   color: #6e6e6e;
   border: 1px solid #000000;
   /* margin-right: 2px; */
-  width: 36%;
+  width: 40%;
   border-radius: ${props => props.theme.borderRadius};
 `;
 
@@ -413,7 +413,7 @@ const Indicativo2 = Indicativo.extend`
   /* width: 48%; */
   /* width: 150px; */
   /* margin-left: 2px; */
-  width: 56%;
+  width: 53%;
   margin-right: 18;
   border-radius: ${props => props.theme.borderRadius};
 `;
