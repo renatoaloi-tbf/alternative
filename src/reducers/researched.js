@@ -268,9 +268,7 @@ const getPriceData = (state, { payload }) => {
 
 
 
-
-  
-  
+  newState.searchPrice.filter = filterVolumes;
   newState.searchPrice.items = map(moment.months(), (item, index) => {
     const findPrice = find(
       filterVolumes,
