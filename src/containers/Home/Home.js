@@ -9,8 +9,8 @@ import {
   withState,
   lifecycle
 } from 'recompose';
-import {func, object} from 'prop-types';
-import {connect} from 'react-redux';
+import { func, object } from 'prop-types';
+import { connect } from 'react-redux';
 import moment from 'moment';
 
 import {
@@ -24,28 +24,28 @@ import {
   Image,
   ScrollWrapper
 } from '~/components/shared';
-import {RecentNumbers, QuickMenuItem} from '~/components/Home';
-import {ImagesApp} from '~/config';
-import {login} from '~/actions';
-import {isNumber} from '~/utils';
+import { RecentNumbers, QuickMenuItem } from '~/components/Home';
+import { ImagesApp } from '~/config';
+import { login } from '~/actions';
+import { isNumber } from '~/utils';
 
 import Intl from 'intl';
-require( 'intl/locale-data/jsonp/pt' );
+require('intl/locale-data/jsonp/pt');
 
 const enhance = compose(
   connect(
-    ({user}) => ({user}),
-    {login}
+    ({ user }) => ({ user }),
+    { login }
   ),
   withHandlers({
-    openMenu: ({navigator}) => () => {
+    openMenu: ({ navigator }) => () => {
       navigator.toggleDrawer({
         side: 'left',
         animated: true,
         screen: 'Home'
       });
     },
-    handleClearSearchUser: ({clear}) => () => {
+    handleClearSearchUser: ({ clear }) => () => {
       clear();
     }
   }),
@@ -56,77 +56,109 @@ const enhance = compose(
   })
 );
 
-export const Home = enhance(({openMenu, user}) => {
+export const Home = enhance(({ openMenu, user }) => {
+  console.log('USUARRRRRIO', user);
+
+  let image = '', cor = '';
+  switch (user.category) {
+    case '':
+      image = null;
+      cor = null;
+      componentImage = '';
+      componentTexto = '';
+      break;
+    case '0':
+      image = '../../images/ic_star-bronze.png';
+      componentImage = <ReactImage source={require('../../images/ic_star-bronze.png')}style={{ width: 24, height: 24 }} />;
+      componentTexto = <View style={{ paddingLeft: 4 }} ><Text style={{ color: '#8C7853' }}>Bronze</Text></View>;
+      
+      break;
+    case '1':
+      image = '../../images/ic_star-prata.png';
+      componentImage = <ReactImage source={require('../../images/ic_star-prata.png')}style={{ width: 24, height: 24 }} />;
+      componentTexto = <View style={{ paddingLeft: 4 }} ><Text style={{ color: '#C0C0C0' }}>Prata</Text></View>;
+      break;
+    case '2':
+      image = '../../images/medalha-gold-v2.png';
+      componentImage = <ReactImage source={require('../../images/medalha-gold-v2.png')}style={{ width: 24, height: 24 }} />;
+      componentTexto = <View style={{ paddingLeft: 4 }} ><Text style={{ color: '#febd00' }}>Ouro</Text></View>;
+      break;
+    default:
+      break;
+  }
+  
   return (
-    
-      <Wrapper secondary>
-        <TopBar
-          title="Home"
-          rightComponent={<Icon inverted name="bell" />}
-          leftComponent={<DrawerButton />}
-        />
-        <WrapperAvatar >
+    <Wrapper secondary>
+      <TopBar
+        title="Home"
+        rightComponent={<Icon inverted name="bell" />}
+        leftComponent={<DrawerButton />}
+      />
+      <WrapperAvatar >
+        
+        {image ? (
           <ViewPin>
-            <ReactImage source={require('../../images/medalha-gold-v2.png')} 
-                        style={{width: 24, height: 24}} />
-            <View style={{ paddingLeft: 4}} >
-              <Text style={{color: '#febd00'}}>Ouro</Text>
-            </View>
+            {componentImage}
+            {componentTexto}
           </ViewPin>
-          <Border>
-            <AvatarDefault source={ImagesApp['avatarBlue']} />
-          </Border>
-        </WrapperAvatar>
-          <WrapperCard>
-            <Card>
-              <Users>
-                <Text align="center" size={20} info>
-                  {user.name}
+        ) : (
+          <ViewPin>
+          </ViewPin>
+          )}
+        <Border>
+          <AvatarDefault source={ImagesApp['avatarBlue']} />
+        </Border>
+      </WrapperAvatar>
+      <WrapperCard>
+        <Card>
+          <Users>
+            <Text align="center" size={20} info>
+              {user.name}
+            </Text>
+            <City size={12} info>
+              {user.city}
+            </City>
+          </Users>
+          <TitleRecentNumbers>
+            <Text size="12" secondary>
+              Números recentes:
                 </Text>
-                <City size={12} info>
-                  {user.city}
-                </City>
-              </Users>
-              <TitleRecentNumbers>
-                <Text size="12" secondary>
-                  Números recentes:
-                </Text>
-              </TitleRecentNumbers>
-              <WrapperRecentNumbers>
-                <RecentNumbers result={`${new Intl.NumberFormat('pt-BR', { style: 'decimal' }).format(user.recent.lastPickup.volume)}L`} description="Última coleta" />
-                <RecentNumbers result={`${new Intl.NumberFormat('pt-BR', { style: 'decimal' }).format(user.recent.currentMonth.volume)}L`} description={`Total ${moment(user.recent.currentMonth.period, 'MM/YYYY').format('MMMM')}`} />
-                <RecentNumbers  result={`${new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(user.recent.lastMonth.price)}/L`} description={`${moment(user.recent.currentMonth.period, 'MM/YYYY').format('MMMM')}`} />
-              </WrapperRecentNumbers>
-            </Card>
-            <WrapperQuickMenu>
-              <QuickMenuItem
-                route="Quality"
-                info
-                icon="certificate"
-                description="Qualidade"
-              />
-              <QuickMenuItem
-                route="Volume"
-                success
-                icon="beaker"
-                description="Volume"
-              />
-              <QuickMenuItem
-                route="Price"
-                warning
-                icon="currency-usd"
-                description="Preço"
-              />
-              <QuickMenuItem
-                route="Documentation"
-                danger
-                icon="file-document"
-                description="Documentos"
-              />
-            </WrapperQuickMenu>
-          </WrapperCard>
-      </Wrapper>
-    
+          </TitleRecentNumbers>
+          <WrapperRecentNumbers>
+            <RecentNumbers result={`${new Intl.NumberFormat('pt-BR', { style: 'decimal' }).format(user.recent.lastPickup.volume)}L`} description="Última coleta" />
+            <RecentNumbers result={`${new Intl.NumberFormat('pt-BR', { style: 'decimal' }).format(user.recent.currentMonth.volume)}L`} description={`Total ${moment(user.recent.currentMonth.period, 'MM/YYYY').format('MMMM')}`} />
+            <RecentNumbers result={`${new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(user.recent.lastMonth.price)}/L`} description={`${moment(user.recent.currentMonth.period, 'MM/YYYY').format('MMMM')}`} />
+          </WrapperRecentNumbers>
+        </Card>
+        <WrapperQuickMenu>
+          <QuickMenuItem
+            route="Quality"
+            info
+            icon="certificate"
+            description="Qualidade"
+          />
+          <QuickMenuItem
+            route="Volume"
+            success
+            icon="beaker"
+            description="Volume"
+          />
+          <QuickMenuItem
+            route="Price"
+            warning
+            icon="currency-usd"
+            description="Preço"
+          />
+          <QuickMenuItem
+            route="Documentation"
+            danger
+            icon="file-document"
+            description="Documentos"
+          />
+        </WrapperQuickMenu>
+      </WrapperCard>
+    </Wrapper>
+
   );
 });
 
