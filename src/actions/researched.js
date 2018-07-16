@@ -58,6 +58,20 @@ export const getPrices = (prices, range, year) => {
   };
 };
 
+
+export const getPriceCompareData = (prices, range, year, rangeAnterior, allPrices) => {
+  return {
+    type: 'PRICES_YEAR_COMPARACAO',
+    payload: {
+      prices,
+      range, 
+      year,
+      rangeAnterior,
+      allPrices
+    }
+  };
+};
+
 export const getStatements = (statements, period) => {
   return {
     type: 'GET_STATEMENTS',

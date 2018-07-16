@@ -60,6 +60,7 @@ const enhance = compose(
       }
     },
     comparacao: e => {
+      console.log('COMPARACAO', comparacao);
       if (typeof comparacao === "function") {
         comparacao(e);
       }
@@ -99,6 +100,7 @@ const enhance = compose(
           ]
         );
       } else {
+        console.log('OPA ENTROU AQUI!');
         let comparacaoStart = moment(range.startDate, "MM/YYYY")
           .subtract(1, "year")
           .format("MMM/YYYY");
