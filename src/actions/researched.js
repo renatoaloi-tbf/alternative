@@ -9,6 +9,19 @@ export const getSearchQuality = (range, qualities, type) => {
   };
 };
 
+
+export const getSearchQualityComparacao = (range, qualities, type, rangeAnterior) => {
+  return {
+    type: 'SEARCH_QUALITY_COMPARACAO',
+    payload: {
+      range,
+      qualities,
+      type,
+      rangeAnterior
+    }
+  };
+};
+
 export const closeSearchQuality = () => {
   return {
     type: 'CLOSE_QUALITY'

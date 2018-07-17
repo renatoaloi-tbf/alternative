@@ -72,7 +72,7 @@ const enhance = compose(
       console.log('CHANGED', changed);
 
       setIsCollected(e);
-      //
+      
       if (changed.rangeAtual != null && changed.rangeAnoAnterior != null) {
         setRange(changed.rangeAtual);
         setRangeAnoAnterior(changed.rangeAnoAnterior);

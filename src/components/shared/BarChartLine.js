@@ -26,7 +26,7 @@ const enhancer = compose(
         valuesAnoAnterior: array
     }),
     withProps(({ values, valueFormatter, valueFormatterIndex, onSelect, media, tipo, anoAnterior, valuesAnoAnterior }) => ({
-
+        
         data: (() => {
             if (__DEV__) console.log('valueFormatter[0]', valueFormatter[0]);
             if (__DEV__) console.log('anoAnterior', anoAnterior);
@@ -67,6 +67,7 @@ const enhancer = compose(
                     }
                 }
                 else {
+                    console.log('TÁ ENTRANDO AQUI BIXO', values);
                     values.forEach(valor => {
                         arrayMedia.push(media);
                         if (valor.y < media && moment(valueFormatter[0], 'MM/YYYY', true).isValid())
@@ -215,6 +216,7 @@ const enhancer = compose(
                     console.log('Teste passando aqui 6');
                     console.log('values 6', values);
                     console.log('trataCores 6', trataCores);
+                    console.log('trataCores 6 media', arrayMedia);
                     return {
                         barData: {
                             dataSets: [{
@@ -310,7 +312,7 @@ const enhancer = compose(
                 
             }
 
-
+            console.log('TRATACORES NOVO', novoFormato);
             return {
                 axisMinimum: 0,
                 axisLineWidth: 0,
@@ -323,6 +325,7 @@ const enhancer = compose(
             };
         })(),
         yAxis: (() => {
+            console.log('TRATACORES NOVO asdasdsadasd')
             return {
                 left: {
                     drawLabels: true,

@@ -25,6 +25,16 @@ const INITIAL_STATE = {
     currentMonth: moment().format('MMMM'),
     lastMonth: moment().subtract(1, 'month').format('MMMM')
   },
+  searchQualityAnoAnterior: {
+    items: [],
+    period: [],
+    byIndex: {},
+    average: 0,
+    averageLastMonth: 0,
+    total: 0,
+    currentMonth: moment().subtract(1, 'year').format('MMMM'),
+    lastMonth: moment().subtract(1, 'month').subtract(1, 'year').format('MMMM')
+  },
   searchVolume: {
     items: [],
     period: [],
@@ -61,10 +71,62 @@ const getData = (state, { payload }) => {
       list.push(qualityConstant);
     }
   });
+  console.log('ITEM TYPE', type);
   newState.searchQuality.items = map(list, item => ({ y: item[type] }));
   if (__DEV__) console.log("researched.js - getData2", newState);
   return newState;
 };
+
+
+const getDataComparacaoAnoAnterior = (state, { payload }) => {
+  const newState = cloneDeep(INITIAL_STATE);
+  const { qualities, range, type, rangeAnterior } = payload;
+  if (__DEV__) console.log("researched.js - getData1", range);
+  if (__DEV__) console.log("researched.js - RANGE ANTERIOR", rangeAnterior);
+
+  /** PESQUISA PERIODO ATUAL */
+  const list = [];
+  newState.searchQuality.period = dateDiffList(range.startDate, range.endDate);
+  console.log('newState.searchQuality.period', newState.searchQuality.period);
+  console.log('qualities', qualities);
+  forEach(newState.searchQuality.period, (item, index) => {
+    newState.searchQuality.byIndex[index] = item;
+    console.log('Teste qualities item', item);
+    if (qualities[item]) {
+      list.push(qualities[item]);
+    } else {
+      list.push(qualityConstant);
+    }
+  });
+  console.log('ITEM TYPE', type);
+  newState.searchQuality.items = map(list, item => ({ y: item[type] }));
+  if (__DEV__) console.log("researched.js - getData2", newState);
+
+  /** PESQUISA PERIODO ATUAL END */
+
+  /** PESQUISA PERIODO ANTERIOR */
+  const listAnoAnterior = [];
+  newState.searchQualityAnoAnterior.period = dateDiffList(rangeAnterior.startDate, rangeAnterior.endDate);
+  console.log('newState.searchQualityAnoAnterior.period', newState.searchQuality.period);
+  console.log('qualitiesAnterior', qualities);
+  forEach(newState.searchQualityAnoAnterior.period, (item, index) => {
+    newState.searchQualityAnoAnterior.byIndex[index] = item;
+    console.log('Teste qualities item', item);
+    if (qualities[item]) {
+      listAnoAnterior.push(qualities[item]);
+    } else {
+      listAnoAnterior.push(qualityConstant);
+    }
+  });
+  console.log('ITEM TYPE', type);
+  newState.searchQualityAnoAnterior.items = map(listAnoAnterior, item => ({ y: item[type] }));
+  console.log('newState.searchQualityAnoAnterior.items', newState.searchQualityAnoAnterior.items);
+  /** PESQUISA PERIODO ANTERIOR END */
+
+  return newState;
+};
+
+
 
 const setArray = number => {
   const arr = [];
@@ -222,11 +284,12 @@ const close = () => {
 const getDetailsDayQuality = (state, { payload }) => {
   const newState = cloneDeep(INITIAL_STATE);
   const { qualities, type } = payload;
+  console.log('ARRAY QUALITY', qualities);
   if (qualities) {
     if (!qualities.length) {
       let arrayQuality = [];
       arrayQuality.push(qualities);
-
+      
       newState.searchQuality.period = map(arrayQuality, item => item.period);
 
       /* forEach(arrayQuality, (item, index) => {
@@ -453,6 +516,8 @@ export const researched = (state = INITIAL_STATE, action) => {
   switch (action.type) {
     case 'SEARCH_QUALITY':
       return getData(state, action);
+    case 'SEARCH_QUALITY_COMPARACAO':
+      return getDataComparacaoAnoAnterior(state, action);
     case 'SEARCH_VOLUME':
       return getVolumeData(state, action);
     case 'SEARCH_VOLUME_ANO_ANTERIOR':
