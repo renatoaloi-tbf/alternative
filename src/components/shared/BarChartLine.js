@@ -338,7 +338,7 @@ const enhancer = compose(
                         lineColor: processColor('#FF8600'),
                         lineWidth: 1,
                         valueTextColor: processColor('white'),
-                        labelPosition: 'LEFT_TOP'
+                        labelPosition: 'LEFT_BOX'
                     }],
                     zeroLine: {
                         enabled: true,

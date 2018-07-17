@@ -127,7 +127,7 @@ export const Home = enhance(({ openMenu, user }) => {
           <WrapperRecentNumbers>
             <RecentNumbers result={`${new Intl.NumberFormat('pt-BR', { style: 'decimal' }).format(user.recent.lastPickup.volume)}L`} description="Última coleta" />
             <RecentNumbers result={`${new Intl.NumberFormat('pt-BR', { style: 'decimal' }).format(user.recent.currentMonth.volume)}L`} description={`Total ${moment(user.recent.currentMonth.period, 'MM/YYYY').format('MMMM')}`} />
-            <RecentNumbers result={`${new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(user.recent.lastMonth.price)}/L`} description={`${moment(user.recent.currentMonth.period, 'MM/YYYY').format('MMMM')}`} />
+            <RecentNumbers result={`${new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(user.recent.lastMonth.price)}/L`} description={`${moment(user.recent.lastMonth.period, 'MM/YYYY').format('MMMM')}`} />
           </WrapperRecentNumbers>
         </Card>
         <WrapperQuickMenu>
@@ -175,7 +175,8 @@ const Card = styled.View`
   padding-right: 20;
   border-radius: ${props => props.theme.borderRadius};
   padding-top: 50;
-  elevation: 0.3;
+  box-shadow: 1px 0px 3px #0f0f0f;
+  elevation: 3;
 `;
 
 const WrapperCard = styled.View`
