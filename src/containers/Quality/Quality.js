@@ -352,7 +352,7 @@ export const Quality = enhance(
 								values={researched.searchQuality.items}
 								valueFormatter={researched.searchQuality.period}
 								onSelect={onSelect}
-								media={35}
+								media={50}
               					tipo={"quality"}
 							/>
 						)}
@@ -368,13 +368,14 @@ const WrapperBody = styled.View`
 	padding-left: 8;
 	padding-right: 8;
 	padding-bottom: 8;
-	
 `;
 
 const WrapperBar = styled.View`
 	flex: 1;
 	background-color: ${props => props.theme.bg};
 	border-radius: ${props => props.theme.borderRadius};
+	box-shadow: 1px 0px 3px #0f0f0f;
+  	elevation: 3;
 `;
 const WrapperHeader = styled.View`
 	padding-right: 8;

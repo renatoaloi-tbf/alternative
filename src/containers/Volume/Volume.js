@@ -341,7 +341,7 @@ export const Volume = enhance(
               values={researched.searchVolume.items}
               valueFormatter={researched.searchVolume.period}
               valueFormatterIndex={researched.searchVolume.byIndex}
-              media={35}
+              media={300}
               tipo={"volume"}
               anoAnterior={anoAnterior}
               valuesAnoAnterior={researched.searchVolumeAnoAnterior.items}
@@ -365,6 +365,8 @@ const WrapperBar = styled.View`
   background-color: ${props => props.theme.bg};
   padding-top: 1;
   border-radius: ${props => props.theme.borderRadius};
+  box-shadow: 1px 0px 3px #0f0f0f;
+  elevation: 3;
 `;
 
 const ScrollWrapperStyle = ScrollWrapper.extend`

@@ -167,6 +167,71 @@ react-native start --reset-cache
 
 Para atualizar o emulador, tecle a tecla "R" duas vezes.
 
+### Configurando MPChartLib
+
+#### Baixando Código Fonte
+
+Efetue o clone do repositório da biblioteca com o comando:
+
+```
+git clone https://github.com/renatoaloi-tbf/MPAndroidChart.git
+```
+
+Depois mude para o branch da correção da linha laranja com label, assim:
+
+```
+git fetch --all
+git checkout linha-laranja-com-label-v303
+```
+
+O diretório da biblioteca deve ficar em paralelo com o diretório da aplicação do reactive native, assim:
+
+```
+C:\desenvolvimento\bovcontrol.com\leiteria
+C:\desenvolvimento\bovcontrol.com\MPAndroidChart
+```
+
+Caso você decida instalar a biblioteca MPAndroidChart em outro lugar, lembre-se de alterar o arquivo ```settings.gradle``` da pasta ```android``` do projeto ```leiteria``` para acompanhar o caminho que você escolher, assim:
+
+```
+project(':MPChartLib').projectDir = new File(rootProject.projectDir, '../../MPAndroidChart/MPChartLib')
+```
+
+#### Atualizando o Gradle
+
+Depois de baixar o código fonte da biblioteca ```MPAndroidChart```, abra ela no Android Studio e deixe o Gradle sincronizar.
+
+Clique no botão de executar (que é uma seta verde) para verificar se a biblioteca está funcionando normalmente.
+
+Caso apareça o erro ```Please select Android SDK``` e você não consiga executar o exemplo da biblioteca, então execute os passos mostrados no vídeo abaixo:
+
+https://www.youtube.com/watch?v=XDq2P1uM7uo
+
+Caso você não encontre esse menu no Android Studio, procure pelo botão ```sync now``` mostrado nesse link abaixo e clique nele.
+
+https://stackoverflow.com/questions/34353220/android-studio-please-select-android-sdk?answertab=votes#tab-top
+
+Se precisar feche e abra novamente o projeto no Android Studio até que você consiga executar o exemplo no emulador.
+
+#### Configurando o Módulo react-native-charts-wrapper
+
+Instalada a biblioteca e depois de executar o comando ```npm install``` configure os arquivos conforme orientado nessa sessão.
+
+> É necessário executar o npm install antes, pois como o módulo fica dentro da pasta node_modules, ele é atualizado toda vez que os módulos do npm são instalados ou atualizados.
+
+- Primeiro atualize o arquivo ```node_modules\react-native-charts-wrapper\android\build.gradle``` na parte de ```dependencies``` para ficar conforme indicado abaixo:
+
+```
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile 'com.facebook.react:react-native:0.20.+'
+    //compile 'com.github.PhilJay:MPAndroidChart:v3.0.3'
+    compile project(':MPChartLib')
+}
+```
+
+Agora basta executar o ```react-native run-android``` normalmente.
+
 ### Ferramentas de Depuração
 
 #### Instalar DevTools

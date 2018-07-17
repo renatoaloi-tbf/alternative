@@ -344,6 +344,7 @@ export const Price = enhance(
               valueFormatter={researched.searchPrice.period}
               onSelect={handlerClick}
               comparacao={comparacao}
+              media={1.011}
               valuesComparacao={researched.searchPriceAnoAnterior.items}
             />
           </WrapperBar>
@@ -372,4 +373,6 @@ const WrapperBar = styled.View`
   background-color: ${props => props.theme.bg};
   padding-top: 1;
   border-radius: ${props => props.theme.borderRadius};
+  box-shadow: 1px 0px 3px #0f0f0f;
+  elevation: 3;
 `;

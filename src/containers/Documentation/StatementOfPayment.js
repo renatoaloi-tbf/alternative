@@ -54,7 +54,7 @@ const enhance = compose(
     'Deduções Ali'
   ]),
   withProps(({statements, month}) => ({
-    data: map(statements.byMonth[month].Items, item => {
+    data: map(statements.byMonth[month].items, item => {
       var qtd = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 0 }).format(item.qtd);
       // + item.un
       var vl = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(item.vl);
@@ -139,15 +139,7 @@ export const StatementOfPayment = enhance(
             </WrapperText>
             <WrapperText>
               <TextLeft inverted size={12}>
-                Insc.
-              </TextLeft>
-              <TextRight inverted size={12}>
-                {statements.byMonth[month].ie}
-              </TextRight>
-            </WrapperText>
-            <WrapperText>
-              <TextLeft inverted size={12}>
-                Est.
+                Insc. Est.
               </TextLeft>
               <TextRight inverted size={12}>
                 {statements.byMonth[month].ie}

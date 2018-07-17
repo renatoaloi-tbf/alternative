@@ -15,12 +15,15 @@ const getStatements = (state, {payload}) => {
 
   const {milkStatements} = payload.data[0];
   forEach(milkStatements, item => {
-    const dateExt = `${Months[item.month-1]} ${item.year}`;
-    const date = `${padZero(2, item.month)}/${item.year}`;
-    if (newState.allMonths.indexOf(date)) {
-      newState.allMonths.push(date);
-      newState.byMonth[date] = item;
-      newState.byMonthExt[date] = dateExt;
+    if (item.month > 0)
+    {
+      const dateExt = `${Months[item.month-1]} ${item.year}`;
+      const date = `${padZero(2, item.month)}/${item.year}`;
+      if (newState.allMonths.indexOf(date)) {
+        newState.allMonths.push(date);
+        newState.byMonth[date] = item;
+        newState.byMonthExt[date] = dateExt;
+      }
     }
   });
   if (__DEV__) console.log("statements.js - getStatements", newState);

@@ -32,8 +32,8 @@ const enhance = compose(
   ),
   withState('count', 'setCount', ({statements}) => {
     const documetations = statements.byMonth[moment().format('MM/YYYY')];
-    if (documetations && documetations.Items.length) {
-      const qtaList = map(documetations.Items, item => item.qtd);
+    if (documetations && documetations.items.length) {
+      const qtaList = map(documetations.items, item => item.qtd);
       const acount = reduce(qtaList, (previ, next) => previ + next);
       return `${isNumber(acount)} L`;
     }
@@ -67,8 +67,8 @@ const enhance = compose(
       setPeriod(moment(e.label, 'MMM/YYYY').format('MMMM [de] YYYY'));
       const documetations = statements.byMonth[e.value];
       if (documetations) {
-        if (documetations && documetations.Items.length) {
-          const qtaList = map(documetations.Items, item => item.qtd);
+        if (documetations && documetations.items.length) {
+          const qtaList = map(documetations.items, item => item.qtd);
           const acount = reduce(qtaList, (previ, next) => previ + next);
           if (__DEV__) console.log("Documentation.js - handlePress", acount);
           setCount(`${isNumber(acount)} L`);

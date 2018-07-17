@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components/native';
 import { compose, withProps, setPropTypes, lifecycle } from 'recompose';
 import { LineChart as LineChartNative } from 'react-native-charts-wrapper';
-import { array, func, bool } from 'prop-types';
+import { array, func, bool, number } from 'prop-types';
 import { processColor } from 'react-native';
 import Intl from 'intl';
 require('intl/locale-data/jsonp/pt');
@@ -16,9 +16,10 @@ const enhancer = compose(
     valueFormatter: array,
     onSelect: func,
     comparacao: bool,
+    media: number,
     valuesComparacao: array
   }),
-  withProps(({ values, valueFormatter, onSelect, comparacao, valuesComparacao }) => ({
+  withProps(({ values, valueFormatter, onSelect, comparacao, media, valuesComparacao }) => ({
     data: (() => {
       
       
@@ -137,7 +138,15 @@ const enhancer = compose(
           zeroLine: {
             enabled: true,
             lineWidth: 1.5
-          }
+          },
+          limitLines: [{
+              limit: media,
+              label: new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 2 }).format(media),
+              lineColor: processColor('#FF8600'),
+              lineWidth: 1,
+              valueTextColor: processColor('white'),
+              labelPosition: 'RIGHT_BOX'
+          }],
         },
 
 
