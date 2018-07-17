@@ -352,7 +352,7 @@ export const Quality = enhance(
 								values={researched.searchQuality.items}
 								valueFormatter={researched.searchQuality.period}
 								onSelect={onSelect}
-								media={70}
+								media={35}
               					tipo={"quality"}
 							/>
 						)}

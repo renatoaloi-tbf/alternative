@@ -10,6 +10,10 @@ import moment from 'moment';
 
 import { EmptyText } from '~/components/shared';
 
+import Intl from 'intl';
+
+require( 'intl/locale-data/jsonp/pt' );
+
 const enhancer = compose(
     setPropTypes({
         values: array.isRequired,
@@ -159,7 +163,7 @@ const enhancer = compose(
                                 }
                             }
                         },
-                        lineData: {
+                        /* lineData: {
                             dataSets: [
                                 {
                                     values: [...arrayMedia],
@@ -176,7 +180,7 @@ const enhancer = compose(
                                         axisDependency: "left",
                                     }
                                 }],
-                        }
+                        } */
                     };
                 }
                 else {
@@ -231,7 +235,7 @@ const enhancer = compose(
                                 barWidth: 0.5
                             }
                         },
-                        lineData: {
+                        /* lineData: {
                             dataSets: [{
                                 values: [...arrayMedia],
                                 label: 'Média',
@@ -247,7 +251,7 @@ const enhancer = compose(
                                     axisDependency: "left",
                                 }
                             }],
-                        }
+                        } */
                     };
                 }
                 else {
@@ -325,7 +329,14 @@ const enhancer = compose(
                     drawAxisLine: true,
                     drawGridLines: true,
                     axisMinimum: 0,
-
+                    limitLines: [{
+                        limit: media,
+                        label: new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 0 }).format(media),
+                        lineColor: processColor('#FF8600'),
+                        lineWidth: 1,
+                        valueTextColor: processColor('white'),
+                        labelPosition: 'LEFT_TOP'
+                    }],
                     zeroLine: {
                         enabled: true,
                         lineWidth: 1.5
