@@ -12,8 +12,7 @@ const getQuality = (state, {payload}) => {
   const {milkQuality} = payload.data[0];
   forEach(milkQuality, item => {
     if (newState.allIds.indexOf(item._id) === -1) {
-      const ranger = moment(item.period, 'DD/MM/YY').format('MM/YYYY');
-
+      const ranger = moment(item.test_date, 'DD/MM/YY').format('MM/YYYY');
       if (newState.groupByMonth[ranger]) {
         newState.groupByMonth[ranger] = [
           ...newState.groupByMonth[ranger],
@@ -25,6 +24,7 @@ const getQuality = (state, {payload}) => {
       newState.allIds.push(item._id);
     }
   });
+
   const keys = Object.keys(newState.groupByMonth);
   forEach(keys, item => {
     newState.groupByYear[item] = reduce(
@@ -36,7 +36,8 @@ const getQuality = (state, {payload}) => {
           fat = (prev.fat ? prev.fat : 0) + (next.fat ? next.fat : 0),
           lact = (prev.lact ? prev.lact : 0) + (next.lact ? next.lact : 0),
           prot = (prev.prot ? prev.prot : 0) + (next.prot ? next.prot : 0),
-          ufc = (prev.ufc ? prev.ufc : 0) + (next.ufc ? next.ufc : 0);
+          ufc = (prev.ufc ? prev.ufc : 0) + (next.ufc ? next.ufc : 0),
+          cbt = (prev.cbt ? prev.cbt : 0) + (next.cbt ? next.cbt : 0);
         return {
           ccs,
           esd,
@@ -44,11 +45,13 @@ const getQuality = (state, {payload}) => {
           fat,
           lact,
           prot,
-          ufc
+          ufc,
+          cbt
         };
       }
     );
   });
+  console.log('getQuality', newState);
   return newState;
 };
 

@@ -100,11 +100,6 @@ const enhance = compose(
       allPrices,
       setComparacao
     }) => e => {
-      console.log('RANGE', range);
-      console.log('RESEARCHED', researched);
-      console.log('PRICES', researched.searchPrice.filter);
-      console.log('TODOS OS PRECOS', allPrices);
-      console.log('RANGE ANO ANTERIOR', changed.rangeAnoAnterior);
       if (changed.rangeAtual != null && changed.rangeAnoAnterior != null) {
         setRange(changed.rangeAtual);
         setRangeAnoAnterior(changed.rangeAnoAnterior);
