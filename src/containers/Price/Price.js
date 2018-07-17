@@ -52,6 +52,7 @@ const enhance = compose(
   withState('changed', 'setChanged', { rangeAtual: null, rangeAnoAnterior: null }),
   withState('anoAnterior', 'setAnoAnterior', false),
   withState('allPrices', 'setAllPrices', null),
+  withState('comparacao', 'setComparacao', false),
   withState('periodPrice', 'setPeriodPrice', ({ researched }) => {
     console.log('RESEARCHED PERIOD'.researched);
     return {
@@ -79,6 +80,8 @@ const enhance = compose(
           pricePeriodAfter
         }
       )
+
+      console.log('ITEM', this.props.price.items);
       await this.props.setAllPrices(this.props.price.items);
       await this.props.getPrices(this.props.price.items, range, this.props.year);
     }
@@ -94,12 +97,14 @@ const enhance = compose(
       prices,
       getPriceCompareData,
       getPrices,
-      allPrices
+      allPrices,
+      setComparacao
     }) => e => {
       console.log('RANGE', range);
       console.log('RESEARCHED', researched);
       console.log('PRICES', researched.searchPrice.filter);
       console.log('TODOS OS PRECOS', allPrices);
+      console.log('RANGE ANO ANTERIOR', changed.rangeAnoAnterior);
       if (changed.rangeAtual != null && changed.rangeAnoAnterior != null) {
         setRange(changed.rangeAtual);
         setRangeAnoAnterior(changed.rangeAnoAnterior);
@@ -111,6 +116,7 @@ const enhance = compose(
           changed.rangeAnoAnterior,
           allPrices
         );
+        setComparacao(true);
       }
       else {
         setRange(range);
@@ -130,13 +136,29 @@ const enhance = compose(
       researched,
       setPeriodPrice,
       setSearchMonth,
-      range
+      range,
+      allPrices,
+      comparacao,
+      changed
     }) => e => {
       setSearchMonth(
         `${moment(range.startDate, 'MM/YYYY').format('MMM/YYYY')} - ${moment(range.endDate, 'MM/YYYY').format('MMM/YYYY')}`
       );
       setYear(e);
-      getPrices(researched.searchPrice.filter, range, moment(range.startDate, 'MM/YYYY').format('YYYY'));
+      if (!comparacao) {
+        getPrices(researched.searchPrice.filter, range, moment(range.startDate, 'MM/YYYY').format('YYYY'));
+      }
+      else {
+        getPriceCompareData(
+          researched.searchPrice.filter,
+          changed.rangeAtual,
+          moment(range.startDate, 'MM/YYYY').format('YYYY'),
+          changed.rangeAnoAnterior,
+          allPrices
+        );
+      }
+      
+      
       let pricePeriod, pricePeriodAfter;
       let myArrayPeriod = Object.values(researched.searchPrice.byIndex);
       for (var i = 0; i < myArrayPeriod.length; i++) {
@@ -158,6 +180,8 @@ const enhance = compose(
         pricePeriod,
         pricePeriodAfter
       });
+      
+
     },
     handlerClick: ({ researched, setPeriodPrice, year }) => e => {
       const pricePeriod = researched.searchPrice.byIndex[e.x] ? researched.searchPrice.byIndex[e.x] : researched.searchPrice.byIndex[0];
@@ -282,7 +306,8 @@ export const Price = enhance(
     isFilter,
     isClose,
     searchMonth,
-    handlerComparacao
+    handlerComparacao,
+    comparacao
   }) => {
     console.log('RESEARCH', researched);
     return (
@@ -318,6 +343,8 @@ export const Price = enhance(
               values={researched.searchPrice.items}
               valueFormatter={researched.searchPrice.period}
               onSelect={handlerClick}
+              comparacao={comparacao}
+              valuesComparacao={researched.searchPriceAnoAnterior.items}
             />
           </WrapperBar>
         </ScrollWrapperStyle>

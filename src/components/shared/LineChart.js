@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components/native';
 import { compose, withProps, setPropTypes, lifecycle } from 'recompose';
 import { LineChart as LineChartNative } from 'react-native-charts-wrapper';
-import { array, func } from 'prop-types';
+import { array, func, bool } from 'prop-types';
 import { processColor } from 'react-native';
 import Intl from 'intl';
 require('intl/locale-data/jsonp/pt');
@@ -14,39 +14,90 @@ const enhancer = compose(
   setPropTypes({
     values: array,
     valueFormatter: array,
-    onSelect: func
+    onSelect: func,
+    comparacao: bool,
+    valuesComparacao: array
   }),
-  withProps(({ values, valueFormatter, onSelect }) => ({
+  withProps(({ values, valueFormatter, onSelect, comparacao, valuesComparacao }) => ({
     data: (() => {
-      valuesEmReais = values.map(function (x) { return { y: x.y, marker: 'R$ ' + new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 2 }).format(x.y) } });
-      console.log('VALORES', valuesEmReais)
-      if (!values.length) return {};
-      return {
-        dataSets: [
-          {
-            values: valuesEmReais,
-            label: 'Qualidade',
-            config: {
-              drawValues: false,
-              lineWidth: 3,
-              drawCubicIntensity: 0.1,
-              circleRadius: 1,
-              drawHighlightIndicators: false,
-              color: processColor('#0093FF'),
-              highlightColor: processColor('red'),
-              drawFilled: true,
-              fillColor: processColor('#0093FF'),
-              fillAlpha: 45,
-              circleColor: processColor('#0093FF'),
-              fillGradient: {
-                colors: [processColor('#C9E8FF'), processColor('transparent')],
-                positions: [0.2, 0.1],
-                orientation: 'TOP_BOTTOM',
+      
+      
+      if (!comparacao) {
+        valuesEmReais = values.map(function (x) { return { y: x.y, marker: 'R$ ' + new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 2 }).format(x.y) } });
+        console.log('VALORES', valuesEmReais)
+        if (!values.length) return {};
+        return {
+          dataSets: [
+            {
+              values: valuesEmReais,
+              label: 'Qualidade',
+              config: {
+                drawValues: false,
+                lineWidth: 3,
+                drawCubicIntensity: 0.1,
+                circleRadius: 1,
+                drawHighlightIndicators: false,
+                color: processColor('#0093FF'),
+                highlightColor: processColor('red'),
+                drawFilled: true,
+                fillColor: processColor('#0093FF'),
+                fillAlpha: 45,
+                circleColor: processColor('#0093FF'),
+                fillGradient: {
+                  colors: [processColor('#C9E8FF'), processColor('transparent')],
+                  positions: [0.2, 0.1],
+                  orientation: 'TOP_BOTTOM',
+                }
               }
             }
-          }
-        ]
-      };
+          ]
+        };
+      }
+      else {
+        valuesEmReais = values.map(function (x) { return { y: x.y, marker: 'R$ ' + new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 2 }).format(x.y) } });
+        console.log('VALORES', valuesEmReais)
+        valuesComparacaoEmReais = valuesComparacao.map(function (x) { return { y: x.y, marker: 'R$ ' + new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 2 }).format(x.y) } });
+        if (!values.length) return {};
+        return {
+          dataSets: [
+            {
+              values: valuesEmReais,
+              label: 'Ano atual',
+              config: {
+                drawValues: false,
+                lineWidth: 3,
+                drawCubicIntensity: 0.1,
+                circleRadius: 1,
+                drawHighlightIndicators: false,
+                color: processColor('#0093FF'),
+                highlightColor: processColor('red'),
+                drawFilled: false,
+                fillAlpha: 45,
+                circleColor: processColor('#0093FF'),
+                
+              }
+            },
+            {
+              values: valuesComparacaoEmReais,
+              label: 'Ano anterior',
+              config: {
+                drawValues: false,
+                lineWidth: 3,
+                drawCubicIntensity: 0.1,
+                circleRadius: 1,
+                drawHighlightIndicators: false,
+                color: processColor('#00CDFF'),
+                highlightColor: processColor('red'),
+                drawFilled: false,
+                fillAlpha: 45,
+                circleColor: processColor('#00CDFF'),
+                
+              }
+            }
+          ]
+        };
+      }
+      
     })(),
     xAxis: (() => {
       valueFormatterUpper = valueFormatter.map(function (x) { return x.toUpperCase() });
@@ -120,7 +171,7 @@ export const LineChart = enhancer(
           scaleYEnabled={false}
           data={data}
           drawBarShadow={false}
-          pinchZoom={false}
+          pinchZoom={true}
           legend={{ enabled: false }}
           doubleTapToZoomEnabled={false}
           chartDescription={{ text: '' }}
@@ -132,7 +183,7 @@ export const LineChart = enhancer(
           dragDecelerationFrictionCoef={0.99}
           borderColor={processColor('teal')}
           keepPositionOnRotation={false}
-          borderWidth={1}
+          borderWidth={0}
           animation={{
             durationX: 0,
             durationY: 1500,
@@ -142,7 +193,7 @@ export const LineChart = enhancer(
             scaleX: 2,
             scaleY: 0,
             xValue: 0,
-            yValue: 2,
+            yValue: 1,
             axisDependency: 'RIGHT'
           }}
         />

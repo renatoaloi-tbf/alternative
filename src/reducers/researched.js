@@ -269,7 +269,7 @@ const getPriceData = (state, { payload }) => {
   console.log('PRICEEEEEES', prices);
 
   const filterPrices = filter(prices, item =>
-    ra.contains(moment(item._id.slice(0, -30)))
+    ra.contains(moment(moment(item.period, 'MM/YYYY').format('YYYYMM')))
   );
 
   const range2 = moment.range(start2, end2);
@@ -286,12 +286,13 @@ const getPriceData = (state, { payload }) => {
   });
 
   newState.searchPrice.filter = filterPrices;
+  console.log('FILTER PRICE', filterPrices);
   newState.searchPrice.items = map(range2map, (item, index) => {
-    const findPrice = find(filterPrices, price => price.month+price.year === item);
+    const findPrice = find(filterPrices, price => moment(price.period, 'MM/YYYY').format('MMYYYY') === item);
     if (findPrice) {
-      return { y: parseFloat(findPrice.price), ano: findPrice.year, anoMes: moment(findPrice.month+'/'+findPrice.year, 'MM/YYYY').format('MMMM/YYYY')};
+      return { y: parseFloat(findPrice.price), ano: findPrice.year, anoMes: moment(findPrice.period, 'MM/YYYY').format('MMMM/YYYY')};
     }
-    return { y: 0, ano: item.toString().substr(2, 4), anoMes: moment(item.toString(), 'MM/YYYY').format('MMMM/YYYY')};
+    return { y: 0, ano: moment(item.toString(), 'MM/YYYY').format('YYYY'), anoMes: moment(item.toString(), 'MM/YYYY').format('MMMM/YYYY')};
   });
 
   const periodo = filter(range2map, item =>
@@ -325,6 +326,123 @@ const getPriceCompareData = (state, { payload }) => {
   console.log('RANGE ANTERIOR COMPARAÇÃO', rangeAnterior);
   console.log('TODOS OS PREÇOS', allPrices);
   console.log('PRICE ANO ANTERIOR COMPARAÇÃO');
+
+  /**COMPARAÇÃO INICIO */
+  /** RANGE ESCOLHIDO */
+  console.log('PREÇOS POR PADRÃO COMPARACAO', prices);
+  const start = moment(range.startDate, 'MM/YYYY').startOf('month').format('YYYYMM');
+  const end = moment(range.endDate, 'MM/YYYY').endOf('month').format('YYYYMM');
+  const start2 = moment(range.startDate, 'MM/YYYY').startOf('month').format('YYYY-MM-DD');
+  const end2 = moment(range.endDate, 'MM/YYYY').endOf('month').format('YYYY-MM-DD');
+
+  console.log('START DATE  COMPARACAO', start);
+  const ra = moment.range(start, end);
+  console.log('PRICEEEEEES  COMPARACAO', prices);
+
+  const filterPrices = filter(prices, item =>
+    ra.contains(moment(moment(item.period, 'MM/YYYY').format('YYYYMM')))
+  );
+
+  const range2 = moment.range(start2, end2);
+
+  for (let month of range2.by('month')) {
+    month.format('YYYY-MM-DD');
+  }
+  
+  const years = Array.from(range2.by('month'));
+  let range2map = years.map(m => m.format('MMYYYY'));
+  
+  filterPrices.forEach(price => {
+    price.y = price.price;
+  });
+
+  newState.searchPrice.filter = filterPrices;
+  console.log('FILTER PRICE  COMPARACAO', filterPrices);
+  newState.searchPrice.items = map(range2map, (item, index) => {
+    const findPrice = find(filterPrices, price => moment(price.period, 'MM/YYYY').format('MMYYYY') === item);
+    if (findPrice) {
+      return { y: parseFloat(findPrice.price), ano: findPrice.year, anoMes: moment(findPrice.period, 'MM/YYYY').format('MMMM/YYYY')};
+    }
+    return { y: 0, ano: moment(item.toString(), 'MM/YYYY').format('YYYY'), anoMes: moment(item.toString(), 'MM/YYYY').format('MMMM/YYYY')};
+  });
+
+  const periodo = filter(range2map, item =>
+    range2.contains(moment(moment(item, 'MMYYYY').startOf('month').format('YYYY-MM-DD')))
+  );
+
+  newState.searchPrice.period = map(periodo, (item, index) =>
+    moment()
+      .month(moment(item, 'MMYYYY').format('MMMM'))
+      .format('MMM')
+  );
+
+  forEach(newState.searchPrice.items, (item, index) => {
+    newState.searchPrice.byIndex[index] = {
+      ...item,
+      period: item.anoMes
+    };
+  });
+
+
+  /** PERIODO ANTERIOR */
+
+
+
+  console.log('PREÇOS POR PADRÃO COMPARACAO ANTERIOR', allPrices);
+  const startrangeAnterior = moment(rangeAnterior.startDate, 'MM/YYYY').startOf('month').format('YYYYMM');
+  const endrangeAnterior = moment(rangeAnterior.endDate, 'MM/YYYY').endOf('month').format('YYYYMM');
+  const start2rangeAnterior = moment(rangeAnterior.startDate, 'MM/YYYY').startOf('month').format('YYYY-MM-DD');
+  const end2rangeAnterior = moment(rangeAnterior.endDate, 'MM/YYYY').endOf('month').format('YYYY-MM-DD');
+
+  console.log('START DATE  COMPARACAO ANTERIOR', startrangeAnterior);
+  const rarangeAnterior = moment.range(startrangeAnterior, endrangeAnterior);
+  console.log('PRICEEEEEES  COMPARACAO ANTERIOR', allPrices);
+
+  const filterPricesrangeAnterior = filter(allPrices, item =>
+    rarangeAnterior.contains(moment(moment(item.period, 'MM/YYYY').format('YYYYMM')))
+  );
+
+  const range2rangeAnterior = moment.range(start2rangeAnterior, end2rangeAnterior);
+
+  for (let month of range2rangeAnterior.by('month')) {
+    month.format('YYYY-MM-DD');
+  }
+  
+  const yearsrangeAnterior = Array.from(range2rangeAnterior.by('month'));
+  let range2rangeAnteriormap = yearsrangeAnterior.map(m => m.format('MMYYYY'));
+  
+  filterPricesrangeAnterior.forEach(price => {
+    price.y = price.price;
+  });
+
+  newState.searchPriceAnoAnterior.filter = filterPricesrangeAnterior;
+  console.log('FILTER PRICE COMPARACAO ANTERIOR', filterPricesrangeAnterior);
+  newState.searchPriceAnoAnterior.items = map(range2rangeAnteriormap, (item, index) => {
+    const findPrice = find(filterPricesrangeAnterior, price => moment(price.period, 'MM/YYYY').format('MMYYYY') === item);
+    if (findPrice) {
+      return { y: parseFloat(findPrice.price), ano: findPrice.year, anoMes: moment(findPrice.period, 'MM/YYYY').format('MMMM/YYYY')};
+    }
+    return { y: 0, ano: moment(item.toString(), 'MM/YYYY').format('YYYY'), anoMes: moment(item.toString(), 'MM/YYYY').format('MMMM/YYYY')};
+  });
+
+  const periodorangeAnterior = filter(range2rangeAnteriormap, item =>
+    range2rangeAnterior.contains(moment(moment(item, 'MMYYYY').startOf('month').format('YYYY-MM-DD')))
+  );
+
+  newState.searchPriceAnoAnterior.period = map(periodorangeAnterior, (item, index) =>
+    moment()
+      .month(moment(item, 'MMYYYY').format('MMMM'))
+      .format('MMM')
+  );
+
+  forEach(newState.searchPriceAnoAnterior.items, (item, index) => {
+    newState.searchPriceAnoAnterior.byIndex[index] = {
+      ...item,
+      period: item.anoMes
+    };
+  });
+
+  console.log('NEW STATE ANO ANTERIOR ANTERIOR', newState);
   
   return newState;
 };
