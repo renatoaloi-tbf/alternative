@@ -71,7 +71,7 @@ const getData = (state, { payload }) => {
       list.push(qualityConstant);
     }
   });
-  console.log('ITEM TYPE', type);
+  console.log('ITEM TYPE 2', qualities);
   newState.searchQuality.items = map(list, item => ({ y: item[type] }));
   if (__DEV__) console.log("researched.js - getData2", newState);
   return newState;

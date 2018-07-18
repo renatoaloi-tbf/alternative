@@ -12,7 +12,7 @@ const getQuality = (state, {payload}) => {
   const {milkQuality} = payload.data[0];
   forEach(milkQuality, item => {
     if (newState.allIds.indexOf(item._id) === -1) {
-      const ranger = moment(item.test_date, 'DD/MM/YY').format('MM/YYYY');
+      const ranger = moment(item.period, 'DD/MM/YY').format('MM/YYYY');
       if (newState.groupByMonth[ranger]) {
         newState.groupByMonth[ranger] = [
           ...newState.groupByMonth[ranger],
