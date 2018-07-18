@@ -9,54 +9,46 @@ import {
     ScrollWrapper,
     Text,
     TextInput
-  } from '~/components/shared';
-//import { TextInput } from 'react-native';
+} from '~/components/shared';
 
-// class PrecoInput extends Component
-// {
-//     constructor(props) {
-//         super(props);
-//         this.state = { 
-//             bpf: 0, 
-//             pncebt: 0, 
-//             AdVolumeText: 'L/Dia',
-//             AdDistanciaText: 'Km',
-//             CbtText: 'x 1.000/',
-//             CcsText: 'x 1.000/',
-//             ProteinaText: 'g/100g',
-//             GorduraText: 'g/100g'
-//         };
-//     }
+import {
+    compose,
+    withHandlers,
+    withProps,
+    setPropTypes,
+    withState,
+    lifecycle
+} from 'recompose';
+import {connect} from 'react-redux';
 
-//     render()
-//     {
-//         return(
-//             <TextInputUnd 
-//                 onFocus={ () => { if(this.props.text === 'L/Dia') setPro({AdVolumeText: ''}) } } 
-//                 onChangeText={ (AdVolumeText) => this.setState({AdVolumeText}) }
-//                 value={ this.state.AdVolumeText } 
-//             />
-//         );
-//     }
-// }
+const enhance = compose(
+    connect(
+        ({factors}) => ({factors}),
+        {}
+    ),
+    withState('bpf', 'setBpf', 0), 
+    withState('pncebt', 'setPncebt', 0), 
+    withState('AdVolumeText', 'setAdVolumeText', 'L/Dia'), 
+    withState('AdDistanciaText', 'setAdDistanciaText', 'Km'), 
+    withState('CbtText', 'setCbtText', 'x 1.000/'), 
+    withState('CcsText', 'setCcsText', 'x 1.000/'), 
+    withState('ProteinaText', 'setProteinaText', 'g/100g'), 
+    withState('GorduraText', 'setGorduraText', 'g/100g'), 
+    /* withProps(({statements, month}) => {}), */
+    lifecycle({
+        componentWillMount() {
+        }
+    })
+);
 
-export default class PriceMinimum extends Component {
-
-    constructor(props) {
-        super(props);
-        this.state = { 
-            bpf: 0, 
-            pncebt: 0, 
-            AdVolumeText: 'L/Dia',
-            AdDistanciaText: 'Km',
-            CbtText: 'x 1.000/',
-            CcsText: 'x 1.000/',
-            ProteinaText: 'g/100g',
-            GorduraText: 'g/100g'
-        };
-    }
-
-    render() {
+export const PriceMinimum = enhance (
+    ({
+        factors, bpf, pncebt, AdVolumeText, AdDistanciaText, CbtText, CcsText, ProteinaText, GorduraText,
+        setBpf, setPncebt, setAdVolumeText, setAdDistanciaText, setCbtText, setCcsText, setProteinaText, 
+        setGorduraText
+    }) => 
+    {
+        console.log('factors', factors);
         return (
             <Wrapper secondary>
                 <TopBar
@@ -90,10 +82,10 @@ export default class PriceMinimum extends Component {
                         <Column1>Ad. Volume</Column1>
                         <ViewColumn2>
                             <TextInputUnd 
-                                onFocus={ () => { if(this.state.AdVolumeText === 'L/Dia') this.setState({AdVolumeText: ''}) } } 
-                                onChangeText={ (AdVolumeText) => this.setState({AdVolumeText}) }
-                                onBlur={ () => { if(this.state.AdVolumeText === '') this.setState({AdVolumeText: 'L/Dia'}) } } 
-                                value={ this.state.AdVolumeText } 
+                                onFocus={ () => { if(AdVolumeText === 'L/Dia') setAdVolumeText('') } } 
+                                onChangeText={ (AdVolumeText) => setAdVolumeText(AdVolumeText) }
+                                onBlur={ () => { if(AdVolumeText === '') setAdVolumeText('L/Dia') } } 
+                                value={ AdVolumeText } 
                             />
                             <StyledTextInput white>0,0390</StyledTextInput>
                         </ViewColumn2>
@@ -102,10 +94,10 @@ export default class PriceMinimum extends Component {
                         <Column1>Ad. Distância</Column1>
                         <ViewColumn2>
                             <TextInputUnd 
-                                onFocus={ () => { if(this.state.AdDistanciaText === 'Km') this.setState({AdDistanciaText: ''}) } } 
-                                onChangeText={ (AdDistanciaText) => this.setState({AdDistanciaText}) }
-                                onBlur={ () => { if(this.state.AdDistanciaText === '') this.setState({AdDistanciaText: 'Km'}) } } 
-                                value={ this.state.AdDistanciaText } 
+                                onFocus={ () => { if(AdDistanciaText === 'Km') setAdDistanciaText('') } } 
+                                onChangeText={ (AdDistanciaText) => setAdDistanciaText(AdDistanciaText) }
+                                onBlur={ () => { if(AdDistanciaText === '') setAdDistanciaText('Km') } } 
+                                value={ AdDistanciaText } 
                             />
                             <StyledTextInput white>0,0390</StyledTextInput>
                         </ViewColumn2>
@@ -114,10 +106,10 @@ export default class PriceMinimum extends Component {
                         <Column1>CBT</Column1>
                         <ViewColumn2>
                             <TextInputUnd 
-                                onFocus={ () => { if(this.state.CbtText === 'x 1.000/') this.setState({CbtText: ''}) } } 
-                                onChangeText={ (CbtText) => this.setState({CbtText}) }
-                                onBlur={ () => { if(this.state.CbtText === '') this.setState({CbtText: 'x 1.000/'}) } }
-                                value={ this.state.CbtText } 
+                                onFocus={ () => { if(CbtText === 'x 1.000/') setCbtText('') } } 
+                                onChangeText={ (CbtText) => setCbtText(CbtText) }
+                                onBlur={ () => { if(CbtText === '') setCbtText('x 1.000/') } }
+                                value={ CbtText } 
                             />
                             <StyledTextInput white>0,0390</StyledTextInput>
                         </ViewColumn2>
@@ -126,10 +118,10 @@ export default class PriceMinimum extends Component {
                         <Column1>CCS</Column1>
                         <ViewColumn2>
                             <TextInputUnd 
-                                onFocus={ () => { if(this.state.CcsText === 'x 1.000/') this.setState({CcsText: ''}) } } 
-                                onChangeText={ (CcsText) => this.setState({CcsText}) }
-                                onBlur={ () => { if(this.state.CcsText === '') this.setState({CcsText: 'x 1.000/'}) } }
-                                value={ this.state.CcsText } 
+                                onFocus={ () => { if(CcsText === 'x 1.000/') setCcsText('') } } 
+                                onChangeText={ (CcsText) => setCcsText(CcsText) }
+                                onBlur={ () => { if(CcsText === '') setCcsText('x 1.000/') } }
+                                value={ CcsText } 
                             />
                             <StyledTextInput white>0,0390</StyledTextInput>
                         </ViewColumn2>
@@ -138,10 +130,10 @@ export default class PriceMinimum extends Component {
                         <Column1>Proteína</Column1>
                         <ViewColumn2>
                             <TextInputUnd 
-                                onFocus={ () => { if(this.state.ProteinaText === 'g/100g') this.setState({ProteinaText: ''}) } } 
-                                onChangeText={ (ProteinaText) => this.setState({ProteinaText}) }
-                                onBlur={ () => { if(this.state.ProteinaText === '') this.setState({ProteinaText: 'g/100g'}) } }
-                                value={ this.state.ProteinaText } 
+                                onFocus={ () => { if(ProteinaText === 'g/100g') setProteinaText('') } } 
+                                onChangeText={ (ProteinaText) => setProteinaText(ProteinaText) }
+                                onBlur={ () => { if(ProteinaText === '') setProteinaText('g/100g') } }
+                                value={ ProteinaText } 
                             />
                             <StyledTextInput white>0,0390</StyledTextInput>
                         </ViewColumn2>
@@ -150,10 +142,10 @@ export default class PriceMinimum extends Component {
                         <Column1>Gordura</Column1>
                         <ViewColumn2>
                             <TextInputUnd 
-                                onFocus={ () => { if(this.state.GorduraText === 'g/100g') this.setState({GorduraText: ''}) } } 
-                                onChangeText={ (GorduraText) => this.setState({GorduraText}) }
-                                onBlur={ () => { if(this.state.GorduraText === '') this.setState({GorduraText: 'g/100g'}) } }
-                                value={ this.state.GorduraText } 
+                                onFocus={ () => { if(GorduraText === 'g/100g') setGorduraText('') } } 
+                                onChangeText={ (GorduraText) => setGorduraText(GorduraText) }
+                                onBlur={ () => { if(GorduraText === '') setGorduraText('g/100g') } }
+                                value={ GorduraText } 
                             />
                             <StyledTextInput white>0,0390</StyledTextInput>
                         </ViewColumn2>
@@ -163,8 +155,8 @@ export default class PriceMinimum extends Component {
                         <ViewColumn2>
                             <View>
                                 <StyledPicker
-                                    selectedValue={this.state.bpf}
-                                    onValueChange={ (itemValue, itemIndex) => this.setState({bpf: itemValue}) }>
+                                    selectedValue={bpf}
+                                    onValueChange={ (itemValue, itemIndex) => setBpf(itemValue) }>
                                     <Picker.Item  label="  Selecione" value="0" />
                                     <Picker.Item  label="  Padrão" value="P" />
                                     <Picker.Item  label="  Nature" value="N" />
@@ -179,8 +171,8 @@ export default class PriceMinimum extends Component {
                         <ViewColumn2>
                             <View>
                                 <StyledPicker
-                                    selectedValue={this.state.pncebt}
-                                    onValueChange={ (itemValue, itemIndex) => this.setState({pncebt: itemValue}) }>
+                                    selectedValue={pncebt}
+                                    onValueChange={ (itemValue, itemIndex) => setPncebt(itemValue) }>
                                     <Picker.Item  label="  Selecione" value="0" />
                                     <Picker.Item  label="  Sim" value="S" />
                                     <Picker.Item  label="  Não" value="N" />
@@ -218,7 +210,7 @@ export default class PriceMinimum extends Component {
             </Wrapper>
         );
     }
-}
+);
 
 const StyledPicker = styled.Picker`
     margin-top: 18;

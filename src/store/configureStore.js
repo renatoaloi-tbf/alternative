@@ -20,7 +20,8 @@ import {
   volume,
   researched,
   user,
-  backend
+  backend,
+  factors
 } from '../reducers';
 
 const config = {
@@ -38,7 +39,8 @@ const appReducer = persistCombineReducers(config, {
   researched,
   form,
   user,
-  backend
+  backend,
+  factors
 }, () => { 
   if (__DEV__) console.log('rehydration complete!', store.getState());
 });
