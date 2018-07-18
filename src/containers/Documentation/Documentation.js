@@ -58,9 +58,9 @@ const enhance = compose(
       setSearchPeriod
     }) => () => {
       setIsFilter(true);
-      setStatements(false);
+      setStatements(true);
       setPeriod(moment().format('MMMM [de] YYYY'));
-      setSearchPeriod(moment().format('MMM/YYYY'));
+      setSearchPeriod(moment().format('MM/YYYY'));
     },
     handlerPress: ({
       setIsFilter,

@@ -6,3 +6,4 @@ export * from './volume';
 export * from './researched';
 export * from './user';
 export * from './backend';
+export * from './factors';
