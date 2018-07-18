@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { View, Picker } from 'react-native';
 import styled, { css } from 'styled-components/native';
+import moment from 'moment'
 import {
     Wrapper,
     TopBar,
@@ -50,6 +51,7 @@ const enhance = compose(
     /* withProps(({statements, month}) => {}), */
     lifecycle({
         componentWillMount() {
+            this.props.setSoma(this.props.factors.infos.basePrice + this.props.factors.infos.marketBonus);
         }
     })
 );
@@ -61,7 +63,9 @@ export const PriceMinimum = enhance(
         setGorduraText, volume, setVolume, distancia, setDistancia, cbt, setCbt, ccs, setCcs,
         proteina, setProteina, gordura, setGordura, soma, setSoma, preselecionado, setPreselecionado
     }) => {
+        
         console.log('factors', factors);
+        
         return (
             <Wrapper secondary>
                 <TopBar
@@ -71,21 +75,21 @@ export const PriceMinimum = enhance(
                 />
                 <ScrollWrapperStyle>
                     <WrapperHeader>
-                        <Message size='18'>Insira os dados de sua propriedade abaixo para simular a previsão de preço a ser pago em Abril de 2018</Message>
+                        <Message size='18'>Insira os dados de sua propriedade abaixo para simular a previsão de preço a ser pago em {moment(factors.infos.period, 'M/YYYY').format('MMMM [de] YYYY').charAt(0).toUpperCase() + moment(factors.infos.period, 'M/YYYY').format('MMMM [de] YYYY').slice(1)}</Message>
                     </WrapperHeader>
                     <WrapperItem>
                         <StyledView>
                             <Column1>Preço base</Column1>
                             <Column2>(R$/Litro)</Column2>
                         </StyledView>
-                        <StyledTextInput inverted blue>0,750</StyledTextInput>
+                        <StyledTextInput inverted blue>{new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 3 }).format(factors.infos.basePrice)}</StyledTextInput>
                     </WrapperItem>
                     <WrapperItem>
                         <StyledView>
                             <Column1>Ad. mercado</Column1>
                             <Column2>(mínimo)</Column2>
                         </StyledView>
-                        <StyledTextInput inverted blue>0,340</StyledTextInput>
+                        <StyledTextInput inverted blue>{new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 3 }).format(factors.infos.marketBonus)}</StyledTextInput>
                     </WrapperItem>
 
                     <WrapperSeparator>
@@ -98,7 +102,7 @@ export const PriceMinimum = enhance(
                                 onFocus={() => { if (AdVolumeText === 'L/Dia') setAdVolumeText('') }}
                                 onChangeText={(AdVolumeText) => {
                                     setAdVolumeText(AdVolumeText);
-                                    factors.items.forEach(el => {
+                                    factors.items[0].forEach(el => {
                                         if (el.type === "volume") {
 
                                             if (el.value === parseInt(AdVolumeText)) {
@@ -129,7 +133,7 @@ export const PriceMinimum = enhance(
                             <TextInputUnd
                                 onFocus={() => { if (AdDistanciaText === 'Km') setAdDistanciaText('') }}
                                 onChangeText={(AdDistanciaText) => {
-                                    setAdDistanciaText(AdDistanciaText); factors.items.forEach(el => {
+                                    setAdDistanciaText(AdDistanciaText); factors.items[0].forEach(el => {
                                         if (el.type === "distance") {
                                             if (el.value === parseInt(AdDistanciaText)) {
                                                 let somaAtual = soma + el.bonus;
@@ -158,7 +162,7 @@ export const PriceMinimum = enhance(
                             <TextInputUnd
                                 onFocus={() => { if (CbtText === 'x 1.000/') setCbtText('') }}
                                 onChangeText={(CbtText) => {
-                                    setCbtText(CbtText); factors.items.forEach(el => {
+                                    setCbtText(CbtText); factors.items[0].forEach(el => {
                                         if (el.type === "cbt") {
                                             if (el.value === parseInt(CbtText)) {
                                                 let somaAtual = soma + el.bonus;
@@ -187,7 +191,7 @@ export const PriceMinimum = enhance(
                             <TextInputUnd
                                 onFocus={() => { if (CcsText === 'x 1.000/') setCcsText('') }}
                                 onChangeText={(CcsText) => {
-                                    setCcsText(CcsText); factors.items.forEach(el => {
+                                    setCcsText(CcsText); factors.items[0].forEach(el => {
                                         if (el.type === "ccs") {
                                             if (el.value === parseInt(CcsText)) {
                                                 let somaAtual = soma + el.bonus;
@@ -216,7 +220,7 @@ export const PriceMinimum = enhance(
                             <TextInputUnd
                                 onFocus={() => { if (ProteinaText === 'g/100g') setProteinaText('') }}
                                 onChangeText={(ProteinaText) => {
-                                    setProteinaText(ProteinaText); factors.items.forEach(el => {
+                                    setProteinaText(ProteinaText); factors.items[0].forEach(el => {
                                         if (el.type === "prot") {
                                             if (el.value === parseInt(ProteinaText)) {
                                                 let somaAtual = soma + el.bonus;
@@ -245,7 +249,7 @@ export const PriceMinimum = enhance(
                             <TextInputUnd
                                 onFocus={() => { if (GorduraText === 'g/100g') setGorduraText('') }}
                                 onChangeText={(GorduraText) => {
-                                    setGorduraText(GorduraText); factors.items.forEach(el => {
+                                    setGorduraText(GorduraText); factors.items[0].forEach(el => {
                                         if (el.type === "fat") {
                                             if (el.value === parseInt(GorduraText)) {
                                                 let somaAtual = soma + el.bonus;
@@ -279,13 +283,13 @@ export const PriceMinimum = enhance(
                                         if (itemIndex > 0) {
                                             let subAtual = soma - bpf;
                                             let somaAtual = subAtual + parseFloat(itemValue.replace(",", "."));
-                                            setBpf(parseFloat(itemValue.replace(",", ".")))
+                                            setBpf(itemValue)
                                             setSoma(somaAtual);
                                         }                                        
                                         }}>
                                     <Picker.Item label="  Selecione" value="0" />
-                                    <Picker.Item label="  Padrão" value="0,03" />
-                                    <Picker.Item label="  Nature" value="0,10" />
+                                    <Picker.Item label="  Padrão" value="0.03" />
+                                    <Picker.Item label="  Nature" value="0.10" />
                                 </StyledPicker>
                                 <Icon style={{ position: 'absolute', zIndex: 20, top: 28, left: 85, color: '#6d6d6d' }} size={20} opacity={0.00} name="chevron-down" />
                             </View>
@@ -302,14 +306,14 @@ export const PriceMinimum = enhance(
                                         if (itemIndex > 0) {
                                             let subAtual = soma - pncebt;
                                             let somaAtual = subAtual + parseFloat(itemValue.replace(",", "."));
-                                            setPncebt(parseFloat(itemValue.replace(",", ".")))
+                                            setPncebt(itemValue)
                                             setSoma(somaAtual);
                                         }    
                                     }
                                     }>
                                     <Picker.Item label="  Selecione" value="0" />
-                                    <Picker.Item label="  Sim" value="0,01" />
-                                    <Picker.Item label="  Não" value="0,00" />
+                                    <Picker.Item label="  Sim" value="0.01" />
+                                    <Picker.Item label="  Não" value="0.00" />
                                 </StyledPicker>
                                 <Icon style={{ position: 'absolute', zIndex: 20, top: 28, left: 85, color: '#6d6d6d' }} size={20} opacity={0.00} name="chevron-down" />
                             </View>
@@ -332,7 +336,7 @@ export const PriceMinimum = enhance(
                             <Message size='18' textblack>Indicativo de variação do adicional de mercado para o leite fornecido em:</Message>
                         </View>
                         <StyledViewFooter>
-                            <Indicativo1>Maio de 2018</Indicativo1>
+                            <Indicativo1>{moment(factors.infos.period, 'M/YYYY').format('MMM [de] YYYY').charAt(0).toUpperCase() + moment(factors.infos.period, 'M/YYYY').format('MMM [de] YYYY').slice(1)}</Indicativo1>
                             <Indicativo2>ALTA</Indicativo2>
                         </StyledViewFooter>
                     </WrapperColumn>

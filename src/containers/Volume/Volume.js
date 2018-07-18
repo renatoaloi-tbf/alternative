@@ -175,8 +175,6 @@ const enhance = compose(
       setSearchMonth,
       anoAnterior
     }) => e => {
-      console.log('TÁ CLICANDO', researched.searchVolume);
-      console.log('TÁ CLICANDO ANTERIOR', researched.searchVolumeAnoAnterior);
       console.log('TÁ CLICANDO e', e);
       if (!isEmpty(e)) {
         
@@ -195,13 +193,13 @@ const enhance = compose(
             let mesTouchStart, mesTouchEnd, mesTouchStartAtual, mesTouchEndAtual;
             e.x = parseInt(e.x);
             
-            if(researched.searchVolumeAnoAnterior.byIndex[e.x])  {
+            if(researched.searchVolumeAnoAnterior.byIndex[e.x-1])  {
               //const ra = moment.range(start, end);
               
-              mesTouchStart = moment(researched.searchVolumeAnoAnterior.byIndex[e.x].start_date).startOf('month').subtract(1, 'year').format('YYYY-MM-DD');
-              mesTouchEnd = moment(researched.searchVolumeAnoAnterior.byIndex[e.x].start_date).endOf('month').subtract(1, 'year').format('YYYY-MM-DD');
-              mesTouchStartAtual = moment(researched.searchVolume.byIndex[e.x].start_date).startOf('month').format('YYYY-MM-DD');
-              mesTouchEndAtual = moment(researched.searchVolume.byIndex[e.x].start_date).endOf('month').format('YYYY-MM-DD');
+              mesTouchStart = moment(researched.searchVolumeAnoAnterior.byIndex[e.x-1].start_date).startOf('month').subtract(1, 'year').format('YYYY-MM-DD');
+              mesTouchEnd = moment(researched.searchVolumeAnoAnterior.byIndex[e.x-1].start_date).endOf('month').subtract(1, 'year').format('YYYY-MM-DD');
+              mesTouchStartAtual = moment(researched.searchVolume.byIndex[e.x-1].start_date).startOf('month').format('YYYY-MM-DD');
+              mesTouchEndAtual = moment(researched.searchVolume.byIndex[e.x-1].start_date).endOf('month').format('YYYY-MM-DD');
               const ra = moment.range(mesTouchStart, mesTouchEnd);
               const raAtual = moment.range(mesTouchStartAtual, mesTouchEndAtual);
               
@@ -259,7 +257,7 @@ const enhance = compose(
         setIsCollected(true);
         if (!anoAnterior) {
           setSearchMonth(moment(volume.start_date).format('LL'));
-          const details = researched.searchVolume.byIndex[e.x];
+          const details = researched.searchVolume.byIndex[e.x-1];
           setDetails(details);
         }
         
