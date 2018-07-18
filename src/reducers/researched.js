@@ -148,15 +148,27 @@ const getVolumeData = (state, { payload }) => {
     ra.contains(moment(item.searchDate))
   );
 
+  //console.log('item.searchDate', item.searchDate);
+  console.log('range', range);
+  console.log('volumes', volumes);
+
   forEach(filterVolumes, (item, index) => {
     newState.searchVolume.byIndex[index] = item;
   });
   newState.searchVolume.items = map(filterVolumes, item => ({ y: item.volume }));
   newState.searchVolume.period = setArray(newState.searchVolume.items.length);
-  newState.searchVolume.currentMonth = start.format('MMMM');
-  newState.searchVolume.lastMonth = start.subtract(1, 'month').format('MMMM');
+  newState.searchVolume.currentMonth = moment().format('MMMM');
+  newState.searchVolume.lastMonth = moment().subtract(1, 'month').format('MMMM');
+
+  // const mi = moment.range(moment().startOf('month'), moment().endOf('month'))
+  // const filterVolumesCurrentMonth = filter(volumes, item =>
+  //   mi.contains(moment(item.searchDate))
+  // );
+  const filterVolumesCurrentMonth = volumes.filter(item => {
+    return moment(item.searchDate).format('MMMM') == newState.searchVolume.currentMonth
+  });
   newState.searchVolume.total = reduce(
-    map(filterVolumes, item => item.volume),
+    map(filterVolumesCurrentMonth, item => item.volume),
     (prev, next) => prev + next
   );
 
@@ -198,10 +210,14 @@ const getVolumeDataAnoAnterior = (state, { payload }) => {
   });
   newState.searchVolume.items = map(filterVolumes, item => ({ y: item.volume }));
   newState.searchVolume.period = setArray(newState.searchVolume.items.length);
-  newState.searchVolume.currentMonth = start.format('MMMM');
-  newState.searchVolume.lastMonth = start.subtract(1, 'month').format('MMMM');
+  newState.searchVolume.currentMonth = moment().format('MMMM');
+  newState.searchVolume.lastMonth = moment().subtract(1, 'month').format('MMMM');
+
+  const filterVolumesCurrentMonth = volumes.filter(item => {
+    return moment(item.searchDate).format('MMMM') == newState.searchVolume.currentMonth
+  });
   newState.searchVolume.total = reduce(
-    map(filterVolumes, item => item.volume),
+    map(filterVolumesCurrentMonth, item => item.volume),
     (prev, next) => prev + next
   );
 

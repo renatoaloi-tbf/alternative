@@ -246,7 +246,9 @@ const enhance = compose(
           }
 
         }
-        let volume = researched.searchVolume.byIndex[e.x];
+
+        console.log('researched.searchVolume.byIndex[e.x-1]', researched.searchVolume.byIndex[e.x-1]);
+        let volume = researched.searchVolume.byIndex[e.x-1];
         
         if (volume) {
           setCollected(volume.volume);
@@ -255,7 +257,8 @@ const enhance = compose(
           setCollected(0);
         }
         setIsCollected(true);
-        if (!anoAnterior) {
+        if (!anoAnterior && volume) {
+          console.log('volume.start_date', volume);
           setSearchMonth(moment(volume.start_date).format('LL'));
           const details = researched.searchVolume.byIndex[e.x-1];
           setDetails(details);
