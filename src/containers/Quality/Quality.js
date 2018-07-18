@@ -105,6 +105,8 @@ const enhance = compose(
 	withState('anoAnterior', 'setAnoAnterior', false),
 	withState('searchMonth', 'setSearchMonth', 'Mais recentes'),
 	withState('comparacao', 'setComparacao', false),
+	withState('detalheDia', 'setDetalheDia', false),
+	withState('dadosDia', 'setDadosDia', null),
 	/* withState('groupByYear', 'setGroupByYear', {}), */
 	withHandlers({
 		handlerComparacao: ({
@@ -172,7 +174,9 @@ const enhance = compose(
 			quality,
 			getSearchQuality,
 			setFilter,
-			setClose
+			setClose,
+			setDetalheDia,
+			setDadosDia
 		}) => () => {
 			console.log('fechei 1');
 			setRange({});
@@ -189,7 +193,8 @@ const enhance = compose(
 				//item.selected = false;
 				item.valor = null;
 			});
-
+			setDetalheDia(false);
+			setDadosDia(null);
 			const type = find(types, item => item.selected);
 			getSearchQuality(range, quality.groupByYear, type.value);
 		},
@@ -281,17 +286,20 @@ const enhance = compose(
 			setSearchToMonth,
 			setClose,
 			setFilter,
-			comparacao
+			comparacao,
+			setDetalheDia,
+			setDadosDia
 		}) => e => {
 			console.log('Teste passando aqui 8', quality);
 			if (e && !isEmpty(e)) {
 				console.log('Teste passando aqui 9', types);
 				let month;
 				if (comparacao)
-					month = researched.searchQuality.byIndex[parseInt(e.x)];
+					month = researched.searchQuality.byIndex[parseInt(e.x-1)];
 				else 
-					month = researched.searchQuality.byIndex[e.x];
+					month = researched.searchQuality.byIndex[e.x-1];
 				const type = find(types, item => item.selected);
+				console.log('MONTH', month);
 				if (quality.groupByMonth[month]) {
 					console.log('Teste passando aqui 10', quality);
 					setClose(true);
@@ -361,6 +369,8 @@ const enhance = compose(
 						if (month) {
 							console.log('Teste passando aqui 13', month);
 							getDetailsDayQuality(month, type.value);
+							setDetalheDia(true);
+							setDadosDia(month.period.substr(0,2));
 							types[0].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 4 }).format(month.fat);
 							types[1].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 4 }).format(month.prot);
 							if (month.cbt) {
@@ -486,7 +496,9 @@ export const Quality = enhance(
 		isClose,
 		open,
 		handlerComparacao,
-		anoAnterior
+		anoAnterior,
+		detalheDia,
+		dadosDia
 	}) => {
 		console.log('VALUES TESTE', researched);
 		return (
@@ -534,6 +546,8 @@ export const Quality = enhance(
               					tipo={"quality"}
 								anoAnterior={anoAnterior}
 								valuesAnoAnterior={researched.searchQualityAnoAnterior.items}
+								detalheDia={detalheDia}
+								dia={dadosDia}
 							/>
 						)}
 					</WrapperBar>
