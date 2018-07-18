@@ -20,7 +20,7 @@ export const backend = (state = INITIAL_STATE, action) => {
     case 'LOGIN_SUCCESS':
       return getBackend(state, action);
     default:
-      if (__DEV__) console.log("backend.js - default", state);
+      //if (__DEV__) console.log("backend.js - default", state);
       return state;
   }
 };

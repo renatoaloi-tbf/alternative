@@ -3,9 +3,7 @@ import {forEach, cloneDeep} from 'lodash';
 // Statements
 
 const INITIAL_STATE = {
-  allMonths: [],
-  byMonth: {},
-  byMonthExt: {},
+  items: [],
 };
 
 const Months = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
@@ -14,23 +12,17 @@ const getFactors = (state, {payload}) => {
   const newState = cloneDeep(state);
 
   const {milkPriceFactors} = payload.data[0];
-  forEach(milkPriceFactors, item => {
-    if (item.month > 0)
-    {
-      const dateExt = `${Months[item.month-1]} ${item.year}`;
-      const date = `${padZero(2, item.month)}/${item.year}`;
-      if (newState.allMonths.indexOf(date)) {
-        newState.allMonths.push(date);
-        newState.byMonth[date] = item;
-        newState.byMonthExt[date] = dateExt;
-      }
-    }
+  //console.log('milkPriceFactors', milkPriceFactors);
+  milkPriceFactors.forEach(item => {
+    //console.log('item', item);
+    newState.items.push(item);
   });
   if (__DEV__) console.log("factors.js - getFactors", newState);
   return newState;
 };
 
 export const factors = (state = INITIAL_STATE, action) => {
+  //if (__DEV__) console.log("factors.js - default", state);
   switch (action.type) {
     case 'LOGIN_SUCCESS':
       return getFactors(state, action);
