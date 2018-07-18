@@ -60,7 +60,7 @@ export const Home = enhance(({ openMenu, user }) => {
   console.log('USUARRRRRIO', user);
 
   let image = '', cor = '';
-  switch (user.category) {
+  switch (user.category.toString()) {
     case '':
       image = null;
       cor = null;

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {Component} from 'react';
 import styled from 'styled-components/native';
 import {
 	compose,
@@ -16,7 +16,8 @@ import {
 	Platform,
 	Image as ImageNative,
 	TouchableOpacity as TouchableOpacityNative,
-	Linking
+	Linking,
+	Image
 } from 'react-native';
 
 // Local
@@ -75,12 +76,66 @@ const enhance = compose(
 	pure
 );
 
+class CardIcon extends Component {
+	render(){
+	  switch (this.props.icon) {
+	  case 'home':
+		return(
+		  <Image source={require('../../images/ic_home_black_24px.png')} 
+		  style={{ height: this.props.size, width: this.props.size, marginTop: this.props.marginTop }} />
+		);
+	  case 'certificate':
+		return(
+		  <Image source={require('../../images/ic_quality.png')} 
+		  style={{ height: this.props.size, width: this.props.size, marginTop: this.props.marginTop }} />
+		);
+	  case 'beaker':
+		return(
+		  <Image source={require('../../images/ic_bottle.png')} 
+		  style={{ height: this.props.size, width: this.props.size, marginTop: this.props.marginTop }} />
+		);
+	  case 'currency-usd':
+		return(
+		  <Image source={require('../../images/ic_attach_money_black_24px.png')} 
+		  style={{ height: this.props.size, width: this.props.size, marginTop: this.props.marginTop }} />
+		);
+	  case 'file-document':
+		return(
+		  <Image source={require('../../images/ic_description_black_24px.png')} 
+		  style={{ height: this.props.size, width: this.props.size, marginTop: this.props.marginTop }} />
+		);
+	  case 'lock':
+		return(
+		  <Image source={require('../../images/ic_lock_black_24px.png')} 
+		  style={{ height: this.props.size, width: this.props.size, marginTop: this.props.marginTop }} />
+		);
+	  case 'comment-text':
+		return(
+		  <Image source={require('../../images/ic_speaker_notes_black_24px.png')} 
+		  style={{ height: this.props.size, width: this.props.size, marginTop: this.props.marginTop }} />
+		);
+	  case 'book-open':
+		return(
+		  <Image source={require('../../images/ic_chrome_reader_mode_black_24px.png')} 
+		  style={{ height: this.props.size, width: this.props.size, marginTop: this.props.marginTop }} />
+		);
+	  case 'logout-variant':
+		return(
+		  <Image source={require('../../images/ic_exit_to_app_black_24px.png')} 
+		  style={{ height: this.props.size, width: this.props.size, marginTop: this.props.marginTop }} />
+		);
+	  default:
+		return false;
+	  }
+	}
+  }
+
 export const MenuItem = enhance(({name, icon, goTo, activated}) => {
 	return (
 		<Wrapper>
 			<TouchableOpacity onPress={goTo}>
 				<WrapperIcon>
-					<Icon secondary size={24} name={icon} opacity={0.57} />
+					<CardIcon icon={icon} size={24} opacity={0.57} marginTop={0} />
 				</WrapperIcon>
 				<WrapperText>
 					<Text size={15} weight="600">

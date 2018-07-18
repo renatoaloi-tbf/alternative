@@ -24,6 +24,8 @@ import {FilterOneDatePicker} from '~/components/FilterOneDatePicker';
 import {DocumentationItem} from '~/components/Documentation';
 import {getStatements} from '~/actions';
 import {isNumber} from '~/utils';
+import Intl from 'intl';
+require('intl/locale-data/jsonp/pt');
 
 const enhance = compose(
   connect(
@@ -31,18 +33,23 @@ const enhance = compose(
     {getStatements}
   ),
   withState('count', 'setCount', ({statements}) => {
-    const documetations = statements.byMonth[moment().format('MM/YYYY')];
-    if (documetations && documetations.items.length) {
-      const qtaList = map(documetations.items, item => item.qtd);
+    console.log('statements', statements);
+    const documentations = statements.byMonth[moment().format('MM/YYYY')];
+    console.log('documentations', documentations);
+    if (documentations && documentations.items.length) {
+      const qtaList = map(documentations.items, item => item.qtd);
       const acount = reduce(qtaList, (previ, next) => previ + next);
-      return `${isNumber(acount)} L`;
+      if (isNumber(acount))
+      {
+        return `${new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 0 }).format(acount)} L`;
+      }  
     }
     return `0 L`;
   }),
   withState('isFilter', 'setIsFilter', true),
   withState('isStatements', 'setStatements', true),
   withState('period', 'setPeriod', moment().format('MMMM [de] YYYY')),
-  withState('searchPeriod', 'setSearchPeriod', moment().format('M/YYYY')),
+  withState('searchPeriod', 'setSearchPeriod', moment().format('MM/YYYY')),
   withHandlers({
     handlerClose: ({
       setIsFilter,
@@ -71,7 +78,13 @@ const enhance = compose(
           const qtaList = map(documetations.items, item => item.qtd);
           const acount = reduce(qtaList, (previ, next) => previ + next);
           if (__DEV__) console.log("Documentation.js - handlePress", acount);
-          setCount(`${isNumber(acount)} L`);
+          if (isNumber(acount))
+          {
+            setCount(`${new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 0 }).format(acount)} L`);
+          }  
+          else {
+            setCount(`0 L`);
+          }
         }
         setStatements(true);
         setSearchPeriod(e.value);
@@ -84,7 +97,10 @@ const enhance = compose(
     componentWillMount() {
       this.props.setIsFilter(true);
       const now = moment().format('MM/YYYY');
-      const isData = this.props.statements[now];
+      const isData = this.props.statements.byMonth[now];
+      console.log('now', now);
+      console.log('statements', this.props.statements);
+      console.log('isData', isData);
       if (isData) {
         this.props.setStatements(true);
         this.props.setSearchPeriod(now);
@@ -105,6 +121,8 @@ export const Documentation = enhance(
     searchPeriod,
     count
   }) => {
+    console.log('searchPeriod', searchPeriod);
+    console.log('count', count);
     return (
       <Wrapper secondary>
         <TopBar
@@ -122,22 +140,22 @@ export const Documentation = enhance(
             />
           </WrapperHeader>
           <WrapperItem>
-            {/* {isStatements && (
+            {isStatements && (
               <DocumentationItem
                 month={searchPeriod}
                 info
                 route="StatementOfPayment"
-                icon="file-document-box"
+                icon="statement"
                 description="Demonstrativo de pagamento"
                 value={count}
               />
-            )} */}
-            <DocumentationItem
+            )}
+            {/* <DocumentationItem
               info
               route="StatementOfPayment"
               icon="statement"
               description="Demonstrativo de pagamento"
-            />
+            /> */}
             <DocumentationItem
               light
               route="PriceMinimum"

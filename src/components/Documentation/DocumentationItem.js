@@ -42,7 +42,8 @@ const enhance = compose(
           screen: route,
           navigatorStyle,
           passProps: {
-            month
+            mes: month,
+            outra: 'teste1234'
           }
         });
       }
