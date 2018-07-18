@@ -104,6 +104,7 @@ const enhance = compose(
 	withState('searchToMonth', 'setSearchToMonth', false),
 	withState('anoAnterior', 'setAnoAnterior', false),
 	withState('searchMonth', 'setSearchMonth', 'Mais recentes'),
+	withState('comparacao', 'setComparacao', false),
 	/* withState('groupByYear', 'setGroupByYear', {}), */
 	withHandlers({
 		handlerComparacao: ({
@@ -114,12 +115,14 @@ const enhance = compose(
 			setRange,
 			changed,
 			researched,
-			type,
+			
 			getSearchQuality,
 			quality,
 			searchToMonth,
 			getDetailsDayQuality,
-			getSearchQualityComparacao
+			getSearchQualityComparacao,
+			setComparacao,
+			types
 		}) => (e) => {
 			console.log('CHANGED', changed);
 			//
@@ -128,15 +131,18 @@ const enhance = compose(
 				setRangeAnoAnterior(changed.rangeAnoAnterior);
 				setAnoAnterior(e);
 				console.log('OPA 1');
+				const type = find(types, item => item.selected);
+				console.log('TYPES', types);
 				getSearchQualityComparacao(changed.rangeAtual, quality.groupByYear, type.value, changed.rangeAnoAnterior);
 				console.log('RESEARCHED NA COMPARAÇÃO', researched.newState);
+				setComparacao(true)
 				//getSearchVolumeAnoAnterior(changed.rangeAtual, volume.all, changed.rangeAnoAnterior, volume.all);
 			}
 			else {
 				setRange(range);
 				setRangeAnoAnterior(rangeAnoAnterior);
 				setAnoAnterior(e);
-
+				setComparacao(false)
 				console.log('OPA 2');
 				//getSearchVolumeAnoAnterior(range, volume.all, rangeAnoAnterior, volume.all);
 			}
@@ -248,7 +254,7 @@ const enhance = compose(
 					//aqui em baixo vai a função de comparação
 				}
 				else {
-					setRange(e);
+					setRange(e);					
 					const type = find(types, item => item.selected);
 					if (!searchToMonth) {
 						getSearchQuality(e, quality.groupByYear, type.value);
@@ -274,12 +280,17 @@ const enhance = compose(
 			setSearchMonth,
 			setSearchToMonth,
 			setClose,
-			setFilter
+			setFilter,
+			comparacao
 		}) => e => {
 			console.log('Teste passando aqui 8', quality);
 			if (e && !isEmpty(e)) {
-				console.log('Teste passando aqui 9');
-				const month = researched.searchQuality.byIndex[e.x];
+				console.log('Teste passando aqui 9', types);
+				let month;
+				if (comparacao)
+					month = researched.searchQuality.byIndex[parseInt(e.x)];
+				else 
+					month = researched.searchQuality.byIndex[e.x];
 				const type = find(types, item => item.selected);
 				if (quality.groupByMonth[month]) {
 					console.log('Teste passando aqui 10', quality);
@@ -344,7 +355,7 @@ const enhance = compose(
 					types[5].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 4 }).format(esd);
 				}
 				else {
-					console.log('Teste passando aqui 11', type.valor);
+					console.log('Teste passando aqui 11', type);
 					if (type.valor != null) {
 						console.log('Teste passando aqui 12');
 						if (month) {
@@ -377,12 +388,18 @@ const enhance = compose(
 			setRange,
 			changed,
 			researched,
-			type,
+			
 			getSearchQuality,
 			quality,
 			searchToMonth,
 			getDetailsDayQuality,
-			searchMonth
+			searchMonth,
+			comparacao,
+			setRangeAnoAnterior,
+			setAnoAnterior,
+			types,
+			getSearchQualityComparacao,
+			setComparacao
 		}) => e => {
 			setFilter(false);
 			setClose(true);
@@ -391,70 +408,48 @@ const enhance = compose(
 				endDate: moment()
 			};
 
-			if (changed.rangeAtual) {
-				if (!searchToMonth) {
-					getSearchQuality(changed.rangeAtual, quality.groupByYear, type.value);
-				} else {
-					if (quality.groupByMonth[searchMonth])
-						getDetailsDayQuality(quality.groupByMonth[searchMonth], type.value);
-				}
+			
+
+			const initDateFormat = moment(range.startDate, 'MM/YYYY').format('MMM/YY');
+			const endDateFormat = moment(range.endDate, 'MM/YYYY').format('MMM/YY');
+			
+			if (comparacao) {
+				setRange(changed.rangeAtual);
+				setRangeAnoAnterior(changed.rangeAnoAnterior);
+				setAnoAnterior(true);
+				console.log('OPA 1');
+				const type = find(types, item => item.selected);
+				console.log('TYPES', types);
+				getSearchQualityComparacao(changed.rangeAtual, quality.groupByYear, type.value, changed.rangeAnoAnterior);
+				console.log('RESEARCHED NA COMPARAÇÃO', researched.newState);
+				setComparacao(true)
+
+				console.log('ENTROU NA COMPARAÇÃO', comparacao);
+				const initDateFormatAnterior = moment(changed.rangeAnoAnterior.startDate, 'MM/YYYY').format('MMM/YY');
+				const endDateFormatAnterior = moment(changed.rangeAnoAnterior.endDate, 'MM/YYYY').format('MMM/YY');
+				setSearchMonth(`(${initDateFormat} - ${endDateFormat}) / (${initDateFormatAnterior} - ${endDateFormatAnterior}) `);
 			}
 			else {
-				if (!searchToMonth) {
-					getSearchQuality(range, quality.groupByYear, type.value);
-				} else {
-					if (quality.groupByMonth[searchMonth])
-						getDetailsDayQuality(quality.groupByMonth[searchMonth], type.value);
+				if (changed.rangeAtual) {
+					if (!searchToMonth) {
+						getSearchQuality(changed.rangeAtual, quality.groupByYear, type.value);
+					} else {
+						if (quality.groupByMonth[searchMonth])
+							getDetailsDayQuality(quality.groupByMonth[searchMonth], type.value);
+					}
 				}
+				else {
+					if (!searchToMonth) {
+						getSearchQuality(range, quality.groupByYear, type.value);
+					} else {
+						if (quality.groupByMonth[searchMonth])
+							getDetailsDayQuality(quality.groupByMonth[searchMonth], type.value);
+					}
+				}
+
+				setSearchMonth(`${initDateFormat} - ${endDateFormat}`);
 			}
-
-			const initDateFormat = moment(range.startDate, 'MM/YYYY').format(
-				'MMM/YY'
-			);
-			const endDateFormat = moment(range.endDate, 'MM/YYYY').format('MMM/YY');
-			setSearchMonth(`${initDateFormat} - ${endDateFormat}`);
-
-			/* setFilter(false);
-			setClose(true);
-			const range = {
-				startDate: moment().subtract(1, 'years'),
-				endDate: moment()
-			};
-			
-			if (changed.rangeAtual) {
-				console.log('OPA 1');
-				setSearchMonth(
-				  `${moment(changed.rangeAtual.startDate, 'MM/YYYY').format('MMM/YYYY')} - ${moment(
-					changed.rangeAtual.endDate,
-					'MM/YYYY'
-				  ).format('MMM/YYYY')}`
-				);
-				console.log('OPA 2');
-				getSearchVolume(changed.rangeAtual, volume.all);
-				setRange({ ...changed.rangeAtual });
-				console.log('OPA 3');
-			  }
-			  else {
-				console.log('OPA 4');
-				setSearchMonth(
-				  `${moment(range.startDate, 'MM/YYYY').format('MMM/YYYY')} - ${moment(
-					range.endDate,
-					'MM/YYYY'
-				  ).format('MMM/YYYY')}`
-				);
-				console.log('OPA 5');
-				getSearchVolume(range, volume.all);
-				setRange({ ...range });
-				console.log('OPA 6');
-			  }
-
-
-
-			const initDateFormat = moment(range.startDate, 'MM/YYYY').format(
-				'MMM/YY'
-			);
-			const endDateFormat = moment(range.endDate, 'MM/YYYY').format('MMM/YY');
-			setSearchMonth(`${initDateFormat} - ${endDateFormat}`); */
+					
 		},
 		open: ({ setClose }) => () => {
 			setClose(true);

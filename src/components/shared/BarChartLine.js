@@ -28,9 +28,11 @@ const enhancer = compose(
     withProps(({ values, valueFormatter, valueFormatterIndex, onSelect, media, tipo, anoAnterior, valuesAnoAnterior }) => ({
         
         data: (() => {
+            let arrayTeste = [{y:0}];
             if (__DEV__) console.log('valueFormatter[0]', valueFormatter[0]);
             if (__DEV__) console.log('anoAnterior', anoAnterior);
-
+            values = arrayTeste.concat(values);
+            values = values.concat(arrayTeste);
             console.log('values 1', values);
             console.log('trataCores 1', trataCores);
 
@@ -311,11 +313,17 @@ const enhancer = compose(
                 }
                 
             }
-
+            let arrayTesteAxis = [""];
+            novoFormato = arrayTesteAxis.concat(novoFormato);
+            novoFormato = novoFormato.concat(arrayTesteAxis);
             console.log('TRATACORES NOVO', novoFormato);
             return {
                 axisMinimum: 0,
                 axisLineWidth: 0,
+                zeroLine: {
+                    enabled: true,
+                    lineWidth: 1.5
+                },
                 limitLine: 115,
                 drawGridLines: false,
                 valueFormatter: [...novoFormato],
@@ -341,7 +349,7 @@ const enhancer = compose(
                         labelPosition: 'LEFT_BOX'
                     }],
                     zeroLine: {
-                        enabled: true,
+                        enabled: false,
                         lineWidth: 1.5
                     }
                 },
@@ -350,7 +358,7 @@ const enhancer = compose(
                     drawAxisLine: false,
                     drawGridLines: false,
                     zeroLine: {
-                        enabled: true,
+                        enabled: false,
                         lineWidth: 1.5
                     }
                 },
