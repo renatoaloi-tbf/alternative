@@ -53,7 +53,7 @@ const enhance = compose(
     'Taxa',
     'Deduções Ali'
   ]),
-  withProps(({statements, month}) => ({
+  withProps(({statements, month}) => { console.log('recebi month', month); return(  {
     data: map(statements.byMonth[month].items, item => {
       var qtd = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 0 }).format(item.qtd);
       // + item.un
@@ -64,11 +64,15 @@ const enhance = compose(
       
       return [item.desc, qtd + 'L', vl, total, tax, ded];
     })
-  })),
+  })}
+  ),
   withState('widthArr', 'setWidthArr', [150, 60, 80, 100, 120, 140]),
   lifecycle({
     componentWillMount() {
-      this.props.setMonth(moment().subtract(1, 'M').format('MM/YYYY'));
+      console.log('recebi month 2', this.props.mes);
+      console.log('recebi month 3', this.props.outra);
+      this.props.setMonth(this.props.mes);
+      //this.props.setMonth(moment().subtract(1, 'M').format('MM/YYYY'));
       this.props.getStatements[this.props.month];
     }
   })
