@@ -198,6 +198,8 @@ const enhance = compose(
             if(researched.searchVolumeAnoAnterior.byIndex[e.x])  {
               //const ra = moment.range(start, end);
               
+              console.log('researched.searchVolumeAnoAnterior', researched.searchVolumeAnoAnterior.byIndex[e.x]);
+              console.log('researched.searchVolume', researched.searchVolume.byIndex[e.x]);
               mesTouchStart = moment(researched.searchVolumeAnoAnterior.byIndex[e.x].start_date).startOf('month').subtract(1, 'year').format('YYYY-MM-DD');
               mesTouchEnd = moment(researched.searchVolumeAnoAnterior.byIndex[e.x].start_date).endOf('month').subtract(1, 'year').format('YYYY-MM-DD');
               mesTouchStartAtual = moment(researched.searchVolume.byIndex[e.x].start_date).startOf('month').format('YYYY-MM-DD');
@@ -248,6 +250,8 @@ const enhance = compose(
           }
 
         }
+
+        console.log('researched.searchVolume.byIndex[e.x]', researched.searchVolume.byIndex[e.x]);
         let volume = researched.searchVolume.byIndex[e.x];
         
         if (volume) {
@@ -257,7 +261,8 @@ const enhance = compose(
           setCollected(0);
         }
         setIsCollected(true);
-        if (!anoAnterior) {
+        if (!anoAnterior && volume) {
+          console.log('volume.start_date', volume);
           setSearchMonth(moment(volume.start_date).format('LL'));
           const details = researched.searchVolume.byIndex[e.x];
           setDetails(details);

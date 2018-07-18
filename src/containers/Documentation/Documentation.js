@@ -160,7 +160,7 @@ export const Documentation = enhance(
               light
               route="PriceMinimum"
               icon="currency-usd"
-              description="Preço minimo"
+              description="Preço mínimo"
             />
             <DocumentationItem
               route="StatementOfPayment"
