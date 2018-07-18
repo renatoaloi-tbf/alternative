@@ -23,9 +23,11 @@ const enhancer = compose(
         media: number,
         tipo: string,
         anoAnterior: bool,
-        valuesAnoAnterior: array
+        valuesAnoAnterior: array,
+        detalheDia: bool,
+        dia: string
     }),
-    withProps(({ values, valueFormatter, valueFormatterIndex, onSelect, media, tipo, anoAnterior, valuesAnoAnterior }) => ({
+    withProps(({ values, valueFormatter, valueFormatterIndex, onSelect, media, tipo, anoAnterior, valuesAnoAnterior, detalheDia, dia }) => ({
         
         data: (() => {
             let arrayTeste = [{y:0}];
@@ -295,8 +297,15 @@ const enhancer = compose(
                         novoFormato.push(moment(element, 'MM/YYYY').format('MMM').toUpperCase());
                     }
                     else if (moment(element, 'DD/MM/YY', true).isValid()) {
-                        count = count + 1;
-                        novoFormato.push(moment(element, 'DD/MM/YYYY').format('MMM').toUpperCase() + ' ' + count);
+                        if (detalheDia) {
+                            count = count + 1;
+                            novoFormato.push(moment(element, 'DD/MM/YYYY').format('MMM').toUpperCase() + ' ' + dia);
+                        }
+                        else {
+                            count = count + 1;
+                            novoFormato.push(moment(element, 'DD/MM/YYYY').format('MMM').toUpperCase() + ' ' + count);
+                        }
+                        
                     }
                 });
             }
@@ -310,8 +319,7 @@ const enhancer = compose(
                     Object.values(valueFormatterIndex).forEach(element => {
                         novoFormato.push(moment(element.searchDate).locale('pt-br').format('DD').toUpperCase());
                     });
-                }
-                
+                } 
             }
             let arrayTesteAxis = [""];
             novoFormato = arrayTesteAxis.concat(novoFormato);
