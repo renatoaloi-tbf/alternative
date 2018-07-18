@@ -20,6 +20,10 @@ import {
     lifecycle
 } from 'recompose';
 import {connect} from 'react-redux';
+import {isNumber} from 'lodash';
+import Intl from 'intl';
+
+require( 'intl/locale-data/jsonp/pt' );
 
 const enhance = compose(
     connect(
@@ -34,6 +38,14 @@ const enhance = compose(
     withState('CcsText', 'setCcsText', 'x 1.000/'), 
     withState('ProteinaText', 'setProteinaText', 'g/100g'), 
     withState('GorduraText', 'setGorduraText', 'g/100g'), 
+
+    withState('volume', 'setVolume', 0.0), 
+    withState('distancia', 'setDistancia', 0.0), 
+    withState('cbt', 'setCbt', 0.0), 
+    withState('ccs', 'setCcs', 0.0), 
+    withState('proteina', 'setProteina', 0.0), 
+    withState('gordura', 'setGordura', 0.0), 
+
     /* withProps(({statements, month}) => {}), */
     lifecycle({
         componentWillMount() {
@@ -45,7 +57,8 @@ export const PriceMinimum = enhance (
     ({
         factors, bpf, pncebt, AdVolumeText, AdDistanciaText, CbtText, CcsText, ProteinaText, GorduraText,
         setBpf, setPncebt, setAdVolumeText, setAdDistanciaText, setCbtText, setCcsText, setProteinaText, 
-        setGorduraText
+        setGorduraText, volume, setVolume, distancia, setDistancia, cbt, setCbt, ccs, setCcs, 
+        proteina, setProteina, gordura, setGordura
     }) => 
     {
         console.log('factors', factors);
@@ -65,14 +78,14 @@ export const PriceMinimum = enhance (
                             <Column1>Preço base</Column1>
                             <Column2>(R$/Litro)</Column2>
                         </StyledView>
-                        <StyledTextInput inverted blue>0,7500</StyledTextInput>
+                        <StyledTextInput inverted blue>0,750</StyledTextInput>
                     </WrapperItem>
                     <WrapperItem>
                         <StyledView>
                             <Column1>Ad. mercado</Column1>
                             <Column2>(mínimo)</Column2>
                         </StyledView>
-                        <StyledTextInput inverted blue>0,3400</StyledTextInput>
+                        <StyledTextInput inverted blue>0,340</StyledTextInput>
                     </WrapperItem>
 
                     <WrapperSeparator>
@@ -83,11 +96,15 @@ export const PriceMinimum = enhance (
                         <ViewColumn2>
                             <TextInputUnd 
                                 onFocus={ () => { if(AdVolumeText === 'L/Dia') setAdVolumeText('') } } 
-                                onChangeText={ (AdVolumeText) => setAdVolumeText(AdVolumeText) }
+                                onChangeText={ (AdVolumeText) => { setAdVolumeText(AdVolumeText); factors.items.forEach(el => { 
+                                    //if (isNumber(AdVolumeText)) {
+                                        if(el.type==="volume") { if (el.value === parseInt(AdVolumeText)) setVolume(el.bonus); }  
+                                    //}
+                                }); }  }
                                 onBlur={ () => { if(AdVolumeText === '') setAdVolumeText('L/Dia') } } 
                                 value={ AdVolumeText } 
                             />
-                            <StyledTextInput white>0,0390</StyledTextInput>
+                            <StyledTextInput white>{new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 3 }).format(volume)}</StyledTextInput>
                         </ViewColumn2>
                     </WrapperItem>
                     <WrapperItem>
@@ -95,11 +112,15 @@ export const PriceMinimum = enhance (
                         <ViewColumn2>
                             <TextInputUnd 
                                 onFocus={ () => { if(AdDistanciaText === 'Km') setAdDistanciaText('') } } 
-                                onChangeText={ (AdDistanciaText) => setAdDistanciaText(AdDistanciaText) }
+                                onChangeText={ (AdDistanciaText) => { setAdDistanciaText(AdDistanciaText); factors.items.forEach(el => { 
+                                    //if (isNumber(AdDistanciaText)) {
+                                        if(el.type==="distance") { if (el.value === parseInt(AdDistanciaText)) setDistancia(el.bonus); }  
+                                    //}
+                                }); } }
                                 onBlur={ () => { if(AdDistanciaText === '') setAdDistanciaText('Km') } } 
                                 value={ AdDistanciaText } 
                             />
-                            <StyledTextInput white>0,0390</StyledTextInput>
+                            <StyledTextInput white>{new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 3 }).format(distancia)}</StyledTextInput>
                         </ViewColumn2>
                     </WrapperItem>
                     <WrapperItem>
@@ -107,11 +128,15 @@ export const PriceMinimum = enhance (
                         <ViewColumn2>
                             <TextInputUnd 
                                 onFocus={ () => { if(CbtText === 'x 1.000/') setCbtText('') } } 
-                                onChangeText={ (CbtText) => setCbtText(CbtText) }
+                                onChangeText={ (CbtText) => {setCbtText(CbtText); factors.items.forEach(el => { 
+                                    //if (isNumber(CbtText)) {
+                                        if(el.type==="cbt") { if (el.value === parseInt(CbtText)) setCbt(el.bonus); }  
+                                   // }
+                                }); } }
                                 onBlur={ () => { if(CbtText === '') setCbtText('x 1.000/') } }
                                 value={ CbtText } 
                             />
-                            <StyledTextInput white>0,0390</StyledTextInput>
+                            <StyledTextInput white>{new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 3 }).format(cbt)}</StyledTextInput>
                         </ViewColumn2>
                     </WrapperItem>
                     <WrapperItem>
@@ -119,11 +144,15 @@ export const PriceMinimum = enhance (
                         <ViewColumn2>
                             <TextInputUnd 
                                 onFocus={ () => { if(CcsText === 'x 1.000/') setCcsText('') } } 
-                                onChangeText={ (CcsText) => setCcsText(CcsText) }
+                                onChangeText={ (CcsText) => { setCcsText(CcsText); factors.items.forEach(el => { 
+                                    //if (isNumber(CcsText)) {
+                                        if(el.type==="ccs") { if (el.value === parseInt(CcsText)) setCcs(el.bonus); }  
+                                    //}
+                                }); } }
                                 onBlur={ () => { if(CcsText === '') setCcsText('x 1.000/') } }
                                 value={ CcsText } 
                             />
-                            <StyledTextInput white>0,0390</StyledTextInput>
+                            <StyledTextInput white>{new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 3 }).format(ccs)}</StyledTextInput>
                         </ViewColumn2>
                     </WrapperItem>
                     <WrapperItem>
@@ -131,11 +160,15 @@ export const PriceMinimum = enhance (
                         <ViewColumn2>
                             <TextInputUnd 
                                 onFocus={ () => { if(ProteinaText === 'g/100g') setProteinaText('') } } 
-                                onChangeText={ (ProteinaText) => setProteinaText(ProteinaText) }
+                                onChangeText={ (ProteinaText) => { setProteinaText(ProteinaText); factors.items.forEach(el => { 
+                                    //if (isNumber(ProteinaText)) {
+                                        if(el.type==="prot") { if (el.value === parseInt(ProteinaText)) setProteina(el.bonus); }  
+                                    //}
+                                }); } }
                                 onBlur={ () => { if(ProteinaText === '') setProteinaText('g/100g') } }
                                 value={ ProteinaText } 
                             />
-                            <StyledTextInput white>0,0390</StyledTextInput>
+                            <StyledTextInput white>{new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 3 }).format(proteina)}</StyledTextInput>
                         </ViewColumn2>
                     </WrapperItem>
                     <WrapperItem>
@@ -143,11 +176,15 @@ export const PriceMinimum = enhance (
                         <ViewColumn2>
                             <TextInputUnd 
                                 onFocus={ () => { if(GorduraText === 'g/100g') setGorduraText('') } } 
-                                onChangeText={ (GorduraText) => setGorduraText(GorduraText) }
+                                onChangeText={ (GorduraText) => { setGorduraText(GorduraText); factors.items.forEach(el => { 
+                                    //if (isNumber(GorduraText)) {
+                                        if(el.type==="fat") { if (el.value === parseInt(GorduraText)) setGordura(el.bonus); }  
+                                    //}
+                                }); } }
                                 onBlur={ () => { if(GorduraText === '') setGorduraText('g/100g') } }
                                 value={ GorduraText } 
                             />
-                            <StyledTextInput white>0,0390</StyledTextInput>
+                            <StyledTextInput white>{new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 3 }).format(gordura)}</StyledTextInput>
                         </ViewColumn2>
                     </WrapperItem>
                     <WrapperItem>

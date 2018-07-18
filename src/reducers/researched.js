@@ -512,7 +512,7 @@ const getPriceCompareData = (state, { payload }) => {
 
 
 export const researched = (state = INITIAL_STATE, action) => {
-  if (__DEV__) console.log("researched.js - action.type", action.type);
+  //if (__DEV__) console.log("researched.js - action.type", action.type);
   switch (action.type) {
     case 'SEARCH_QUALITY':
       return getData(state, action);
