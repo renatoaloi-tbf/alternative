@@ -50,7 +50,7 @@ export const VolumeDetails = enhance(({details}) => {
           Volume Coletado
         </TextLeft>
         <TextRight size={12} secondary>
-          {details.volume ? new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 2 }).format(details.volume) : 0} L
+          {details.volume ? details.volume : 0} L
         </TextRight>
       </WrapperTetx>
       <WrapperTetx>

@@ -12,7 +12,7 @@ import { EmptyText } from '~/components/shared';
 
 import Intl from 'intl';
 
-require( 'intl/locale-data/jsonp/pt' );
+require('intl/locale-data/jsonp/pt');
 
 const enhancer = compose(
     setPropTypes({
@@ -28,14 +28,46 @@ const enhancer = compose(
         dia: string
     }),
     withProps(({ values, valueFormatter, valueFormatterIndex, onSelect, media, tipo, anoAnterior, valuesAnoAnterior, detalheDia, dia }) => ({
-        
+
         data: (() => {
-            let arrayTeste = [{y:0}];
-            if (__DEV__) console.log('valueFormatter[0]', valueFormatter[0]);
+            let arrayTeste = [{ y: 0, searchDate: '' }];
+            if (__DEV__) console.log('valueFormatter[0]', valueFormatter);
             if (__DEV__) console.log('anoAnterior', anoAnterior);
+            if (__DEV__) console.log('value Formatter by index', valueFormatterIndex);
             values = arrayTeste.concat(values);
             values = values.concat(arrayTeste);
             console.log('values 1', values);
+            if (anoAnterior) {
+                valuesAnoAnterior = arrayTeste.concat(valuesAnoAnterior);
+                valuesAnoAnterior = valuesAnoAnterior.concat(arrayTeste);
+
+                if (tipo == "volume") {
+                    let arrayMeses = []
+                    values.forEach(item => {
+                        if ((arrayMeses.indexOf(moment(item.searchDate).locale('pt-br').format('MMM').toUpperCase()) == -1) && item.searchDate != "") {
+                            arrayMeses.push({mes: moment(item.searchDate).locale('pt-br').format('MMM').toUpperCase(), dados : { y: 0 }}) ;
+                        }
+                    });
+                    let cont = 0;
+                    
+                    
+                    console.log('ARRAY MESES', arrayMeses);
+                    arrayMeses.forEach(function (value, i) {
+                        console.log('%d: %s', i, value);
+                    });
+                    /* arrayMeses.forEach(function (mes, indexMes) {
+                        console.log('MES EM QUESTÃO', mes);
+                        Object.values(valueFormatterIndex).forEach(itemFI => {
+                            if (indexMes == moment(itemFI.searchDate).locale('pt-br').format('MMM').toUpperCase()) {
+    
+                                console.log('TEM DATA IGUAL', itemFI);
+                            }
+                        });    
+                    }); */
+                }
+
+            }
+            console.log('values ano anterior 1', valuesAnoAnterior);
             console.log('trataCores 1', trataCores);
 
             let trataCores = [], trataCoresAnoAnterior = [], arrayMedia = [];
@@ -160,7 +192,7 @@ const enhancer = compose(
 
                             ],
                             config: {
-                                barWidth: 0.5,
+                                barWidth: 0.3,
                                 group: {
                                     fromX: 0,
                                     groupSpace: 0.2,
@@ -305,21 +337,27 @@ const enhancer = compose(
                             count = count + 1;
                             novoFormato.push(moment(element, 'DD/MM/YYYY').format('MMM').toUpperCase() + ' ' + count);
                         }
-                        
+
                     }
                 });
             }
             else {
                 if (anoAnterior) {
+                    console.log('valueFormatterIndex', valueFormatterIndex);
                     Object.values(valueFormatterIndex).forEach(element => {
-                        novoFormato.push(moment(element.searchDate).locale('pt-br').format('MMM').toUpperCase());
-                    });    
+                        if (element.searchDate == "") {
+                            novoFormato.push(moment(element.searchDate).locale('pt-br').format('MMM').toUpperCase());
+                        }
+                        else {
+                            novoFormato.push("");
+                        }
+                    });
                 }
                 else {
                     Object.values(valueFormatterIndex).forEach(element => {
                         novoFormato.push(moment(element.searchDate).locale('pt-br').format('DD').toUpperCase());
                     });
-                } 
+                }
             }
             let arrayTesteAxis = [""];
             novoFormato = arrayTesteAxis.concat(novoFormato);
@@ -335,9 +373,9 @@ const enhancer = compose(
                 limitLine: 115,
                 drawGridLines: false,
                 valueFormatter: [...novoFormato],
-                granularityEnabled: true,
-                granularity: 1,
-                position: 'BOTTOM'
+                /* granularityEnabled: true,
+                granularity: 1, */
+                position: 'BOTTOM',
             };
         })(),
         yAxis: (() => {
@@ -375,6 +413,7 @@ const enhancer = compose(
         })(),
         zoom: (() => {
             if (moment(valueFormatter[0], 'MM/YYYY', true).isValid()) {
+                console.log('Entrou no zoom 1');
                 return {
                     scaleX: 2,
                     scaleY: 1,
@@ -384,14 +423,29 @@ const enhancer = compose(
             }
             else {
                 if (tipo == 'volume') {
-                    return {
-                        scaleX: 2,
-                        scaleY: 1,
-                        xValue: 0,
-                        yValue: 1
-                    };
+                    console.log('Entrou no zoom 2');
+                    if (anoAnterior) {
+                        console.log('Entrou no zoom 2 com Comparação');
+                        return {
+                            scaleX: 22,
+                            scaleY: 1,
+                            xValue: 2,
+                            yValue: 1
+                        };
+                    }
+                    else {
+                        console.log('Entrou no zoom 2 sem Comparação');
+                        return {
+                            scaleX: 7,
+                            scaleY: 1,
+                            xValue: 2,
+                            yValue: 1
+                        };
+                    }
+
                 }
                 else {
+                    console.log('Entrou no zoom 3');
                     return {
                         scaleX: 4,
                         scaleY: 1,
@@ -399,6 +453,7 @@ const enhancer = compose(
                         yValue: 1
                     };
                 }
+                console.log('Entrou no zoom 4');
             }
         })(),
         onSelect: e => {
