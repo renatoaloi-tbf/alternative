@@ -3,7 +3,7 @@ import {withNavigatorContext, withNavigations} from '~/enhancers';
 import {Login} from '~/containers/Login';
 import {Filter} from '~/containers/Filter';
 import {Home, HomeRedirect} from '~/containers/Home';
-import {Documentation, StatementOfPayment} from '~/containers/Documentation';
+import {Documentation, StatementOfPayment, Blank} from '~/containers/Documentation';
 import {Price} from '~/containers/Price';
 import {Volume} from '~/containers/Volume';
 import {Quality} from '~/containers/Quality';
@@ -24,6 +24,7 @@ export const registerScreens = (store, Provider) => {
   registerComponent('Home', Home);
   registerComponent('NotificationModal', NotificationModal);
   registerComponent('Documentation', Documentation);
+  registerComponent('Blank', Blank);
   registerComponent('Price', Price);
   registerComponent('Volume', Volume);
   registerComponent('Quality', Quality);

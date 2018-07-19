@@ -94,8 +94,8 @@ export const Home = enhance(({ openMenu, user }) => {
         rightComponent={<Icon inverted name="bell" />}
         leftComponent={<DrawerButton />}
       />
+
       <WrapperAvatar >
-        
         {image ? (
           <ViewPin>
             {componentImage}
@@ -105,11 +105,12 @@ export const Home = enhance(({ openMenu, user }) => {
           <ViewPin>
           </ViewPin>
           )}
-        <Border>
+        <View>
           <AvatarDefault source={ImagesApp['avatarBlue']} />
-        </Border>
+        </View>
       </WrapperAvatar>
-      <WrapperCard>
+
+      <WrapperCard >
         <Card>
           <Users>
             <Text align="center" size={20} info>
@@ -130,7 +131,10 @@ export const Home = enhance(({ openMenu, user }) => {
             <RecentNumbers result={`${new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(user.recent.lastMonth.price)}/L`} description={`${moment(user.recent.lastMonth.period, 'MM/YYYY').format('MMMM')}`} />
           </WrapperRecentNumbers>
         </Card>
-        <WrapperQuickMenu>
+      </WrapperCard>
+
+      <WrapperQuickMenu>
+        <WrapperMenuRow>
           <QuickMenuItem
             route="Quality"
             info
@@ -143,6 +147,8 @@ export const Home = enhance(({ openMenu, user }) => {
             icon="beaker"
             description="Volume"
           />
+        </WrapperMenuRow>
+        <WrapperMenuRow>
           <QuickMenuItem
             route="Price"
             warning
@@ -155,28 +161,28 @@ export const Home = enhance(({ openMenu, user }) => {
             icon="file-document"
             description="Documentos"
           />
-        </WrapperQuickMenu>
-      </WrapperCard>
-    </Wrapper>
+        </WrapperMenuRow>
+      </WrapperQuickMenu>
 
+    </Wrapper>
   );
 });
 
-const ViewPin = styled.View`
-  padding-left: 60;
-  flex-direction: row;
-  z-index: 10; 
-  position: absolute;
+const WrapperAvatar = styled.View`
+  margin-top: 20;
+  display: flex;
+  align-items: center;
+  box-shadow: 10px 5px 5px black;
+  elevation: 1;
+  z-index: 2;
 `;
 
-const Card = styled.View`
-  background-color: ${props => props.theme.bg};
-  padding-left: 20;
-  padding-right: 20;
-  border-radius: ${props => props.theme.borderRadius};
-  padding-top: 50;
-  box-shadow: 1px 0px 3px #0f0f0f;
-  elevation: 3;
+const ViewPin = styled.View`
+  flex-direction: row;
+  align-self: flex-end;
+  z-index: 10; 
+  position: absolute;
+  width: 47%;
 `;
 
 const WrapperCard = styled.View`
@@ -184,9 +190,33 @@ const WrapperCard = styled.View`
   padding-right: 7;
   padding-bottom: 10;
   box-shadow: 0px 0.5px 1px #e0e0e0;
-  position: absolute;
   width: 100%;
-  top: 100;
+  margin-top: -60; 
+`;
+
+const Card = styled.View`
+  background-color: ${props => props.theme.bg};
+  padding-left: 20;
+  padding-right: 20;
+  padding-top: 50; 
+  border-radius: ${props => props.theme.borderRadius};
+  box-shadow: 1px 0px 3px #0f0f0f;
+  elevation: 3;
+  z-index: 1;
+`;
+
+const WrapperQuickMenu = styled.View`
+  padding-left: 7;
+  padding-right: 7;
+  flex-direction: column;
+  flex-grow: 1;
+`;
+
+const WrapperMenuRow = styled.View`
+  padding-bottom: 7;
+  flex-direction: row;
+  justify-content: space-between;
+  flex-grow: 1;
 `;
 
 const WrapperRecentNumbers = styled.View`
@@ -210,61 +240,9 @@ const City = Text.extend`
   opacity: 0.75;
 `;
 
-const WrapperAvatar = styled.View`
-  top: 20;
-  left: 38%;
-  right: 38%;
-  box-shadow: 10px 5px 5px black;
-  elevation: 1;
-  z-index: 2;
-`;
-
 const AvatarDefault = Image.extend`
   width: 92;
   height: 92;
   border-radius: 10;
   z-index: 1;
 `;
-
-const Border = styled.View``;
-const Header = styled.View`
-  z-index: 2;
-  height: 40;
-`;
-
-const AvatarIcon = styled.View`
-  top: -4;
-  flex: 1;
-  justify-content: center;
-  border: 2px solid #fff;
-  height: 26;
-  width: 26;
-  background-color: ${props => props.theme.warning};
-  z-index: 2;
-  align-items: center;
-  position: absolute;
-  border-radius: 20;
-  box-shadow: 0px 2px 1px #e3e3;
-  z-index: 2;
-`;
-
-const ViewIcon = styled.View`
-  z-index: 2;
-  flex-direction: row;
-  shadow-color: transparent;
-  width: 100%;
-  align-items: center;
-  justify-content: center;
-  margin-left: 30;
-`;
-const Description = styled.View`
-  top: -12;
-  padding-left: 70;
-`;
-
-const WrapperQuickMenu = styled.View`
-  flex-direction: row;
-  flex-wrap: wrap;
-  justify-content: space-between;
-`;
-

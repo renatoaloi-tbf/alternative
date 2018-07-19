@@ -58,14 +58,10 @@ class CardIcon extends Component {
 const QuickMenuItemEnhance = enhance(props => {
   return (
     <TouchableOpacityDefault {...props} onPress={props.goTo}>
-      <WrapperIcon>
-        <CardIcon icon={props.icon} />
-      </WrapperIcon>
-      <Bottom>
-        <Text inverted size={20} weight={'bold'}>
-          {props.description}
-        </Text>
-      </Bottom>
+      <CardIcon icon={props.icon} />
+      <Text inverted size={20} weight={'bold'} style={{ paddingTop: 10 }}>
+        {props.description}
+      </Text>
     </TouchableOpacityDefault>
   );
 });
@@ -73,10 +69,13 @@ const QuickMenuItemEnhance = enhance(props => {
 export const QuickMenuItem = styled(QuickMenuItemEnhance)``;
 
 const TouchableOpacityDefault = styled(TouchableOpacity)`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
   align-items: center;
+  align-content: center;
   width: 49%;
   border-radius: ${props => props.theme.borderRadius};
-  margin-top: 8;
   box-shadow: 1px 0px 3px #0f0f0f;
   elevation: 3;
   
@@ -103,51 +102,4 @@ const TouchableOpacityDefault = styled(TouchableOpacity)`
     css`
       background-color: ${props => props.theme.infoMenu};
     `}
-`;
-
-const Wrapper = styled.View`
-  align-items: center;
-  width: 49%;
-  border-radius: ${props => props.theme.borderRadius};
-  margin-top: 8;
-  box-shadow: 0px 0.5px 1px #e0e0e0;
-  shadow-color: #000;
-  shadow-offset: {width: 3, height: 2};
-  shadow-opacity: 0.8;
-  shadow-radius: 2;
-  elevation: 1;
-  ${props =>
-    props.danger &&
-    css`
-      background-color: ${props => props.theme.dangerMenu};
-    `}
-
-  ${props =>
-    props.success &&
-    css`
-      background-color: ${props => props.theme.successMenu};
-    `}
-
-  ${props =>
-    props.warning &&
-    css`
-      background-color: ${props => props.theme.warningMenu};
-    `}
-
-  ${props =>
-    props.info &&
-    css`
-      background-color: ${props => props.theme.infoMenu};
-    `}
-`;
-
-const Bottom = styled.View`
-  padding-top: 15;
-  padding-bottom: 10;
-`;
-
-const IconDefault = Icon.extend``;
-
-const WrapperIcon = styled.View`
-  padding-top: 10;
 `;
