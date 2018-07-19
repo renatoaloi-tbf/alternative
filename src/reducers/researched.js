@@ -251,6 +251,7 @@ const getVolumeDataAnoAnterior = (state, { payload }) => {
   /**
    * VOLUME DO ANO ANTERIOR
    */
+  console.log('RANGE DO ANO ANTERIOR STARTDATE', rangeAnterior.startDate);
   const startAnterior = moment(rangeAnterior.startDate, 'MM/YYYY').startOf('month');
   const endAnterior = moment(rangeAnterior.endDate, 'MM/YYYY').endOf('month');
   const raAnterior = moment.range(startAnterior, endAnterior);
@@ -274,7 +275,8 @@ const getVolumeDataAnoAnterior = (state, { payload }) => {
   newState.searchVolumeAnoAnterior.period = setArray(newState.searchVolumeAnoAnterior.items.length);
   newState.searchVolumeAnoAnterior.currentMonth = startAnterior.format('MMMM');
   newState.searchVolumeAnoAnterior.lastMonth = startAnterior.subtract(1, 'month').format('MMMM');
-  newState.searchVolumeAnoAnterior.lastYear = startAnterior.subtract(1, 'month').format('YYYY');
+
+  newState.searchVolumeAnoAnterior.lastYear =  moment(rangeAnterior.startDate, 'MM/YYYY').format('YYYY');
   newState.searchVolumeAnoAnterior.total = reduce(
     map(filterVolumesAnteriores, item => item.volume),
     (prev, next) => prev + next
