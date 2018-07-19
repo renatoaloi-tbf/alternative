@@ -115,7 +115,7 @@ const enhance = compose(
           ).format('MMM/YYYY')}`
         );
         console.log('OPA 2');
-        getSearchVolume(changed.rangeAtual, volume.all);
+        getSearchVolume(changed.rangeAtual, volume.all, false);
         setRange({ ...changed.rangeAtual });
         console.log('OPA 3');
       }
@@ -128,7 +128,7 @@ const enhance = compose(
           ).format('MMM/YYYY')}`
         );
         console.log('OPA 5');
-        getSearchVolume(range, volume.all);
+        getSearchVolume(range, volume.all, false);
         setRange({ ...range });
         console.log('OPA 6');
       }
@@ -160,7 +160,7 @@ const enhance = compose(
         }
         else {
           setRange(e);
-          getSearchVolume(e, volume.all);
+          getSearchVolume(e, volume.all, false);
         }
 
       }
@@ -278,7 +278,7 @@ const enhance = compose(
           'MM/YYYY'
         ).format('MMM/YYYY')}`
       );
-      this.props.getSearchVolume(this.props.range, this.props.volume.all);
+      this.props.getSearchVolume(this.props.range, this.props.volume.all, true);
     }
   })
 );
