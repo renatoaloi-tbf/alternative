@@ -72,7 +72,7 @@ const getData = (state, { payload }) => {
     }
   });
   console.log('ITEM TYPE', type);
-  newState.searchQuality.items = map(list, item => ({ y: item[type] }));
+  newState.searchQuality.items = map(list, item => ({ y: item[type] ? item[type] : 0 }));
   if (__DEV__) console.log("researched.js - getData2", newState);
   return newState;
 };
