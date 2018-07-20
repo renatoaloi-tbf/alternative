@@ -72,7 +72,7 @@ const getData = (state, { payload }) => {
     }
   });
   console.log('ITEM TYPE', type);
-  newState.searchQuality.items = map(list, item => ({ y: item[type] }));
+  newState.searchQuality.items = map(list, item => ({ y: item[type] ? item[type] : 0 }));
   if (__DEV__) console.log("researched.js - getData2", newState);
   return newState;
 };
@@ -155,8 +155,7 @@ const getVolumeData = (state, { payload }) => {
   forEach(filterVolumes, (item, index) => {
     newState.searchVolume.byIndex[index] = item;
   });
-  console.log('FILTEEEEEER VOLUMES', filterVolumes);
-  newState.searchVolume.items = map(filterVolumes, item => ({ y: item.volume, searchDate: item.searchDate }));
+  newState.searchVolume.items = map(filterVolumes, item => ({ y: item.volume }));
   newState.searchVolume.period = setArray(newState.searchVolume.items.length);
   newState.searchVolume.currentMonth = moment().format('MMMM');
   newState.searchVolume.lastMonth = moment().subtract(1, 'month').format('MMMM');
@@ -168,15 +167,12 @@ const getVolumeData = (state, { payload }) => {
   const filterVolumesCurrentMonth = volumes.filter(item => {
     return moment(item.searchDate).format('MMMM') == newState.searchVolume.currentMonth
   });
-  if (primeiraVisao) {
-    newState.searchVolume.total = 0;
-  }
-  else{
+  
     newState.searchVolume.total = reduce(
       map(filterVolumesCurrentMonth, item => item.volume),
       (prev, next) => prev + next
     );
-  }
+  
   
 
   newState.searchVolume.average =
@@ -190,12 +186,9 @@ const getVolumeData = (state, { payload }) => {
     map(filterMesAnterior, item => item.volume),
     (prev, next) => prev + next
   );
-  if (primeiraVisao) {
-    newState.searchVolume.averageLastMonth = 0;
-  }
-  else {
-    newState.searchVolume.averageLastMonth = totalLastMonth / filterMesAnterior.length;
-  }
+  
+  newState.searchVolume.averageLastMonth = totalLastMonth / filterMesAnterior.length;
+
   
   console.log('newState.searchVolume', newState.searchVolume);
   return newState;
@@ -220,7 +213,7 @@ const getVolumeDataAnoAnterior = (state, { payload }) => {
   forEach(filterVolumes, (item, index) => {
     newState.searchVolume.byIndex[index] = item;
   });
-  newState.searchVolume.items = map(filterVolumes, item => ({ y: item.volume, searchDate: item.searchDate}));
+  newState.searchVolume.items = map(filterVolumes, item => ({ y: item.volume,  searchDate: item.searchDate }));
   newState.searchVolume.period = setArray(newState.searchVolume.items.length);
   newState.searchVolume.currentMonth = moment().format('MMMM');
   newState.searchVolume.lastMonth = moment().subtract(1, 'month').format('MMMM');

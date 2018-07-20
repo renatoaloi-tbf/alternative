@@ -273,10 +273,8 @@ const enhance = compose(
     componentWillMount() {
       const { startDate, endDate } = this.props.range;
       this.props.setSearchMonth(
-        `${moment(startDate, 'MM/YYYY').format('MMM/YYYY')} - ${moment(
-          endDate,
-          'MM/YYYY'
-        ).format('MMM/YYYY')}`
+        
+        `${moment(startDate, 'MM/YYYY').format('MMMM/YYYY').charAt(0).toUpperCase() + moment(startDate, 'MM/YYYY').format('MMMM/YYYY').slice(1)}`
       );
       this.props.getSearchVolume(this.props.range, this.props.volume.all, true);
     }

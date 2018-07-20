@@ -295,9 +295,9 @@ const enhance = compose(
 				console.log('Teste passando aqui 9', types);
 				let month;
 				if (comparacao)
-					month = researched.searchQuality.byIndex[parseInt(e.x-1)];
+					month = researched.searchQuality.byIndex[parseInt(e.x)];
 				else 
-					month = researched.searchQuality.byIndex[e.x-1];
+					month = researched.searchQuality.byIndex[e.x];
 				const type = find(types, item => item.selected);
 				console.log('MONTH', month);
 				if (quality.groupByMonth[month]) {
@@ -518,7 +518,6 @@ export const Quality = enhance(
 						isClose={isClose}
 						open={open}
 						comparacao={handlerComparacao}
-						
 					/>
 				</WrapperHeader>
 				<WrapperFilter>
