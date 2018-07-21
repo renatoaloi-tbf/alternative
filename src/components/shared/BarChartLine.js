@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components/native';
 import { compose, withProps, setPropTypes, lifecycle, withState } from 'recompose';
-import { CombinedChart as BarChartNative } from 'react-native-charts-wrapper';
+import { BarChart as BarChartNative } from 'react-native-charts-wrapper';
 import { array, func, number, string, object, bool } from 'prop-types';
 import { processColor } from 'react-native';
 import moment from 'moment';
@@ -12,7 +12,7 @@ import { EmptyText } from '~/components/shared';
 
 import Intl from 'intl';
 
-require( 'intl/locale-data/jsonp/pt' );
+require('intl/locale-data/jsonp/pt');
 
 const enhancer = compose(
     setPropTypes({
@@ -25,50 +25,146 @@ const enhancer = compose(
         anoAnterior: bool,
         valuesAnoAnterior: array,
         detalheDia: bool,
-        dia: string
+        dia: string,
     }),
-    withProps(({ values, valueFormatter, valueFormatterIndex, onSelect, media, tipo, anoAnterior, valuesAnoAnterior, detalheDia, dia }) => ({
-        
+    withProps(({ values, valueFormatter, valueFormatterIndex, onSelect, media, tipo, anoAnterior, valuesAnoAnterior, detalheDia, dia, formatterMeses, testeUnique}) => ({
+
         data: (() => {
-            let arrayTeste = [{y:0}];
-            if (__DEV__) console.log('valueFormatter[0]', valueFormatter[0]);
+            let arrayTeste = [{ y: 0, searchDate: '' }];
+            if (__DEV__) console.log('valueFormatter[0]', valueFormatter);
             if (__DEV__) console.log('anoAnterior', anoAnterior);
-            values = arrayTeste.concat(values);
-            values = values.concat(arrayTeste);
+            if (__DEV__) console.log('value Formatter by index', valueFormatterIndex);
+            
             console.log('values 1', values);
+            if (anoAnterior) {
+                if (tipo == "volume") {
+                    let arrayMesesAtual = [], arrayMesesAnoAnterior = [];
+                    values.forEach(function(item, i)  {
+                        if ((arrayMesesAtual.indexOf(moment(item.searchDate).locale('pt-br').format('MMM').toUpperCase()) == -1) && item.searchDate != "") 
+                        arrayMesesAtual[moment(item.searchDate).locale('pt-br').format('MMM').toUpperCase()] = { y : 0 };
+                    });
+                    
+                    
+                    for (var key in arrayMesesAtual) {
+                        
+                        values.forEach(itemFI => {
+                            if (itemFI.searchDate != "") {
+                                if (key == moment(itemFI.searchDate).locale('pt-br').format('MMM').toUpperCase()) {
+                                    arrayMesesAtual[key].y = arrayMesesAtual[key].y + itemFI.y;
+                                }
+                            }
+                            
+                        });    
+                    }
+                    
+                    valuesAnoAnterior.forEach(function(item, i)  {
+                        if ((arrayMesesAnoAnterior.indexOf(moment(item.searchDate).locale('pt-br').format('MMM').toUpperCase()) == -1) && item.searchDate != "") 
+                        arrayMesesAnoAnterior[moment(item.searchDate).locale('pt-br').format('MMM').toUpperCase()] = { y : 0 };
+                    });
+
+                    for (var key in arrayMesesAnoAnterior) {
+                        valuesAnoAnterior.forEach(itemFI => {
+                            if (itemFI.searchDate != "") {
+                                if (key == moment(itemFI.searchDate).locale('pt-br').format('MMM').toUpperCase()) {
+                                    arrayMesesAnoAnterior[key].y = arrayMesesAnoAnterior[key].y + itemFI.y;
+                                }
+                            }
+                            
+                        });    
+                    }
+
+                    console.log('TESTE NOVO VALUES',arrayMesesAtual);
+                    
+                       
+                    values = [], valuesAnoAnterior = []
+                    for(var key in arrayMesesAtual) {
+                        values.push(arrayMesesAtual[key]);
+                    }
+                    for(var keyAnterior in arrayMesesAnoAnterior) {
+                        valuesAnoAnterior.push(arrayMesesAnoAnterior[keyAnterior]);
+                    }
+                    
+                    formatterMeses = Object.keys(arrayMesesAtual);
+                    formatterMesesAnoAnterior = Object.keys(arrayMesesAnoAnterior);
+                    Array.prototype.unique = function() {
+                        var a = this.concat();
+                        for(var i=0; i<a.length; ++i) {
+                            for(var j=i+1; j<a.length; ++j) {
+                                if(a[i] === a[j])
+                                    a.splice(j--, 1);
+                            }
+                        }
+                        return a;
+                    };
+                    testeUnique = formatterMeses.concat(formatterMesesAnoAnterior).unique();
+                    console.log('TESTE ARRAY SEM REPETIÇOES', testeUnique); 
+                }
+
+            }
+            console.log('values ano anterior 1', valuesAnoAnterior);
             console.log('trataCores 1', trataCores);
 
             let trataCores = [], trataCoresAnoAnterior = [], arrayMedia = [];
 
             if (values.length > 0) {
-                console.log('Teste passando aqui 1');
+                console.log('Teste passando aqui 1', valuesAnoAnterior.length);
                 if (anoAnterior) {
-                    if (valuesAnoAnterior.length > 0) {
-                        valuesAnoAnterior.forEach(vaa => {
-                            values.push({ y: 0 });
-                            if (vaa.y < media && moment(valueFormatter[0], 'MM/YYYY', true).isValid())
-                                trataCoresAnoAnterior.push(processColor('#ffbd00'));
-                            else
-                                trataCoresAnoAnterior.push(processColor('#00cdff'));
-                        });
-
-                        values.forEach(valor => {
-                            arrayMedia.push(media);
-                            if (valor.y < media && moment(valueFormatter[0], 'MM/YYYY', true).isValid())
-                                trataCores.push(processColor('#ffbd00'));
-                            else
+                    if (tipo == "volume") {
+                        if (valuesAnoAnterior.length > 0) {
+                            valuesAnoAnterior.forEach(vaa => {
+                                if (vaa.y < media && moment(valueFormatter[0], 'MM/YYYY', true).isValid())
+                                    trataCoresAnoAnterior.push(processColor('#ffbd00'));
+                                else
+                                    trataCoresAnoAnterior.push(processColor('#00cdff'));
+                            });
+    
+                            values.forEach(valor => {
+                                arrayMedia.push(media);
+                                if (valor.y < media && moment(valueFormatter[0], 'MM/YYYY', true).isValid())
+                                    trataCores.push(processColor('#ffbd00'));
+                                else
+                                    trataCores.push(processColor('#0096FF'));
+                            })
+                        }
+                        else {
+                            for (let index = 0; index < 15; index++) {
+                                valuesAnoAnterior.push({ y: 0 });
+                                values.push({ y: 0 });
                                 trataCores.push(processColor('#0096FF'));
-                        })
-                    }
-                    else {
-                        for (let index = 0; index < 15; index++) {
-                            valuesAnoAnterior.push({ y: 0 });
-                            values.push({ y: 0 });
-                            trataCores.push(processColor('#0096FF'));
-                            trataCoresAnoAnterior.push(processColor('#00cdff'));
-                            arrayMedia.push(media);
+                                trataCoresAnoAnterior.push(processColor('#00cdff'));
+                                arrayMedia.push(media);
+                            }
                         }
                     }
+                    else {
+                        if (valuesAnoAnterior.length > 0) {
+                            valuesAnoAnterior.forEach(vaa => {
+                                values.push({ y: 0 });
+                                if (vaa.y < media && moment(valueFormatter[0], 'MM/YYYY', true).isValid())
+                                    trataCoresAnoAnterior.push(processColor('#ffbd00'));
+                                else
+                                    trataCoresAnoAnterior.push(processColor('#00cdff'));
+                            });
+    
+                            values.forEach(valor => {
+                                arrayMedia.push(media);
+                                if (valor.y < media && moment(valueFormatter[0], 'MM/YYYY', true).isValid())
+                                    trataCores.push(processColor('#ffbd00'));
+                                else
+                                    trataCores.push(processColor('#0096FF'));
+                            })
+                        }
+                        else {
+                            for (let index = 0; index < 15; index++) {
+                                valuesAnoAnterior.push({ y: 0 });
+                                values.push({ y: 0 });
+                                trataCores.push(processColor('#0096FF'));
+                                trataCoresAnoAnterior.push(processColor('#00cdff'));
+                                arrayMedia.push(media);
+                            }
+                        }
+                    }
+                    
                 }
                 else {
                     console.log('TÁ ENTRANDO AQUI BIXO', values);
@@ -121,13 +217,14 @@ const enhancer = compose(
                     }
                 }
             }
-            console.log('Teste passando aqui 3 ');
+            console.log('Teste passando aqui 3 ', valuesAnoAnterior);
             if (anoAnterior) {
-                console.log('Teste passando aqui 4');
+                console.log('Teste passando aqui 4', values);
 
                 if (moment(valueFormatter[0], 'MM/YYYY', true).isValid() || tipo == 'volume') {
+
                     return {
-                        barData: {
+
                             dataSets: [
                                 {
                                     values: [...valuesAnoAnterior],
@@ -160,37 +257,18 @@ const enhancer = compose(
 
                             ],
                             config: {
-                                barWidth: 0.5,
+                                barWidth: 0.4,
                                 group: {
-                                    fromX: 0,
+                                    fromX: -0.5,
                                     groupSpace: 0.2,
                                     barSpace: 0,
                                 }
                             }
-                        },
-                        /* lineData: {
-                            dataSets: [
-                                {
-                                    values: [...arrayMedia],
-                                    label: 'Média',
-                                    config: {
-                                        drawValues: false,
-                                        valueTextSize: 10,
-                                        valueTextColor: processColor('#ffbd00'),
-                                        colors: [processColor('#ffbd00')],
-                                        mode: "CUBIC_BEZIER",
-                                        drawCircles: false,
-                                        circleRadius: 10,
-                                        lineWidth: 4,
-                                        axisDependency: "left",
-                                    }
-                                }],
-                        } */
-                    };
+                        }
+                    
                 }
                 else {
                     return {
-                        barData: {
                             dataSets: [{
                                 values: [...values],
                                 label: 'Qualidade',
@@ -211,7 +289,6 @@ const enhancer = compose(
                                 barWidth: 0.5
                             }
                         }
-                    };
                 }
             }
             else {
@@ -222,42 +299,22 @@ const enhancer = compose(
                     console.log('trataCores 6', trataCores);
                     console.log('trataCores 6 media', arrayMedia);
                     return {
-                        barData: {
+                        
                             dataSets: [{
                                 values: [...values],
-                                label: 'Qualidade',
-
+                                label: 'Volume',
                                 config: {
                                     barSpacePercent: 100,
                                     highlightAlpha: 50,
                                     drawValues: false,
                                     axisDependency: 'left',
-                                    colors: trataCores,
+                                    colors: [...trataCores],
                                     barShadowColor: processColor('lightgrey'),
                                     highlightColor: processColor('red')
                                 }
                             }],
-                            config: {
-                                barWidth: 0.5
-                            }
-                        },
-                        /* lineData: {
-                            dataSets: [{
-                                values: [...arrayMedia],
-                                label: 'Média',
-                                config: {
-                                    drawValues: false,
-                                    valueTextSize: 10,
-                                    valueTextColor: processColor('#ffbd00'),
-                                    colors: [processColor('#ffbd00')],
-                                    mode: "CUBIC_BEZIER",
-                                    drawCircles: false,
-                                    circleRadius: 10,
-                                    lineWidth: 4,
-                                    axisDependency: "left",
-                                }
-                            }],
-                        } */
+                            
+                        
                     };
                 }
                 else {
@@ -265,7 +322,6 @@ const enhancer = compose(
                     console.log('values', values);
                     console.log('trataCores', trataCores);
                     return {
-                        barData: {
                             dataSets: [{
                                 values: [...values],
                                 label: 'Qualidade',
@@ -284,7 +340,6 @@ const enhancer = compose(
                                 barWidth: 0.5
                             }
                         }
-                    };
                 }
             }
         })(),
@@ -305,39 +360,42 @@ const enhancer = compose(
                             count = count + 1;
                             novoFormato.push(moment(element, 'DD/MM/YYYY').format('MMM').toUpperCase() + ' ' + count);
                         }
-                        
+
                     }
                 });
             }
             else {
                 if (anoAnterior) {
+                    console.log('valueFormatterIndex', valueFormatterIndex);
                     Object.values(valueFormatterIndex).forEach(element => {
-                        novoFormato.push(moment(element.searchDate).locale('pt-br').format('MMM').toUpperCase());
-                    });    
+                        if (element.searchDate == "") {
+                            novoFormato.push(moment(element.searchDate).locale('pt-br').format('MMM').toUpperCase());
+                        }
+                        else {
+                            novoFormato.push("");
+                        }
+                    });
                 }
                 else {
                     Object.values(valueFormatterIndex).forEach(element => {
                         novoFormato.push(moment(element.searchDate).locale('pt-br').format('DD').toUpperCase());
                     });
-                } 
+                }
             }
             let arrayTesteAxis = [""];
-            novoFormato = arrayTesteAxis.concat(novoFormato);
-            novoFormato = novoFormato.concat(arrayTesteAxis);
+            /* novoFormato = arrayTesteAxis.concat(novoFormato);
+            novoFormato = novoFormato.concat(arrayTesteAxis); */
             console.log('TRATACORES NOVO', novoFormato);
             return {
-                axisMinimum: 0,
-                axisLineWidth: 0,
-                zeroLine: {
-                    enabled: true,
-                    lineWidth: 1.5
-                },
+                axisMinimum: -0.5,
                 limitLine: 115,
+                centerAxisLabels: testeUnique ? false : false,
                 drawGridLines: false,
-                valueFormatter: [...novoFormato],
+                valueFormatter: [...testeUnique ? testeUnique : novoFormato],
                 granularityEnabled: true,
                 granularity: 1,
-                position: 'BOTTOM'
+                position: 'BOTTOM',
+                avoidFirstLastClipping: false
             };
         })(),
         yAxis: (() => {
@@ -375,8 +433,9 @@ const enhancer = compose(
         })(),
         zoom: (() => {
             if (moment(valueFormatter[0], 'MM/YYYY', true).isValid()) {
+                console.log('Entrou no zoom 1');
                 return {
-                    scaleX: 2,
+                    scaleX: 1.4,
                     scaleY: 1,
                     xValue: 0,
                     yValue: 1
@@ -384,21 +443,50 @@ const enhancer = compose(
             }
             else {
                 if (tipo == 'volume') {
-                    return {
-                        scaleX: 2,
-                        scaleY: 1,
-                        xValue: 0,
-                        yValue: 1
-                    };
+                    console.log('Entrou no zoom 2');
+                    if (anoAnterior) {
+                        console.log('Entrou no zoom 2 com Comparação');
+                        return {
+                            scaleX: 0,
+                            scaleY: 1,
+                            xValue: 0,
+                            yValue: 1
+                        };
+                    }
+                    else {
+                        console.log('Entrou no zoom 2 sem Comparação');
+                        return {
+                            scaleX: 5.5,
+                            scaleY: 1,
+                            xValue: 2,
+                            yValue: 1
+                        };
+                    }
+
                 }
-                else {
-                    return {
-                        scaleX: 4,
-                        scaleY: 1,
-                        xValue: 0,
-                        yValue: 1
-                    };
+                else {console.log('VALUE FORMARTER ZOOM', valueFormatter);
+                    if (valueFormatter.length == 1) {
+                        console.log('Entrou no zoom 3');
+                        return {
+                            scaleX: 0,
+                            scaleY: 0,
+                            xValue: 0,
+                            yValue: 0
+                        };
+                    }
+                    else {
+                        console.log('Entrou no zoom 4');
+                        return {
+                            scaleX: 6,
+                            scaleY: 1,
+                            xValue: 0,
+                            yValue: 1
+                        };
+                    }
+                    
+                    
                 }
+                
             }
         })(),
         onSelect: e => {
