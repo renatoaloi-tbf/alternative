@@ -423,12 +423,12 @@ const enhance = compose(
 			const initDateFormat = moment(range.startDate, 'MM/YYYY').format('MMM/YY');
 			const endDateFormat = moment(range.endDate, 'MM/YYYY').format('MMM/YY');
 			
+			const type = find(types, item => item.selected);
 			if (comparacao) {
 				setRange(changed.rangeAtual);
 				setRangeAnoAnterior(changed.rangeAnoAnterior);
 				setAnoAnterior(true);
 				console.log('OPA 1');
-				const type = find(types, item => item.selected);
 				console.log('TYPES', types);
 				getSearchQualityComparacao(changed.rangeAtual, quality.groupByYear, type.value, changed.rangeAnoAnterior);
 				console.log('RESEARCHED NA COMPARAÇÃO', researched.newState);
@@ -440,6 +440,7 @@ const enhance = compose(
 				setSearchMonth(`(${initDateFormat} - ${endDateFormat}) / (${initDateFormatAnterior} - ${endDateFormatAnterior}) `);
 			}
 			else {
+				console.log('OPA 2');
 				if (changed.rangeAtual) {
 					if (!searchToMonth) {
 						getSearchQuality(changed.rangeAtual, quality.groupByYear, type.value);

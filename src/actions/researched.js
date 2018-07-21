@@ -28,12 +28,13 @@ export const closeSearchQuality = () => {
   };
 };
 
-export const getSearchVolume = (range, volumes) => {
+export const getSearchVolume = (range, volumes, primeiraVisao) => {
   return {
     type: 'SEARCH_VOLUME',
     payload: {
       range,
-      volumes
+      volumes,
+      primeiraVisao
     }
   };
 };

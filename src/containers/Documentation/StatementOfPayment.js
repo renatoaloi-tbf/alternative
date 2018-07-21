@@ -169,10 +169,12 @@ export const StatementOfPayment = enhance(
                         data={rowData}
                         widthArr={widthArr}
                         style={[
-                          {height: 40, backgroundColor: '#DEDEDE'},
-                          index % 2 && {backgroundColor: '#FFFFFF'}
+                          {
+                            height: 60, backgroundColor: '#DEDEDE'},
+                            index % 2 && {backgroundColor: '#FFFFFF'
+                          }
                         ]}
-                        textStyle={{textAlign: 'left', fontWeight: '100', marginLeft: 6}}
+                        textStyle={{textAlign: 'left', fontWeight: '100', marginLeft: 6 }}
                       />
                     ))}
                   </TableWrapper>

@@ -1,9 +1,15 @@
 import {padZero} from '~/utils';
 import {forEach, cloneDeep} from 'lodash';
+import moment from 'moment';
 // Statements
 
 const INITIAL_STATE = {
   items: [],
+  infos: {
+    basePrice: 0,
+    marketBonus: 0,
+    period: moment().format('M/YYYY')
+  }
 };
 
 const Months = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
@@ -12,11 +18,29 @@ const getFactors = (state, {payload}) => {
   const newState = cloneDeep(state);
 
   const {milkPriceFactors} = payload.data[0];
-  //console.log('milkPriceFactors', milkPriceFactors);
-  milkPriceFactors.forEach(item => {
-    //console.log('item', item);
-    newState.items.push(item);
+  console.log('milkPriceFactors', milkPriceFactors);
+  newState.infos.basePrice = milkPriceFactors.basePrice;
+  newState.infos.period = milkPriceFactors.period;
+  newState.infos.marketBonus = milkPriceFactors.marketBonus;
+  let arrayCbt = [], arrayCcs = [], arrayFat = [], arrayProt = [], arrayVolume = [];
+  milkPriceFactors.cbt.forEach(item => {
+    arrayCbt.push(item)
   });
+  milkPriceFactors.fat.forEach(item => {
+    arrayFat.push(item)
+  });
+  milkPriceFactors.ccs.forEach(item => {
+    arrayCcs.push(item)
+  });
+  milkPriceFactors.prot.forEach(item => {
+    arrayProt.push(item)
+  });
+  milkPriceFactors.volume.forEach(item => {
+    arrayVolume.push(item)
+  });
+
+  var merge = arrayCbt.concat(arrayFat).concat(arrayCcs).concat(arrayProt).concat(arrayVolume);
+  newState.items.push(merge);
   if (__DEV__) console.log("factors.js - getFactors", newState);
   return newState;
 };

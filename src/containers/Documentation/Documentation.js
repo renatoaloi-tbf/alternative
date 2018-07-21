@@ -150,29 +150,25 @@ export const Documentation = enhance(
                 value={count}
               />
             )}
-            {/* <DocumentationItem
-              info
-              route="StatementOfPayment"
-              icon="statement"
-              description="Demonstrativo de pagamento"
-            /> */}
             <DocumentationItem
               light
               route="PriceMinimum"
               icon="currency-usd"
-              description="Preço minimo"
+              description="Preço mínimo"
             />
             <DocumentationItem
-              route="StatementOfPayment"
+              route="Blank"
               success
               icon="onenote"
               description="Nota Fiscal"
+              month={searchPeriod}
             />
             <DocumentationItem
               warning
-              route="StatementOfPayment"
+              route="Blank"
               icon="note"
               description="Demonstrativo de imposto de renda"
+              month={searchPeriod}
             />
             <DocumentationItem
               warningLigth

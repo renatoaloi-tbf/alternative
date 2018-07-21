@@ -31,7 +31,7 @@ const enhance = compose(
         onPress(e);
       }
     },
-    goTo: ({navigator, route, month, setVisible}) => () => {
+    goTo: ({navigator, route, month, setVisible, description}) => () => {
       if (route === 'In62')
       {
         setVisible(true);
@@ -43,7 +43,7 @@ const enhance = compose(
           navigatorStyle,
           passProps: {
             mes: month,
-            outra: 'teste1234'
+            title: description
           }
         });
       }
