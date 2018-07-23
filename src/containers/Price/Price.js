@@ -27,6 +27,7 @@ import {
 import { FilterPrice } from '~/components/FilterPrice';
 import { PriceDetails } from '~/components/Price';
 import { getPrices, getPriceCompareData } from '~/actions';
+import {navigatorStyle} from '~/config';
 
 const enhance = compose(
   connect(
@@ -65,23 +66,31 @@ const enhance = compose(
       const { startDate, endDate } = this.props.range;
       
       this.props.setSearchMonth(
-        `${moment().startOf('year').format('MMM/YYYY')} - ${moment().endOf('year').format('MMM/YYYY')}`
+        `${moment().format('YYYY')}`
       );
       const range = {
-        startDate: moment().startOf('year').subtract(1, 'year'),
-        endDate: moment().endOf('year')
+        startDate: moment().startOf('month').subtract(11, 'month'),
+        endDate: moment().startOf('month')
       };
-      let pricePeriod, pricePeriodAfter;
-      pricePeriod = { y: 0, period: moment().startOf('year').format('MMMM/YYYY') };
-      pricePeriodAfter = { y: 0, period: moment().endOf('year').format('MMMM/YYYY') };
+      let pricePeriod, pricePeriodAfter, valorLtLeiteMesAnterior;
+
+      valorLtLeiteMesAnterior = this.props.price.items.filter(function(item) {
+        return item.period == moment().subtract(1, 'month').format('MM/YYYY');
+      });
+      
+      console.log('PREÇO DO LEITE DO MES ANTERIOR', valorLtLeiteMesAnterior);
+
+      pricePeriod = { y: valorLtLeiteMesAnterior[0].price, period: moment().subtract(1, 'month').format('MMMM/YYYY') };
+      pricePeriodAfter = { y: 0, period: moment().format('MMMM/YYYY') };
       this.props.setPeriodPrice(
         {
           pricePeriod,
           pricePeriodAfter
         }
       )
-
+      
       console.log('ITEM', this.props.price.items);
+      console.log('ITEM PERIOD', this.props.price.period);
       await this.props.setAllPrices(this.props.price.items);
       await this.props.getPrices(this.props.price.items, range, this.props.year);
     }
@@ -171,12 +180,19 @@ const enhance = compose(
 
       pricePeriod = pricePeriod ? pricePeriod : { y: 0, period: moment(range.startDate, 'MM/YYYY').format('MMMM/YYYY') };
       pricePeriodAfter = pricePeriodAfter ? pricePeriodAfter : { y: 0, period: moment(range.endDate, 'MM/YYYY').format('MMMM/YYYY') };
-      setPeriodPrice({
+      /* setPeriodPrice({
         pricePeriod,
         pricePeriodAfter
-      });
+      }); */
       
 
+    },
+    previsao: ({navigator}) => e => {
+      navigator.push({
+        screen: 'PriceMinimum',
+        navigatorStyle,
+       
+      });
     },
     handlerClick: ({ researched, setPeriodPrice, year }) => e => {
       const pricePeriod = researched.searchPrice.byIndex[e.x] ? researched.searchPrice.byIndex[e.x] : researched.searchPrice.byIndex[0];
@@ -186,10 +202,10 @@ const enhance = compose(
         ? pricePeriodAfter
         : { y: 'Previsão', period: pd.format('MMMM/YYYY') };
 
-      setPeriodPrice({
+      /* setPeriodPrice({
         pricePeriod,
         pricePeriodAfter
-      });
+      }); */
     },
     handlerClose: ({
       setDetails,
@@ -256,10 +272,10 @@ const enhance = compose(
 
         setChanged({ rangeAtual: range, rangeAnoAnterior: rangeAnterior });
 
-        setPeriodPrice({
+        /* setPeriodPrice({
           pricePeriod,
           pricePeriodAfter
-        });
+        }); */
       }
     },
     onSelect: ({
@@ -302,7 +318,8 @@ export const Price = enhance(
     isClose,
     searchMonth,
     handlerComparacao,
-    comparacao
+    comparacao,
+    previsao
   }) => {
     console.log('RESEARCH', researched);
     return (
@@ -331,6 +348,7 @@ export const Price = enhance(
             <PriceDetails
               pricePeriod={periodPrice.pricePeriod}
               pricePeriodAfter={periodPrice.pricePeriodAfter}
+              previsao={previsao}
             />
           </WrapperPriceDetails>
           <WrapperBar>
