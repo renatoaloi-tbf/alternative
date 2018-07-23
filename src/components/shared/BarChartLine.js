@@ -31,11 +31,6 @@ const enhancer = compose(
 
         data: (() => {
             let arrayTeste = [{ y: 0, searchDate: '' }];
-            //if (__DEV__) console.log('valueFormatter[0]', valueFormatter);
-            //if (__DEV__) console.log('anoAnterior', anoAnterior);
-            //if (__DEV__) console.log('value Formatter by index', valueFormatterIndex);
-            
-            console.log('values 1', values);
             if (anoAnterior) {
                 if (tipo == "volume") {
                     let arrayMesesAtual = [], arrayMesesAnoAnterior = [];
@@ -44,9 +39,6 @@ const enhancer = compose(
                         if ((arrayMesesAtual.indexOf(moment(item.searchDate).locale('pt-br').format('MMM').toUpperCase()) == -1) && item.searchDate != "") 
                             arrayMesesAtual[moment(item.searchDate).locale('pt-br').format('MMM').toUpperCase()] = { y : 0 };
                     });
-
-                    //console.log('arrayMesesAtual 1', arrayMesesAtual);
-                    
                     for (var key in arrayMesesAtual) {
                         values.forEach(itemFI => {
                             if (itemFI.searchDate != "") {
@@ -72,13 +64,8 @@ const enhancer = compose(
                             
                         });    
                     }
-
-                    //console.log('TESTE NOVO VALUES DO ANO ANTERIOR',arrayMesesAnoAnterior);
-                    //console.log('TESTE NOVO VALUES',arrayMesesAtual);
-                       
                     values = [], valuesAnoAnterior = [];
                     for(var key in arrayMesesAtual) {
-                        //console.log('TESTE NOVO VALUES KEY', key);
                         if (key != 'unique')
                             values.push(arrayMesesAtual[key]);
                     }
@@ -86,10 +73,6 @@ const enhancer = compose(
                         if (keyAnterior != 'unique')
                             valuesAnoAnterior.push(arrayMesesAnoAnterior[keyAnterior]);
                     }
-
-                    //console.log('TESTE NOVO VALUES DO ANO ANTERIOR 2', values);
-                    //console.log('TESTE NOVO VALUES 2', valuesAnoAnterior);
-                    
                     formatterMeses = Object.keys(arrayMesesAtual);
                     formatterMesesAnoAnterior = Object.keys(arrayMesesAnoAnterior);
                     Array.prototype.unique = function() {
@@ -103,7 +86,6 @@ const enhancer = compose(
                         return a;
                     };
                     testeUnique = formatterMeses.concat(formatterMesesAnoAnterior).unique();
-                    //console.log('TESTE ARRAY SEM REPETIÇOES', testeUnique); 
                 }
             }
             else
@@ -120,8 +102,6 @@ const enhancer = compose(
                             arrayCount.push(mesValues);
                         }
                     });
-                    console.log('count++', countMes);
-
                     if (countMes > 1)
                     {
                         let arrayMesesAtual = [];
@@ -132,9 +112,6 @@ const enhancer = compose(
                                 arrayMesesAtual[moment(item.searchDate).locale('pt-br').format('MMM').toUpperCase()] = { y : 0 };
                             }
                         });
-
-                        //console.log('arrayMesesAtual 2', arrayMesesAtual);
-                        
                         for (var key in arrayMesesAtual) {
                             values.forEach(itemFI => {
                                 if (itemFI.searchDate != "") {
@@ -144,7 +121,6 @@ const enhancer = compose(
                                 }
                             });    
                         }
-
                         values = [];
                         for(var key in arrayMesesAtual) {
                             if (key != 'unique')
@@ -153,15 +129,8 @@ const enhancer = compose(
                     }
                 }
             }
-            //console.log('values ano anterior 1', valuesAnoAnterior);
-            //console.log('trataCores 1', trataCores);
-
             let trataCores = [], trataCoresAnoAnterior = [], arrayMedia = [];
-
-            //console.log('values.length', values.length);
-
             if (values.length > 0) {
-                console.log('Teste passando aqui 1', valuesAnoAnterior.length);
                 if (anoAnterior) {
                     if (tipo == "volume") {
                         if (valuesAnoAnterior.length > 0) {
@@ -171,7 +140,6 @@ const enhancer = compose(
                                 else
                                     trataCoresAnoAnterior.push(processColor('#00cdff'));
                             });
-    
                             values.forEach(valor => {
                                 arrayMedia.push(media);
                                 if (valor.y < media && moment(valueFormatter[0], 'MM/YYYY', true).isValid())
@@ -221,10 +189,8 @@ const enhancer = compose(
                             }
                         }
                     }
-                    
                 }
                 else {
-                    //console.log('TÁ ENTRANDO AQUI BIXO', values);
                     values.forEach(valor => {
                         arrayMedia.push(media);
                         if (valor.y < media && moment(valueFormatter[0], 'MM/YYYY', true).isValid())
@@ -233,11 +199,8 @@ const enhancer = compose(
                             trataCores.push(processColor('#0096FF'));
                     });
                 }
-                console.log('values 2', values);
             }
             else {
-                //console.log('Teste passando aqui 2');
-                //QUANDO NÃO EXISTIR VALOR PARA O RANGE ATUAL
                 if (anoAnterior) {
                     if (valuesAnoAnterior.length > 0) {
                         values = [];
@@ -248,7 +211,6 @@ const enhancer = compose(
                             else
                                 trataCoresAnoAnterior.push(processColor('#00cdff'));
                         });
-
                         values.forEach(valor => {
                             arrayMedia.push(media);
                             if (valor.y < media && moment(valueFormatter[0], 'MM/YYYY', true).isValid())
@@ -278,110 +240,25 @@ const enhancer = compose(
                     }
                 }
             }
-            //console.log('Teste passando aqui 3 ', valuesAnoAnterior);
             if (anoAnterior) {
-                //console.log('Teste passando aqui 4', values);
-
                 if (moment(valueFormatter[0], 'MM/YYYY', true).isValid() || tipo == 'volume') {
                     return {
-                            dataSets: [
-                                {
-                                    values: [...valuesAnoAnterior],
-                                    label: 'Qualidade Ano anterior',
-
-                                    config: {
-                                        barSpacePercent: 100,
-                                        highlightAlpha: 50,
-                                        drawValues: false,
-                                        axisDependency: 'left',
-                                        colors: trataCoresAnoAnterior,
-                                        barShadowColor: processColor('lightgrey'),
-                                        highlightColor: processColor('red')
-                                    }
-                                },
-                                {
-                                    values: [...values],
-                                    label: 'Qualidade',
-
-                                    config: {
-                                        barSpacePercent: 100,
-                                        highlightAlpha: 50,
-                                        drawValues: false,
-                                        axisDependency: 'left',
-                                        colors: trataCores,
-                                        barShadowColor: processColor('lightgrey'),
-                                        highlightColor: processColor('red')
-                                    }
-                                }
-
-                            ],
-                            config: {
-                                barWidth: 0.4,
-                                group: {
-                                    fromX: -0.5,
-                                    groupSpace: 0.2,
-                                    barSpace: 0,
-                                }
-                            }
-                        }
-                    
-                }
-                else {
-                    return {
-                            dataSets: [{
-                                values: [...values],
-                                label: 'Qualidade',
+                        dataSets: [
+                            {
+                                values: [...valuesAnoAnterior],
+                                label: 'Qualidade Ano anterior',
 
                                 config: {
                                     barSpacePercent: 100,
                                     highlightAlpha: 50,
                                     drawValues: false,
                                     axisDependency: 'left',
-                                    colors: trataCores,
-                                    barShadowColor: processColor('lightgrey'),
-                                    highlightColor: processColor('red'),
-
-                                }
-
-                            }],
-                            config: {
-                                barWidth: 0.5
-                            }
-                        }
-                }
-            }
-            else {
-                //console.log('Teste passando aqui 5');
-                if (moment(valueFormatter[0], 'MM/YYYY', true).isValid() || tipo == 'volume') {
-                    //console.log('Teste passando aqui 6');
-                    //console.log('values 6', values);
-                    //console.log('trataCores 6', trataCores);
-                    //console.log('trataCores 6 media', arrayMedia);
-                    return {
-                        
-                            dataSets: [{
-                                values: [...values],
-                                label: 'Volume',
-                                config: {
-                                    barSpacePercent: 100,
-                                    highlightAlpha: 50,
-                                    drawValues: false,
-                                    axisDependency: 'left',
-                                    colors: [...trataCores],
+                                    colors: trataCoresAnoAnterior,
                                     barShadowColor: processColor('lightgrey'),
                                     highlightColor: processColor('red')
                                 }
-                            }],
-                            
-                        
-                    };
-                }
-                else {
-                    //console.log('Teste passando aqui 7');
-                    //console.log('values', values);
-                    //console.log('trataCores', trataCores);
-                    return {
-                            dataSets: [{
+                            },
+                            {
                                 values: [...values],
                                 label: 'Qualidade',
 
@@ -392,13 +269,80 @@ const enhancer = compose(
                                     axisDependency: 'left',
                                     colors: trataCores,
                                     barShadowColor: processColor('lightgrey'),
-                                    highlightColor: processColor('red'),
+                                    highlightColor: processColor('red')
                                 }
-                            }],
-                            config: {
-                                barWidth: 0.5
+                            }
+
+                        ],
+                        config: {
+                            barWidth: 0.4,
+                            group: {
+                                fromX: -0.5,
+                                groupSpace: 0.2,
+                                barSpace: 0,
                             }
                         }
+                    }
+                }
+                else {
+                    return {
+                        dataSets: [{
+                            values: [...values],
+                            label: 'Qualidade',
+                            config: {
+                                barSpacePercent: 100,
+                                highlightAlpha: 50,
+                                drawValues: false,
+                                axisDependency: 'left',
+                                colors: trataCores,
+                                barShadowColor: processColor('lightgrey'),
+                                highlightColor: processColor('red'),
+                            }
+
+                        }],
+                        config: {
+                            barWidth: 0.5
+                        }
+                    }
+                }
+            }
+            else {
+                if (moment(valueFormatter[0], 'MM/YYYY', true).isValid() || tipo == 'volume') {
+                    return {
+                        dataSets: [{
+                            values: [...values],
+                            label: 'Volume',
+                            config: {
+                                barSpacePercent: 100,
+                                highlightAlpha: 50,
+                                drawValues: false,
+                                axisDependency: 'left',
+                                colors: [...trataCores],
+                                barShadowColor: processColor('lightgrey'),
+                                highlightColor: processColor('red')
+                            }
+                        }],
+                    };
+                }
+                else {
+                    return {
+                        dataSets: [{
+                            values: [...values],
+                            label: 'Qualidade',
+                            config: {
+                                barSpacePercent: 100,
+                                highlightAlpha: 50,
+                                drawValues: false,
+                                axisDependency: 'left',
+                                colors: trataCores,
+                                barShadowColor: processColor('lightgrey'),
+                                highlightColor: processColor('red'),
+                            }
+                        }],
+                        config: {
+                            barWidth: 0.5
+                        }
+                    }
                 }
             }
         })(),
@@ -419,13 +363,11 @@ const enhancer = compose(
                             count = count + 1;
                             novoFormato.push(moment(element, 'DD/MM/YYYY').format('MMM').toUpperCase() + ' ' + count);
                         }
-
                     }
                 });
             }
             else {
                 if (anoAnterior) {
-                    //console.log('valueFormatterIndex', valueFormatterIndex);
                     Object.values(valueFormatterIndex).forEach(element => {
                         if (element.searchDate == "") {
                             novoFormato.push(moment(element.searchDate).locale('pt-br').format('MMM').toUpperCase());
@@ -446,8 +388,6 @@ const enhancer = compose(
                             arrayCount.push(mesValues);
                         }
                     });
-                    //console.log('valueFormatterIndex count++', countMes);
-
                     Object.values(valueFormatterIndex).forEach(element => {
                         if (countMes > 1)
                         {
@@ -463,9 +403,6 @@ const enhancer = compose(
                 }
             }
             let arrayTesteAxis = [""];
-            /* novoFormato = arrayTesteAxis.concat(novoFormato);
-            novoFormato = novoFormato.concat(arrayTesteAxis); */
-            //console.log('TRATACORES NOVO', novoFormato);
             return {
                 axisMinimum: -0.5,
                 limitLine: 115,
@@ -479,7 +416,6 @@ const enhancer = compose(
             };
         })(),
         yAxis: (() => {
-            //console.log('TRATACORES NOVO asdasdsadasd')
             return {
                 left: {
                     drawLabels: true,
@@ -513,7 +449,6 @@ const enhancer = compose(
         })(),
         zoom: (() => {
             if (moment(valueFormatter[0], 'MM/YYYY', true).isValid()) {
-                //console.log('Entrou no zoom 1', 0.1145833 * values.length);
                 return {
                     scaleX: 0.1145833 * values.length,
                     scaleY: 1,
@@ -523,9 +458,7 @@ const enhancer = compose(
             }
             else {
                 if (tipo == 'volume') {
-                    //console.log('Entrou no zoom 2', 0.1145833 * values.length);
                     if (anoAnterior) {
-                        //console.log('Entrou no zoom 2 com Comparação');
                         return {
                             scaleX: 0.1145833 * values.length,
                             scaleY: 1,
@@ -534,7 +467,6 @@ const enhancer = compose(
                         };
                     }
                     else {
-                        //console.log('Entrou no zoom 2 sem Comparação');
                         return {
                             scaleX: 0.1145833 * values.length,
                             scaleY: 1,
@@ -542,12 +474,9 @@ const enhancer = compose(
                             yValue: 1
                         };
                     }
-
                 }
                 else {
-                    //console.log('VALUE FORMARTER ZOOM', valueFormatter);
                     if (valueFormatter.length == 1) {
-                        //console.log('Entrou no zoom 3', 0.1145833 * values.length);
                         return {
                             scaleX: 0.1145833 * values.length,
                             scaleY: 0,
@@ -556,7 +485,6 @@ const enhancer = compose(
                         };
                     }
                     else {
-                        //console.log('Entrou no zoom 4', 0.1145833 * values.length);
                         return {
                             scaleX: 0.1145833 * values.length,
                             scaleY: 1,
@@ -564,10 +492,7 @@ const enhancer = compose(
                             yValue: 1
                         };
                     }
-                    
-                    
                 }
-                
             }
         })(),
         onSelect: e => {

@@ -28,9 +28,11 @@ const enhance = compose(
     lastMonth: string,
     collected: number,
     isCollected: bool,
+    isCompare: bool,
     lastYear: string,
     percentual: string,
-    totalAnoAnterior: number
+    totalAnoAnterior: number,
+    totalAnoAtual: number
   }),
   defaultProps({
     average: 0,
@@ -46,7 +48,7 @@ const enhance = compose(
 );
 
 export const VolumeAverage = enhance(
-  ({ total, average, month, collected, isCollected, lastMonth, lastYear, percentual, totalAnoAnterior }) => {
+  ({ total, average, month, collected, isCollected, lastMonth, lastYear, percentual, totalAnoAnterior, isCompare, totalAnoAtual }) => {
     return (
       <Wrapper>
         <WrapperContentSelected>
@@ -55,9 +57,15 @@ export const VolumeAverage = enhance(
               <Text size={12} inverted>
                 Litros Coletados
               </Text>
-              <Text inverted size={30}>
-                {new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 0 }).format(collected ? collected : 0) } L
-              </Text>
+              {isCompare ? (
+                <Text inverted size={30}>
+                  {new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 0 }).format(totalAnoAtual ? totalAnoAtual : 0) } L
+                </Text>
+              ) : (
+                <Text inverted size={30}>
+                  {new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 0 }).format(collected ? collected : 0) } L
+                </Text>
+              )}
             </StyleTextTotal>
           ) : (
               <StyleTextMonth>
@@ -71,7 +79,7 @@ export const VolumeAverage = enhance(
             )}
         </WrapperContentSelected>
         <WrapperContent>
-          {isCollected && percentual ? (
+          {isCompare ? (
             <StyleTextMonth>
               <Text size={12} secondary>
                 Comparativo ({lastYear})
@@ -95,8 +103,6 @@ export const VolumeAverage = enhance(
               </Text>
               </StyleTextMonth>
             )}
-
-
         </WrapperContent>
       </Wrapper>
     );
