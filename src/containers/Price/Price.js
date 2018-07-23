@@ -69,7 +69,7 @@ const enhance = compose(
         `${moment().format('YYYY')}`
       );
       const range = {
-        startDate: moment().startOf('month').subtract(11, 'month'),
+        startDate: moment().startOf('month').subtract(12, 'month'),
         endDate: moment().startOf('month')
       };
       let pricePeriod, pricePeriodAfter, valorLtLeiteMesAnterior;
@@ -357,7 +357,7 @@ export const Price = enhance(
               valueFormatter={researched.searchPrice.period}
               onSelect={handlerClick}
               comparacao={comparacao}
-              media={1.011}
+              media={researched.searchPrice.media}
               valuesComparacao={researched.searchPriceAnoAnterior.items}
             />
           </WrapperBar>
