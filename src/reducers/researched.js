@@ -139,7 +139,7 @@ const setArray = number => {
 };
 
 const getVolumeData = (state, { payload }) => {
-  //console.log('nao passei aqui, talquei?');
+  console.log('nao passei aqui, talquei?');
   const newState = cloneDeep(INITIAL_STATE);
   const { range, volumes, primeiraVisao } = payload;
   const start = moment(range.startDate, 'MM/YYYY').startOf('month');
@@ -177,7 +177,7 @@ const getVolumeData = (state, { payload }) => {
 
 
 const getVolumeDataAnoAnterior = (state, { payload }) => {
-
+  console.log('aqui eu passei');
   const newState = cloneDeep(INITIAL_STATE);
   const { range, volumes, rangeAnterior, volumesAnteriores } = payload;
 
@@ -190,13 +190,14 @@ const getVolumeDataAnoAnterior = (state, { payload }) => {
   const filterVolumes = filter(volumes, item =>
     ra.contains(moment(item.searchDate))
   );
+  console.log('filterVolumes', filterVolumes);
 
   forEach(filterVolumes, (item, index) => {
     newState.searchVolume.byIndex[index] = item;
   });
   newState.searchVolume.items = map(filterVolumes, item => ({ y: item.volume,  searchDate: item.searchDate }));
 
-  //console.log('getVolumeDataAnoAnterior - newState.searchVolume.items', newState.searchVolume.items);
+  console.log('getVolumeDataAnoAnterior - newState.searchVolume.items', newState.searchVolume.items);
 
   newState.searchVolume.period = setArray(newState.searchVolume.items.length);
   newState.searchVolume.currentMonth = moment().format('MMMM');

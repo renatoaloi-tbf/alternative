@@ -176,6 +176,7 @@ const enhance = compose(
       setDetails({});
     },
     onChange: ({
+      researched,
       setRange,
       getSearchVolume,
       volume,
@@ -185,13 +186,14 @@ const enhance = compose(
       getSearchVolumeAnoAnterior,
       setChanged,
     }) => e => {
-      console.log('e onChange', e);
+      //console.log('e onChange', e);
       if (size(e) === 2) {
         var rangeAnterior = {
           startDate: moment(e.startDate, 'MM/YYYY').subtract(1, 'year').format('MM/YYYY'),
           endDate: moment(e.endDate, 'MM/YYYY').subtract(1, 'year').format('MM/YYYY')
         }
-        console.log('range anterior', rangeAnterior);
+        //console.log('range atual', e);
+        //console.log('range anterior', rangeAnterior);
         setChanged({ rangeAtual: e, rangeAnoAnterior: rangeAnterior });
         if (anoAnterior) {
           setRangeAnoAnterior(rangeAnterior);
@@ -203,8 +205,9 @@ const enhance = compose(
           //getSearchVolumeAnoAnterior(e, volume.all, e, volume.all);
           //getSearchVolume(e, volume.all, false);
         }
-        console.log('volume onChange', volume);
+        //console.log('volume onChange', volume);
         getSearchVolumeAnoAnterior(e, volume.all, rangeAnterior, volume.all);
+        //console.log('onChange researched.searchVolume.items', researched.searchVolume.items);
       }
     },
     onSelect: ({
@@ -215,7 +218,9 @@ const enhance = compose(
       setIsCollected,
       setClose,
       setSearchMonth,
-      anoAnterior
+      anoAnterior,
+      volume,
+      getSearchVolumeAnoAnterior
     }) => e => {
       //console.log('TÁ CLICANDO e', e);
       if (!isEmpty(e)) {
@@ -285,58 +290,69 @@ const enhance = compose(
           }
         }
 
-        //console.log('researched.searchVolume.byIndex[e.x]', researched.searchVolume.byIndex[e.x]);
-        let volume = researched.searchVolume.byIndex[e.x];
-        
-        if (volume) {
-          setCollected(volume.volume);
-        }
-        else {
-          setCollected(0);
-        }
-        setIsCollected(true);
-        if (!anoAnterior && volume) {
-          console.log('volume.start_date', volume);
-          console.log('itens do mes', researched.searchVolume);
-          var arrayDate = [];
-          var arrayCount = [];
-          var countMes = 0;
-          researched.searchVolume.items.forEach((item, i) => { 
-              var mesValues = moment(item.searchDate).locale('pt-br').format('MMM').toUpperCase();
-              if (arrayCount.indexOf(mesValues) == -1)
-              {
-                  countMes++;
-                  arrayCount.push(mesValues);
-                  arrayDate.push(moment(item.searchDate).format('MM/YYYY'));
-              }
-          }); 
-          console.log('e', e);
-          console.log('countMes', countMes);
+        //console.log('itens do mes', researched.searchVolume);
+        var arrayDate = [];
+        var arrayCount = [];
+        var countMes = 0;
+        researched.searchVolume.items.forEach((item, i) => { 
+            var mesValues = moment(item.searchDate).locale('pt-br').format('MMM').toUpperCase();
+            if (arrayCount.indexOf(mesValues) == -1)
+            {
+                countMes++;
+                arrayCount.push(mesValues);
+                arrayDate.push(moment(item.searchDate).format('MM/YYYY'));
+            }
+        }); 
+        //console.log('e', e);
+        //console.log('countMes', countMes);
 
-          if (countMes > 1)
-          {
-            const mes = arrayDate[e.x];
+        if (countMes > 1)
+        {
+          const mes = arrayDate[e.x];
 
-            var range = {
+          const range = {
               startDate: mes,
               endDate: mes
-            }
+          };
 
-            console.log('range onSelect', range);
+          //console.log('range onSelect', range);
 
-            setRange(range);
-            getSearchVolumeAnoAnterior(range, researched.searchVolume.byIndex, range, researched.searchVolume.byIndex);
+          //setRange(range);
+          setSearchMonth(
+            `${moment(mes, 'MM/YYYY').format('MMMM/YYYY').charAt(0).toUpperCase() 
+                + moment(mes, 'MM/YYYY').format('MMMM/YYYY').slice(1)}`
+          );
+          //
+          //console.log('sai daqui');
+          //getSearchVolume(range, volume.all, false);
+          getSearchVolumeAnoAnterior(range, volume.all, range, volume.all);
+          //console.log('cheguei aqui');
+          //console.log('researched.searchVolume.items', researched.searchVolume.items);
+          // setRange({ ...range });
+          // setIsCollected(false);
+          // setDetails({});
+        }
+        else
+        {
+          //console.log('researched.searchVolume.byIndex[e.x]', researched.searchVolume.byIndex[e.x]);
+          let volumelocal = researched.searchVolume.byIndex[e.x];
 
+          //console.log('volume.start_date', volumelocal);
+          
+          if (volumelocal) {
+            setCollected(volumelocal.volume);
           }
-          else
-          {
-            setSearchMonth(moment(volume.start_date).format('LL'));
+          else {
+            setCollected(0);
+          }
+          setIsCollected(true);
+          if (!anoAnterior && volumelocal) {
+            setSearchMonth(moment(volumelocal.start_date).format('LL'));
             const details = researched.searchVolume.byIndex[e.x];
             setDetails(details);
           }
+          setClose(true);
         }
-        
-        setClose(true);
         
       }
     }

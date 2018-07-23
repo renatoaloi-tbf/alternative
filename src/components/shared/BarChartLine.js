@@ -35,7 +35,7 @@ const enhancer = compose(
             //if (__DEV__) console.log('anoAnterior', anoAnterior);
             //if (__DEV__) console.log('value Formatter by index', valueFormatterIndex);
             
-            //console.log('values 1', values);
+            console.log('values 1', values);
             if (anoAnterior) {
                 if (tipo == "volume") {
                     let arrayMesesAtual = [], arrayMesesAnoAnterior = [];
@@ -120,7 +120,7 @@ const enhancer = compose(
                             arrayCount.push(mesValues);
                         }
                     });
-                    //console.log('count++', countMes);
+                    console.log('count++', countMes);
 
                     if (countMes > 1)
                     {
@@ -161,7 +161,7 @@ const enhancer = compose(
             //console.log('values.length', values.length);
 
             if (values.length > 0) {
-                //console.log('Teste passando aqui 1', valuesAnoAnterior.length);
+                console.log('Teste passando aqui 1', valuesAnoAnterior.length);
                 if (anoAnterior) {
                     if (tipo == "volume") {
                         if (valuesAnoAnterior.length > 0) {
@@ -233,6 +233,7 @@ const enhancer = compose(
                             trataCores.push(processColor('#0096FF'));
                     });
                 }
+                console.log('values 2', values);
             }
             else {
                 //console.log('Teste passando aqui 2');
