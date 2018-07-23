@@ -1,7 +1,7 @@
 import React from 'react';
 import {isEqual} from 'lodash';
 import styled from 'styled-components/native';
-import {string, number, bool, object} from 'prop-types';
+import {string, number, bool, object, func} from 'prop-types';
 import {
   compose,
   setPropTypes,
@@ -19,22 +19,29 @@ require( 'intl/locale-data/jsonp/pt' );
 // locals
 import {getNavigatorContext} from '~/enhancers';
 import {Text} from '~/components/shared';
+import { View} from 'react-native';
 
 const enhance = compose(
   setPropTypes({
     pricePeriod: object,
-    pricePeriodAfter: object
+    pricePeriodAfter: object,
+    previsao: func,
   }),
-  withProps(({onPress, type}) => ({
-    onPress: e => {
+  withProps(({onPress, type, previsao}) => ({
+    /* onPress: e => {
       if (typeof onPress === 'function') {
         onPress(type);
       }
-    }
+    } */
+    previsao: e => {
+      if (typeof previsao === "function") {
+        previsao(e);
+      }
+    },
   }))
 );
 
-export const PriceDetails = enhance(({pricePeriod, pricePeriodAfter}) => {
+export const PriceDetails = enhance(({pricePeriod, pricePeriodAfter, previsao}) => {
   if (__DEV__) console.log('Periodo preço', pricePeriod);
   return (
     <Wrapper>
@@ -48,13 +55,16 @@ export const PriceDetails = enhance(({pricePeriod, pricePeriodAfter}) => {
               {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(pricePeriod.y)}
             </Text>
           </WrapperContentSelected>
-          <WrapperContent>
-            <Text size={12} secondary>
+          <WrapperContent >
+            <Text size={12} secondary onPress={previsao}>
               {pricePeriodAfter.period}
             </Text>
-            <Text size={28} secondary>
-              {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(pricePeriodAfter.y)}
-            </Text>
+            <View  style={{flexDirection:'row'}}>
+              <Text size={28} secondary onPress={previsao}>
+                Previsão 
+              </Text>
+              <Text secondary onPress={previsao} style={{top: 5, fontSize: 25, marginLeft: 5, color: '#0096ff'}}>$</Text>
+            </View>
           </WrapperContent>
         </StyleTotal>
       )}
