@@ -193,15 +193,15 @@ const enhance = compose(
         setChanged({ rangeAtual: e, rangeAnoAnterior: rangeAnterior });
         if (anoAnterior) {
           setRangeAnoAnterior(rangeAnterior);
-          getSearchVolumeAnoAnterior(e, volume.all, rangeAnterior, volume.all);
+          //getSearchVolumeAnoAnterior(e, volume.all, rangeAnterior, volume.all);
           //console.log('RANGEEEE ATUAL NO ONCHANGE COM ANO ANTERIOR', rangeAnterior);
         }
         else {
           setRange(e);
           //getSearchVolumeAnoAnterior(e, volume.all, e, volume.all);
-          getSearchVolume(e, volume.all, false);
+          //getSearchVolume(e, volume.all, false);
         }
-        //getSearchVolumeAnoAnterior(e, volume.all, rangeAnterior, volume.all, anoAnterior);
+        getSearchVolumeAnoAnterior(e, volume.all, rangeAnterior, volume.all, anoAnterior);
       }
     },
     onSelect: ({
