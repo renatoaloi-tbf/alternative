@@ -67,8 +67,8 @@ const enhance = compose(
       researched,
       setCollected
     }) => (e) => {
-      console.log('VOLUME ALL', volume.all);
-      console.log('CHANGED', changed);
+      //console.log('VOLUME ALL', volume.all);
+      //console.log('CHANGED', changed);
 
       setIsCollected(e);
       
@@ -85,7 +85,7 @@ const enhance = compose(
         getSearchVolumeAnoAnterior(range, volume.all, rangeAnoAnterior, volume.all);
       }
       setCollected(researched.searchVolume.total);
-      console.log('RESEARCHED VOLUME', researched);
+      //console.log('RESEARCHED VOLUME', researched);
     },
 		close: ({
 			setRange,
@@ -99,7 +99,7 @@ const enhance = compose(
       setAnoAnterior,
       setRangeAnoAnterior
 		}) => () => {
-			console.log('fechei 1');
+			//console.log('fechei 1');
 			setRange({});
       setClose(false);
       // reiniciando dados de comparação
@@ -114,13 +114,13 @@ const enhance = compose(
           `${moment(startDate, 'MM/YYYY').format('MMMM/YYYY').charAt(0).toUpperCase() 
               + moment(startDate, 'MM/YYYY').format('MMMM/YYYY').slice(1)}`
         );
-        console.log('fechei 4');
+        //console.log('fechei 4');
         getSearchVolume(range, volume.all, true);
-        console.log('fechei 5');
+        //console.log('fechei 5');
         setRange({ ...range });
         setIsCollected(false);
         setDetails({});
-        console.log('fechei 6');
+        //console.log('fechei 6');
 		},
     handlerClose: ({
       setDetails,
@@ -132,7 +132,7 @@ const enhance = compose(
       setClose,
       changed
     }) => () => {
-      console.log('CHANGED 2', changed);
+      //console.log('CHANGED 2', changed);
       setRange({});
       setClose(false);
       const range = {
@@ -140,21 +140,21 @@ const enhance = compose(
         endDate: moment()
       };
       if (changed.rangeAtual) {
-        console.log('OPA 1');
+        //console.log('OPA 1');
         setSearchMonth(
           `${moment(changed.rangeAtual.startDate, 'MM/YYYY').format('MMM/YYYY')} - ${moment(
             changed.rangeAtual.endDate,
             'MM/YYYY'
           ).format('MMM/YYYY')}`
         );
-        console.log('OPA 2');
+        //console.log('OPA 2');
         getSearchVolume(changed.rangeAtual, volume.all, false);
         setRange({ ...changed.rangeAtual });
-        console.log('OPA 3');
+        //console.log('OPA 3');
         setClose(true);
       }
       else {
-        console.log('OPA 4');
+        //console.log('OPA 4');
         const { startDate, endDate } = range;
         setSearchMonth(
           `${moment(startDate, 'MM/YYYY').format('MMMM/YYYY').charAt(0).toUpperCase() 
@@ -170,7 +170,7 @@ const enhance = compose(
         console.log('OPA 5');
         getSearchVolume(range, volume.all, false); */
         setRange({ ...range });
-        console.log('OPA 6');
+        //console.log('OPA 6');
       }
       setIsCollected(false);
       setDetails({});
@@ -185,11 +185,13 @@ const enhance = compose(
       getSearchVolumeAnoAnterior,
       setChanged,
     }) => e => {
+      console.log('e onChange', e);
       if (size(e) === 2) {
-        rangeAnterior = {
+        var rangeAnterior = {
           startDate: moment(e.startDate, 'MM/YYYY').subtract(1, 'year').format('MM/YYYY'),
           endDate: moment(e.endDate, 'MM/YYYY').subtract(1, 'year').format('MM/YYYY')
         }
+        console.log('range anterior', rangeAnterior);
         setChanged({ rangeAtual: e, rangeAnoAnterior: rangeAnterior });
         if (anoAnterior) {
           setRangeAnoAnterior(rangeAnterior);
@@ -201,7 +203,8 @@ const enhance = compose(
           //getSearchVolumeAnoAnterior(e, volume.all, e, volume.all);
           //getSearchVolume(e, volume.all, false);
         }
-        getSearchVolumeAnoAnterior(e, volume.all, rangeAnterior, volume.all, anoAnterior);
+        console.log('volume onChange', volume);
+        getSearchVolumeAnoAnterior(e, volume.all, rangeAnterior, volume.all);
       }
     },
     onSelect: ({
@@ -214,7 +217,7 @@ const enhance = compose(
       setSearchMonth,
       anoAnterior
     }) => e => {
-      console.log('TÁ CLICANDO e', e);
+      //console.log('TÁ CLICANDO e', e);
       if (!isEmpty(e)) {
         
         if (anoAnterior) {
@@ -282,7 +285,7 @@ const enhance = compose(
           }
         }
 
-        console.log('researched.searchVolume.byIndex[e.x]', researched.searchVolume.byIndex[e.x]);
+        //console.log('researched.searchVolume.byIndex[e.x]', researched.searchVolume.byIndex[e.x]);
         let volume = researched.searchVolume.byIndex[e.x];
         
         if (volume) {
@@ -294,9 +297,43 @@ const enhance = compose(
         setIsCollected(true);
         if (!anoAnterior && volume) {
           console.log('volume.start_date', volume);
-          setSearchMonth(moment(volume.start_date).format('LL'));
-          const details = researched.searchVolume.byIndex[e.x];
-          setDetails(details);
+          console.log('itens do mes', researched.searchVolume);
+          var arrayDate = [];
+          var arrayCount = [];
+          var countMes = 0;
+          researched.searchVolume.items.forEach((item, i) => { 
+              var mesValues = moment(item.searchDate).locale('pt-br').format('MMM').toUpperCase();
+              if (arrayCount.indexOf(mesValues) == -1)
+              {
+                  countMes++;
+                  arrayCount.push(mesValues);
+                  arrayDate.push(moment(item.searchDate).format('MM/YYYY'));
+              }
+          }); 
+          console.log('e', e);
+          console.log('countMes', countMes);
+
+          if (countMes > 1)
+          {
+            const mes = arrayDate[e.x];
+
+            var range = {
+              startDate: mes,
+              endDate: mes
+            }
+
+            console.log('range onSelect', range);
+
+            setRange(range);
+            getSearchVolumeAnoAnterior(range, researched.searchVolume.byIndex, range, researched.searchVolume.byIndex);
+
+          }
+          else
+          {
+            setSearchMonth(moment(volume.start_date).format('LL'));
+            const details = researched.searchVolume.byIndex[e.x];
+            setDetails(details);
+          }
         }
         
         setClose(true);
@@ -334,7 +371,7 @@ export const Volume = enhance(
     anoAnterior,
     close
   }) => {
-    console.log('researched TESTE VOLUME ANTERIOR', researched.searchVolume.averageLastMonth);
+    //console.log('researched TESTE VOLUME ANTERIOR', researched.searchVolume.averageLastMonth);
     return (
       <Wrapper secondary>
         <TopBar

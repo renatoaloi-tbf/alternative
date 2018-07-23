@@ -31,11 +31,11 @@ const enhancer = compose(
 
         data: (() => {
             let arrayTeste = [{ y: 0, searchDate: '' }];
-            if (__DEV__) console.log('valueFormatter[0]', valueFormatter);
-            if (__DEV__) console.log('anoAnterior', anoAnterior);
-            if (__DEV__) console.log('value Formatter by index', valueFormatterIndex);
+            //if (__DEV__) console.log('valueFormatter[0]', valueFormatter);
+            //if (__DEV__) console.log('anoAnterior', anoAnterior);
+            //if (__DEV__) console.log('value Formatter by index', valueFormatterIndex);
             
-            console.log('values 1', values);
+            //console.log('values 1', values);
             if (anoAnterior) {
                 if (tipo == "volume") {
                     let arrayMesesAtual = [], arrayMesesAnoAnterior = [];
@@ -45,7 +45,7 @@ const enhancer = compose(
                             arrayMesesAtual[moment(item.searchDate).locale('pt-br').format('MMM').toUpperCase()] = { y : 0 };
                     });
 
-                    console.log('arrayMesesAtual 1', arrayMesesAtual);
+                    //console.log('arrayMesesAtual 1', arrayMesesAtual);
                     
                     for (var key in arrayMesesAtual) {
                         values.forEach(itemFI => {
@@ -111,18 +111,18 @@ const enhancer = compose(
                 if (tipo == "volume") 
                 {
                     var arrayCount = [];
-                    var count = 0;
+                    var countMes = 0;
                     values.forEach((item, i) => { 
-                        if (arrayCount.indexOf(item.searchDate) == -1)
+                        var mesValues = moment(item.searchDate).locale('pt-br').format('MMM').toUpperCase();
+                        if (arrayCount.indexOf(mesValues) == -1)
                         {
-                            count++;
-                            arrayCount.push(item.searchDate);
+                            countMes++;
+                            arrayCount.push(mesValues);
                         }
-                        //console.log('count registro', item); console.log('count registro count', count); 
                     });
-                    console.log('count++', count);
+                    //console.log('count++', countMes);
 
-                    if (count > 31)
+                    if (countMes > 1)
                     {
                         let arrayMesesAtual = [];
 
@@ -133,7 +133,7 @@ const enhancer = compose(
                             }
                         });
 
-                        console.log('arrayMesesAtual 2', arrayMesesAtual);
+                        //console.log('arrayMesesAtual 2', arrayMesesAtual);
                         
                         for (var key in arrayMesesAtual) {
                             values.forEach(itemFI => {
@@ -153,15 +153,15 @@ const enhancer = compose(
                     }
                 }
             }
-            console.log('values ano anterior 1', valuesAnoAnterior);
-            console.log('trataCores 1', trataCores);
+            //console.log('values ano anterior 1', valuesAnoAnterior);
+            //console.log('trataCores 1', trataCores);
 
             let trataCores = [], trataCoresAnoAnterior = [], arrayMedia = [];
 
-            console.log('values.length', values.length);
+            //console.log('values.length', values.length);
 
             if (values.length > 0) {
-                console.log('Teste passando aqui 1', valuesAnoAnterior.length);
+                //console.log('Teste passando aqui 1', valuesAnoAnterior.length);
                 if (anoAnterior) {
                     if (tipo == "volume") {
                         if (valuesAnoAnterior.length > 0) {
@@ -224,7 +224,7 @@ const enhancer = compose(
                     
                 }
                 else {
-                    console.log('TÁ ENTRANDO AQUI BIXO', values);
+                    //console.log('TÁ ENTRANDO AQUI BIXO', values);
                     values.forEach(valor => {
                         arrayMedia.push(media);
                         if (valor.y < media && moment(valueFormatter[0], 'MM/YYYY', true).isValid())
@@ -235,7 +235,7 @@ const enhancer = compose(
                 }
             }
             else {
-                console.log('Teste passando aqui 2');
+                //console.log('Teste passando aqui 2');
                 //QUANDO NÃO EXISTIR VALOR PARA O RANGE ATUAL
                 if (anoAnterior) {
                     if (valuesAnoAnterior.length > 0) {
@@ -277,9 +277,9 @@ const enhancer = compose(
                     }
                 }
             }
-            console.log('Teste passando aqui 3 ', valuesAnoAnterior);
+            //console.log('Teste passando aqui 3 ', valuesAnoAnterior);
             if (anoAnterior) {
-                console.log('Teste passando aqui 4', values);
+                //console.log('Teste passando aqui 4', values);
 
                 if (moment(valueFormatter[0], 'MM/YYYY', true).isValid() || tipo == 'volume') {
                     return {
@@ -350,12 +350,12 @@ const enhancer = compose(
                 }
             }
             else {
-                console.log('Teste passando aqui 5');
+                //console.log('Teste passando aqui 5');
                 if (moment(valueFormatter[0], 'MM/YYYY', true).isValid() || tipo == 'volume') {
-                    console.log('Teste passando aqui 6');
-                    console.log('values 6', values);
-                    console.log('trataCores 6', trataCores);
-                    console.log('trataCores 6 media', arrayMedia);
+                    //console.log('Teste passando aqui 6');
+                    //console.log('values 6', values);
+                    //console.log('trataCores 6', trataCores);
+                    //console.log('trataCores 6 media', arrayMedia);
                     return {
                         
                             dataSets: [{
@@ -376,9 +376,9 @@ const enhancer = compose(
                     };
                 }
                 else {
-                    console.log('Teste passando aqui 7');
-                    console.log('values', values);
-                    console.log('trataCores', trataCores);
+                    //console.log('Teste passando aqui 7');
+                    //console.log('values', values);
+                    //console.log('trataCores', trataCores);
                     return {
                             dataSets: [{
                                 values: [...values],
@@ -424,7 +424,7 @@ const enhancer = compose(
             }
             else {
                 if (anoAnterior) {
-                    console.log('valueFormatterIndex', valueFormatterIndex);
+                    //console.log('valueFormatterIndex', valueFormatterIndex);
                     Object.values(valueFormatterIndex).forEach(element => {
                         if (element.searchDate == "") {
                             novoFormato.push(moment(element.searchDate).locale('pt-br').format('MMM').toUpperCase());
@@ -436,28 +436,27 @@ const enhancer = compose(
                 }
                 else {
                     var arrayCount = [];
-                    var count = 0;
+                    var countMes = 0;
                     Object.values(valueFormatterIndex).forEach((item, i) => { 
-                        if (arrayCount.indexOf(item.searchDate) == -1)
+                        var mesValues = moment(item.searchDate).locale('pt-br').format('MMM').toUpperCase();
+                        if (arrayCount.indexOf(mesValues) == -1)
                         {
-                            count++;
-                            arrayCount.push(item.searchDate);
+                            countMes++;
+                            arrayCount.push(mesValues);
                         }
-                        //console.log('count registro', item); console.log('count registro count', count); 
                     });
-                    console.log('valueFormatterIndex count++', count);
+                    //console.log('valueFormatterIndex count++', countMes);
 
                     Object.values(valueFormatterIndex).forEach(element => {
-                        if (count <= 31)
-                        {
-                            novoFormato.push(moment(element.searchDate).locale('pt-br').format('DD').toUpperCase());
-                        }
-                        //console.log('element.searchDate', element.searchDate);
-                        else 
+                        if (countMes > 1)
                         {
                             if (novoFormato.indexOf(moment(element.searchDate).locale('pt-br').format('MMM').toUpperCase()) == -1) {
                                 novoFormato.push(moment(element.searchDate).locale('pt-br').format('MMM').toUpperCase());
                             }
+                        }
+                        else 
+                        {
+                            novoFormato.push(moment(element.searchDate).locale('pt-br').format('DD').toUpperCase());
                         }
                     });
                 }
@@ -465,7 +464,7 @@ const enhancer = compose(
             let arrayTesteAxis = [""];
             /* novoFormato = arrayTesteAxis.concat(novoFormato);
             novoFormato = novoFormato.concat(arrayTesteAxis); */
-            console.log('TRATACORES NOVO', novoFormato);
+            //console.log('TRATACORES NOVO', novoFormato);
             return {
                 axisMinimum: -0.5,
                 limitLine: 115,
@@ -479,7 +478,7 @@ const enhancer = compose(
             };
         })(),
         yAxis: (() => {
-            console.log('TRATACORES NOVO asdasdsadasd')
+            //console.log('TRATACORES NOVO asdasdsadasd')
             return {
                 left: {
                     drawLabels: true,
@@ -513,7 +512,7 @@ const enhancer = compose(
         })(),
         zoom: (() => {
             if (moment(valueFormatter[0], 'MM/YYYY', true).isValid()) {
-                console.log('Entrou no zoom 1', 0.1145833 * values.length);
+                //console.log('Entrou no zoom 1', 0.1145833 * values.length);
                 return {
                     scaleX: 0.1145833 * values.length,
                     scaleY: 1,
@@ -523,9 +522,9 @@ const enhancer = compose(
             }
             else {
                 if (tipo == 'volume') {
-                    console.log('Entrou no zoom 2', 0.1145833 * values.length);
+                    //console.log('Entrou no zoom 2', 0.1145833 * values.length);
                     if (anoAnterior) {
-                        console.log('Entrou no zoom 2 com Comparação');
+                        //console.log('Entrou no zoom 2 com Comparação');
                         return {
                             scaleX: 0.1145833 * values.length,
                             scaleY: 1,
@@ -534,7 +533,7 @@ const enhancer = compose(
                         };
                     }
                     else {
-                        console.log('Entrou no zoom 2 sem Comparação');
+                        //console.log('Entrou no zoom 2 sem Comparação');
                         return {
                             scaleX: 0.1145833 * values.length,
                             scaleY: 1,
@@ -544,9 +543,10 @@ const enhancer = compose(
                     }
 
                 }
-                else {console.log('VALUE FORMARTER ZOOM', valueFormatter);
+                else {
+                    //console.log('VALUE FORMARTER ZOOM', valueFormatter);
                     if (valueFormatter.length == 1) {
-                        console.log('Entrou no zoom 3', 0.1145833 * values.length);
+                        //console.log('Entrou no zoom 3', 0.1145833 * values.length);
                         return {
                             scaleX: 0.1145833 * values.length,
                             scaleY: 0,
@@ -555,7 +555,7 @@ const enhancer = compose(
                         };
                     }
                     else {
-                        console.log('Entrou no zoom 4', 0.1145833 * values.length);
+                        //console.log('Entrou no zoom 4', 0.1145833 * values.length);
                         return {
                             scaleX: 0.1145833 * values.length,
                             scaleY: 1,

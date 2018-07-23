@@ -60,7 +60,7 @@ const INITIAL_STATE = {
 const getData = (state, { payload }) => {
   const newState = cloneDeep(INITIAL_STATE);
   const { qualities, range, type } = payload;
-  if (__DEV__) console.log("researched.js - getData1", range);
+  //if (__DEV__) console.log("researched.js - getData1", range);
   const list = [];
   newState.searchQuality.period = dateDiffList(range.startDate, range.endDate);
   forEach(newState.searchQuality.period, (item, index) => {
@@ -71,9 +71,9 @@ const getData = (state, { payload }) => {
       list.push(qualityConstant);
     }
   });
-  console.log('ITEM TYPE', type);
+  //console.log('ITEM TYPE', type);
   newState.searchQuality.items = map(list, item => ({ y: item[type] ? item[type] : 0 }));
-  if (__DEV__) console.log("researched.js - getData2", newState);
+  //if (__DEV__) console.log("researched.js - getData2", newState);
   return newState;
 };
 
@@ -81,46 +81,46 @@ const getData = (state, { payload }) => {
 const getDataComparacaoAnoAnterior = (state, { payload }) => {
   const newState = cloneDeep(INITIAL_STATE);
   const { qualities, range, type, rangeAnterior } = payload;
-  if (__DEV__) console.log("researched.js - getData1", range);
-  if (__DEV__) console.log("researched.js - RANGE ANTERIOR", rangeAnterior);
+  //if (__DEV__) console.log("researched.js - getData1", range);
+  //if (__DEV__) console.log("researched.js - RANGE ANTERIOR", rangeAnterior);
 
   /** PESQUISA PERIODO ATUAL */
   const list = [];
   newState.searchQuality.period = dateDiffList(range.startDate, range.endDate);
-  console.log('newState.searchQuality.period', newState.searchQuality.period);
-  console.log('qualities', qualities);
+  //console.log('newState.searchQuality.period', newState.searchQuality.period);
+  //console.log('qualities', qualities);
   forEach(newState.searchQuality.period, (item, index) => {
     newState.searchQuality.byIndex[index] = item;
-    console.log('Teste qualities item', item);
+    //console.log('Teste qualities item', item);
     if (qualities[item]) {
       list.push(qualities[item]);
     } else {
       list.push(qualityConstant);
     }
   });
-  console.log('ITEM TYPE', type);
+  //console.log('ITEM TYPE', type);
   newState.searchQuality.items = map(list, item => ({ y: item[type] }));
-  if (__DEV__) console.log("researched.js - getData2", newState);
+  //if (__DEV__) console.log("researched.js - getData2", newState);
 
   /** PESQUISA PERIODO ATUAL END */
 
   /** PESQUISA PERIODO ANTERIOR */
   const listAnoAnterior = [];
   newState.searchQualityAnoAnterior.period = dateDiffList(rangeAnterior.startDate, rangeAnterior.endDate);
-  console.log('newState.searchQualityAnoAnterior.period', newState.searchQuality.period);
-  console.log('qualitiesAnterior', qualities);
+  //console.log('newState.searchQualityAnoAnterior.period', newState.searchQuality.period);
+  //console.log('qualitiesAnterior', qualities);
   forEach(newState.searchQualityAnoAnterior.period, (item, index) => {
     newState.searchQualityAnoAnterior.byIndex[index] = item;
-    console.log('Teste qualities item', item);
+    //console.log('Teste qualities item', item);
     if (qualities[item]) {
       listAnoAnterior.push(qualities[item]);
     } else {
       listAnoAnterior.push(qualityConstant);
     }
   });
-  console.log('ITEM TYPE', type);
+  //console.log('ITEM TYPE', type);
   newState.searchQualityAnoAnterior.items = map(listAnoAnterior, item => ({ y: item[type] }));
-  console.log('newState.searchQualityAnoAnterior.items', newState.searchQualityAnoAnterior.items);
+  //console.log('newState.searchQualityAnoAnterior.items', newState.searchQualityAnoAnterior.items);
   /** PESQUISA PERIODO ANTERIOR END */
 
   return newState;
@@ -139,7 +139,7 @@ const setArray = number => {
 };
 
 const getVolumeData = (state, { payload }) => {
-  console.log('nao passei aqui, talquei?');
+  //console.log('nao passei aqui, talquei?');
   const newState = cloneDeep(INITIAL_STATE);
   const { range, volumes, primeiraVisao } = payload;
   const start = moment(range.startDate, 'MM/YYYY').startOf('month');
@@ -196,7 +196,7 @@ const getVolumeDataAnoAnterior = (state, { payload }) => {
   });
   newState.searchVolume.items = map(filterVolumes, item => ({ y: item.volume,  searchDate: item.searchDate }));
 
-  console.log('getVolumeDataAnoAnterior - newState.searchVolume.items', newState.searchVolume.items);
+  //console.log('getVolumeDataAnoAnterior - newState.searchVolume.items', newState.searchVolume.items);
 
   newState.searchVolume.period = setArray(newState.searchVolume.items.length);
   newState.searchVolume.currentMonth = moment().format('MMMM');
@@ -228,7 +228,7 @@ const getVolumeDataAnoAnterior = (state, { payload }) => {
   /**
    * VOLUME DO ANO ANTERIOR
    */
-    console.log('RANGE DO ANO ANTERIOR STARTDATE', rangeAnterior.startDate);
+    //console.log('RANGE DO ANO ANTERIOR STARTDATE', rangeAnterior.startDate);
     const startAnterior = moment(rangeAnterior.startDate, 'MM/YYYY').startOf('month');
     const endAnterior = moment(rangeAnterior.endDate, 'MM/YYYY').endOf('month');
     const raAnterior = moment.range(startAnterior, endAnterior);
@@ -237,7 +237,7 @@ const getVolumeDataAnoAnterior = (state, { payload }) => {
       raAnterior.contains(moment(item.searchDate))
     );
 
-    console.log('FILTER VOLUMES ANO ANTERIOR', filterVolumesAnteriores);
+    //console.log('FILTER VOLUMES ANO ANTERIOR', filterVolumesAnteriores);
     if (filterVolumesAnteriores.length > 0) {
       forEach(filterVolumesAnteriores, (item, index) => {
         newState.searchVolumeAnoAnterior.byIndex[index] = item;
@@ -291,7 +291,7 @@ const close = () => {
 const getDetailsDayQuality = (state, { payload }) => {
   const newState = cloneDeep(INITIAL_STATE);
   const { qualities, type } = payload;
-  console.log('ARRAY QUALITY', qualities);
+  //console.log('ARRAY QUALITY', qualities);
   if (qualities) {
     if (!qualities.length) {
       let arrayQuality = [];
@@ -328,15 +328,15 @@ const getDetailsDayQuality = (state, { payload }) => {
 const getPriceData = (state, { payload }) => {
   const newState = cloneDeep(INITIAL_STATE);
   const { prices, range, year } = payload;
-  console.log('PREÇOS POR PADRÃO', prices);
+  //console.log('PREÇOS POR PADRÃO', prices);
   const start = moment(range.startDate, 'MM/YYYY').startOf('month').format('YYYYMM');
   const end = moment(range.endDate, 'MM/YYYY').endOf('month').format('YYYYMM');
   const start2 = moment(range.startDate, 'MM/YYYY').startOf('month').format('YYYY-MM-DD');
   const end2 = moment(range.endDate, 'MM/YYYY').endOf('month').format('YYYY-MM-DD');
 
-  console.log('START DATE', start);
+  //console.log('START DATE', start);
   const ra = moment.range(start, end);
-  console.log('PRICEEEEEES', prices);
+  //console.log('PRICEEEEEES', prices);
 
   const filterPrices = filter(prices, item =>
     ra.contains(moment(moment(item.period, 'MM/YYYY').format('YYYYMM')))
@@ -356,7 +356,7 @@ const getPriceData = (state, { payload }) => {
   });
 
   newState.searchPrice.filter = filterPrices;
-  console.log('FILTER PRICE', filterPrices);
+  //console.log('FILTER PRICE', filterPrices);
   newState.searchPrice.items = map(range2map, (item, index) => {
     const findPrice = find(filterPrices, price => moment(price.period, 'MM/YYYY').format('MMYYYY') === item);
     if (findPrice) {
@@ -382,7 +382,7 @@ const getPriceData = (state, { payload }) => {
     };
   });
 
-  if (__DEV__) console.log("researched.js - getPriceData", newState);
+  //if (__DEV__) console.log("researched.js - getPriceData", newState);
 
   return newState;
 };
@@ -390,24 +390,24 @@ const getPriceData = (state, { payload }) => {
 const getPriceCompareData = (state, { payload }) => {
   const newState = cloneDeep(INITIAL_STATE);
   const { prices, range, year, rangeAnterior, allPrices } = payload;
-  console.log('PRICES COMPARAÇÃO', prices);
-  console.log('RANGE COMPARAÇÃO', range);
-  console.log('ANO COMPARAÇÃO', year);
-  console.log('RANGE ANTERIOR COMPARAÇÃO', rangeAnterior);
-  console.log('TODOS OS PREÇOS', allPrices);
-  console.log('PRICE ANO ANTERIOR COMPARAÇÃO');
+  //console.log('PRICES COMPARAÇÃO', prices);
+  //console.log('RANGE COMPARAÇÃO', range);
+  //console.log('ANO COMPARAÇÃO', year);
+  //console.log('RANGE ANTERIOR COMPARAÇÃO', rangeAnterior);
+  //console.log('TODOS OS PREÇOS', allPrices);
+  //console.log('PRICE ANO ANTERIOR COMPARAÇÃO');
 
   /**COMPARAÇÃO INICIO */
   /** RANGE ESCOLHIDO */
-  console.log('PREÇOS POR PADRÃO COMPARACAO', prices);
+  //console.log('PREÇOS POR PADRÃO COMPARACAO', prices);
   const start = moment(range.startDate, 'MM/YYYY').startOf('month').format('YYYYMM');
   const end = moment(range.endDate, 'MM/YYYY').endOf('month').format('YYYYMM');
   const start2 = moment(range.startDate, 'MM/YYYY').startOf('month').format('YYYY-MM-DD');
   const end2 = moment(range.endDate, 'MM/YYYY').endOf('month').format('YYYY-MM-DD');
 
-  console.log('START DATE  COMPARACAO', start);
+  //console.log('START DATE  COMPARACAO', start);
   const ra = moment.range(start, end);
-  console.log('PRICEEEEEES  COMPARACAO', prices);
+  //console.log('PRICEEEEEES  COMPARACAO', prices);
 
   const filterPrices = filter(prices, item =>
     ra.contains(moment(moment(item.period, 'MM/YYYY').format('YYYYMM')))
@@ -427,7 +427,7 @@ const getPriceCompareData = (state, { payload }) => {
   });
 
   newState.searchPrice.filter = filterPrices;
-  console.log('FILTER PRICE  COMPARACAO', filterPrices);
+  //console.log('FILTER PRICE  COMPARACAO', filterPrices);
   newState.searchPrice.items = map(range2map, (item, index) => {
     const findPrice = find(filterPrices, price => moment(price.period, 'MM/YYYY').format('MMYYYY') === item);
     if (findPrice) {
@@ -458,15 +458,15 @@ const getPriceCompareData = (state, { payload }) => {
 
 
 
-  console.log('PREÇOS POR PADRÃO COMPARACAO ANTERIOR', allPrices);
+  //console.log('PREÇOS POR PADRÃO COMPARACAO ANTERIOR', allPrices);
   const startrangeAnterior = moment(rangeAnterior.startDate, 'MM/YYYY').startOf('month').format('YYYYMM');
   const endrangeAnterior = moment(rangeAnterior.endDate, 'MM/YYYY').endOf('month').format('YYYYMM');
   const start2rangeAnterior = moment(rangeAnterior.startDate, 'MM/YYYY').startOf('month').format('YYYY-MM-DD');
   const end2rangeAnterior = moment(rangeAnterior.endDate, 'MM/YYYY').endOf('month').format('YYYY-MM-DD');
 
-  console.log('START DATE  COMPARACAO ANTERIOR', startrangeAnterior);
+  //console.log('START DATE  COMPARACAO ANTERIOR', startrangeAnterior);
   const rarangeAnterior = moment.range(startrangeAnterior, endrangeAnterior);
-  console.log('PRICEEEEEES  COMPARACAO ANTERIOR', allPrices);
+  //console.log('PRICEEEEEES  COMPARACAO ANTERIOR', allPrices);
 
   const filterPricesrangeAnterior = filter(allPrices, item =>
     rarangeAnterior.contains(moment(moment(item.period, 'MM/YYYY').format('YYYYMM')))
@@ -486,7 +486,7 @@ const getPriceCompareData = (state, { payload }) => {
   });
 
   newState.searchPriceAnoAnterior.filter = filterPricesrangeAnterior;
-  console.log('FILTER PRICE COMPARACAO ANTERIOR', filterPricesrangeAnterior);
+  //console.log('FILTER PRICE COMPARACAO ANTERIOR', filterPricesrangeAnterior);
   newState.searchPriceAnoAnterior.items = map(range2rangeAnteriormap, (item, index) => {
     const findPrice = find(filterPricesrangeAnterior, price => moment(price.period, 'MM/YYYY').format('MMYYYY') === item);
     if (findPrice) {
@@ -512,7 +512,7 @@ const getPriceCompareData = (state, { payload }) => {
     };
   });
 
-  console.log('NEW STATE ANO ANTERIOR ANTERIOR', newState);
+  //console.log('NEW STATE ANO ANTERIOR ANTERIOR', newState);
   
   return newState;
 };

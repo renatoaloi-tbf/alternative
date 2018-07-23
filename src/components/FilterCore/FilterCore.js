@@ -42,7 +42,7 @@ const enhance = compose(
       }
     },
     onChange: e => {
-      if (__DEV__) console.log("FilterCore.js - onChange", e);
+      //if (__DEV__) console.log("FilterCore.js - onChange", e);
       if (typeof onChange === "function") {
         onChange(e);
       }
@@ -63,7 +63,7 @@ const enhance = compose(
       }
     },
     comparacao: e => {
-      console.log('COMPARACAO', comparacao);
+      //console.log('COMPARACAO', comparacao);
       if (typeof comparacao === "function") {
         comparacao(e);
       }
@@ -71,13 +71,13 @@ const enhance = compose(
   })),
   withHandlers({
     onChangeInit: ({ range, setRange, onChange }) => e => {
-      if (__DEV__) console.log("FilterCore.js - onChangeInit", e);
-      if (__DEV__) console.log("FilterCore.js - onChangeInit range", range);
+      //if (__DEV__) console.log("FilterCore.js - onChangeInit", e);
+      //if (__DEV__) console.log("FilterCore.js - onChangeInit range", range);
       setRange({ ...range, startDate: e.value });
       onChange({ ...range, startDate: e.value });
     },
     onChangeEnd: ({ range, setRange, onChange }) => e => {
-      if (__DEV__) console.log("FilterCore.js - onChangeEnd range", range);
+      //if (__DEV__) console.log("FilterCore.js - onChangeEnd range", range);
       setRange({ ...range, endDate: e.value });
       onChange({ ...range, endDate: e.value });
     },
@@ -88,8 +88,8 @@ const enhance = compose(
       range,
       setValueComparacao
     }) => e => {
-      console.log("acao comparar", e);
-      console.log("RANGE Filter core", range);
+      //console.log("acao comparar", e);
+      //console.log("RANGE Filter core", range);
       if (!range.startDate) {
         Alert.alert(
           "Atenção",
@@ -104,7 +104,7 @@ const enhance = compose(
           ]
         );
       } else {
-        console.log('OPA ENTROU AQUI!');
+        //console.log('OPA ENTROU AQUI!');
         let comparacaoStart = moment(range.startDate, "MM/YYYY")
           .subtract(1, "year")
           .format("MMM/YYYY");
@@ -112,7 +112,7 @@ const enhance = compose(
           .subtract(1, "year")
           .format("MMM/YYYY");
       
-        console.log('e o que meu', e);
+        //console.log('e o que meu', e);
         setCompare(e);
         if (compare)
         {
@@ -146,7 +146,7 @@ export const FilterCore = enhance(
     inverted,
     valueComparacao
   }) => {
-    if (__DEV__) console.log("FilterCore.js - enhance", range);
+    //if (__DEV__) console.log("FilterCore.js - enhance", range);
     return (
       <Wrapper>
         {!isVisible && (
