@@ -39,21 +39,21 @@ const enhancer = compose(
             if (anoAnterior) {
                 if (tipo == "volume") {
                     let arrayMesesAtual = [], arrayMesesAnoAnterior = [];
+
                     values.forEach(function(item, i)  {
                         if ((arrayMesesAtual.indexOf(moment(item.searchDate).locale('pt-br').format('MMM').toUpperCase()) == -1) && item.searchDate != "") 
-                        arrayMesesAtual[moment(item.searchDate).locale('pt-br').format('MMM').toUpperCase()] = { y : 0 };
+                            arrayMesesAtual[moment(item.searchDate).locale('pt-br').format('MMM').toUpperCase()] = { y : 0 };
                     });
-                    
+
+                    console.log('arrayMesesAtual 1', arrayMesesAtual);
                     
                     for (var key in arrayMesesAtual) {
-                        
                         values.forEach(itemFI => {
                             if (itemFI.searchDate != "") {
                                 if (key == moment(itemFI.searchDate).locale('pt-br').format('MMM').toUpperCase()) {
                                     arrayMesesAtual[key].y = arrayMesesAtual[key].y + itemFI.y;
                                 }
                             }
-                            
                         });    
                     }
                     
@@ -73,16 +73,22 @@ const enhancer = compose(
                         });    
                     }
 
-                    console.log('TESTE NOVO VALUES',arrayMesesAtual);
-                    
+                    //console.log('TESTE NOVO VALUES DO ANO ANTERIOR',arrayMesesAnoAnterior);
+                    //console.log('TESTE NOVO VALUES',arrayMesesAtual);
                        
-                    values = [], valuesAnoAnterior = []
+                    values = [], valuesAnoAnterior = [];
                     for(var key in arrayMesesAtual) {
-                        values.push(arrayMesesAtual[key]);
+                        //console.log('TESTE NOVO VALUES KEY', key);
+                        if (key != 'unique')
+                            values.push(arrayMesesAtual[key]);
                     }
                     for(var keyAnterior in arrayMesesAnoAnterior) {
-                        valuesAnoAnterior.push(arrayMesesAnoAnterior[keyAnterior]);
+                        if (keyAnterior != 'unique')
+                            valuesAnoAnterior.push(arrayMesesAnoAnterior[keyAnterior]);
                     }
+
+                    //console.log('TESTE NOVO VALUES DO ANO ANTERIOR 2', values);
+                    //console.log('TESTE NOVO VALUES 2', valuesAnoAnterior);
                     
                     formatterMeses = Object.keys(arrayMesesAtual);
                     formatterMesesAnoAnterior = Object.keys(arrayMesesAnoAnterior);
@@ -97,14 +103,62 @@ const enhancer = compose(
                         return a;
                     };
                     testeUnique = formatterMeses.concat(formatterMesesAnoAnterior).unique();
-                    console.log('TESTE ARRAY SEM REPETIÇOES', testeUnique); 
+                    //console.log('TESTE ARRAY SEM REPETIÇOES', testeUnique); 
                 }
+            }
+            else
+            {
+                if (tipo == "volume") 
+                {
+                    var arrayCount = [];
+                    var count = 0;
+                    values.forEach((item, i) => { 
+                        if (arrayCount.indexOf(item.searchDate) == -1)
+                        {
+                            count++;
+                            arrayCount.push(item.searchDate);
+                        }
+                        //console.log('count registro', item); console.log('count registro count', count); 
+                    });
+                    console.log('count++', count);
 
+                    if (count > 31)
+                    {
+                        let arrayMesesAtual = [];
+
+                        values.forEach(function(item, i)  {
+                            if ((arrayMesesAtual.indexOf(moment(item.searchDate).locale('pt-br').format('MMM').toUpperCase()) == -1) && item.searchDate != "") 
+                            {
+                                arrayMesesAtual[moment(item.searchDate).locale('pt-br').format('MMM').toUpperCase()] = { y : 0 };
+                            }
+                        });
+
+                        console.log('arrayMesesAtual 2', arrayMesesAtual);
+                        
+                        for (var key in arrayMesesAtual) {
+                            values.forEach(itemFI => {
+                                if (itemFI.searchDate != "") {
+                                    if (key == moment(itemFI.searchDate).locale('pt-br').format('MMM').toUpperCase()) {
+                                        arrayMesesAtual[key].y = arrayMesesAtual[key].y + itemFI.y;
+                                    }
+                                }
+                            });    
+                        }
+
+                        values = [];
+                        for(var key in arrayMesesAtual) {
+                            if (key != 'unique')
+                                values.push(arrayMesesAtual[key]);
+                        }
+                    }
+                }
             }
             console.log('values ano anterior 1', valuesAnoAnterior);
             console.log('trataCores 1', trataCores);
 
             let trataCores = [], trataCoresAnoAnterior = [], arrayMedia = [];
+
+            console.log('values.length', values.length);
 
             if (values.length > 0) {
                 console.log('Teste passando aqui 1', valuesAnoAnterior.length);
@@ -127,6 +181,7 @@ const enhancer = compose(
                             })
                         }
                         else {
+                            values = [];
                             for (let index = 0; index < 15; index++) {
                                 valuesAnoAnterior.push({ y: 0 });
                                 values.push({ y: 0 });
@@ -138,6 +193,7 @@ const enhancer = compose(
                     }
                     else {
                         if (valuesAnoAnterior.length > 0) {
+                            values = [];
                             valuesAnoAnterior.forEach(vaa => {
                                 values.push({ y: 0 });
                                 if (vaa.y < media && moment(valueFormatter[0], 'MM/YYYY', true).isValid())
@@ -155,6 +211,7 @@ const enhancer = compose(
                             })
                         }
                         else {
+                            values = [];
                             for (let index = 0; index < 15; index++) {
                                 valuesAnoAnterior.push({ y: 0 });
                                 values.push({ y: 0 });
@@ -182,6 +239,7 @@ const enhancer = compose(
                 //QUANDO NÃO EXISTIR VALOR PARA O RANGE ATUAL
                 if (anoAnterior) {
                     if (valuesAnoAnterior.length > 0) {
+                        values = [];
                         valuesAnoAnterior.forEach(vaa => {
                             values.push({ y: 0 });
                             if (vaa.y < media && moment(valueFormatter[0], 'MM/YYYY', true).isValid())
@@ -199,6 +257,7 @@ const enhancer = compose(
                         })
                     }
                     else {
+                        values = [];
                         for (let index = 0; index < 15; index++) {
                             valuesAnoAnterior.push({ y: 0 });
                             values.push({ y: 0 });
@@ -209,6 +268,7 @@ const enhancer = compose(
                     }
                 }
                 else {
+                    values = [];
                     for (let index = 0; index < 15; index++) {
                         arrayMedia.push(media);
                         values.push({ y: 0 });
@@ -222,9 +282,7 @@ const enhancer = compose(
                 console.log('Teste passando aqui 4', values);
 
                 if (moment(valueFormatter[0], 'MM/YYYY', true).isValid() || tipo == 'volume') {
-
                     return {
-
                             dataSets: [
                                 {
                                     values: [...valuesAnoAnterior],
@@ -346,7 +404,7 @@ const enhancer = compose(
         xAxis: (() => {
             let novoFormato = [];
             if (tipo != "volume") {
-                let count = 0;
+                var count = 0;
                 valueFormatter.forEach(element => {
                     if (moment(element, 'MM/YYYY', true).isValid()) {
                         novoFormato.push(moment(element, 'MM/YYYY').format('MMM').toUpperCase());
@@ -377,8 +435,30 @@ const enhancer = compose(
                     });
                 }
                 else {
+                    var arrayCount = [];
+                    var count = 0;
+                    Object.values(valueFormatterIndex).forEach((item, i) => { 
+                        if (arrayCount.indexOf(item.searchDate) == -1)
+                        {
+                            count++;
+                            arrayCount.push(item.searchDate);
+                        }
+                        //console.log('count registro', item); console.log('count registro count', count); 
+                    });
+                    console.log('valueFormatterIndex count++', count);
+
                     Object.values(valueFormatterIndex).forEach(element => {
-                        novoFormato.push(moment(element.searchDate).locale('pt-br').format('DD').toUpperCase());
+                        if (count <= 31)
+                        {
+                            novoFormato.push(moment(element.searchDate).locale('pt-br').format('DD').toUpperCase());
+                        }
+                        //console.log('element.searchDate', element.searchDate);
+                        else 
+                        {
+                            if (novoFormato.indexOf(moment(element.searchDate).locale('pt-br').format('MMM').toUpperCase()) == -1) {
+                                novoFormato.push(moment(element.searchDate).locale('pt-br').format('MMM').toUpperCase());
+                            }
+                        }
                     });
                 }
             }
@@ -403,7 +483,7 @@ const enhancer = compose(
             return {
                 left: {
                     drawLabels: true,
-                    drawAxisLine: true,
+                    drawAxisLine: false,
                     drawGridLines: true,
                     axisMinimum: 0,
                     limitLines: [{
@@ -433,9 +513,9 @@ const enhancer = compose(
         })(),
         zoom: (() => {
             if (moment(valueFormatter[0], 'MM/YYYY', true).isValid()) {
-                console.log('Entrou no zoom 1');
+                console.log('Entrou no zoom 1', 0.1145833 * values.length);
                 return {
-                    scaleX: 1.4,
+                    scaleX: 0.1145833 * values.length,
                     scaleY: 1,
                     xValue: 0,
                     yValue: 1
@@ -443,11 +523,11 @@ const enhancer = compose(
             }
             else {
                 if (tipo == 'volume') {
-                    console.log('Entrou no zoom 2');
+                    console.log('Entrou no zoom 2', 0.1145833 * values.length);
                     if (anoAnterior) {
                         console.log('Entrou no zoom 2 com Comparação');
                         return {
-                            scaleX: 0,
+                            scaleX: 0.1145833 * values.length,
                             scaleY: 1,
                             xValue: 0,
                             yValue: 1
@@ -456,7 +536,7 @@ const enhancer = compose(
                     else {
                         console.log('Entrou no zoom 2 sem Comparação');
                         return {
-                            scaleX: 5.5,
+                            scaleX: 0.1145833 * values.length,
                             scaleY: 1,
                             xValue: 2,
                             yValue: 1
@@ -466,18 +546,18 @@ const enhancer = compose(
                 }
                 else {console.log('VALUE FORMARTER ZOOM', valueFormatter);
                     if (valueFormatter.length == 1) {
-                        console.log('Entrou no zoom 3');
+                        console.log('Entrou no zoom 3', 0.1145833 * values.length);
                         return {
-                            scaleX: 0,
+                            scaleX: 0.1145833 * values.length,
                             scaleY: 0,
                             xValue: 0,
                             yValue: 0
                         };
                     }
                     else {
-                        console.log('Entrou no zoom 4');
+                        console.log('Entrou no zoom 4', 0.1145833 * values.length);
                         return {
-                            scaleX: 6,
+                            scaleX: 0.1145833 * values.length,
                             scaleY: 1,
                             xValue: 0,
                             yValue: 1

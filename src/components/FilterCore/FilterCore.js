@@ -34,7 +34,7 @@ const enhance = compose(
   withState("compare", "setCompare", false),
   withState("range", "setRange", {}),
   withState("valueComparacao", "setValueComparacao", ""),
-  withProps(({ setVisible, onChange, apply, close, open, comparacao }) => ({
+  withProps(({ setVisible, onChange, apply, close, open, comparacao, setValueComparacao, setCompare }) => ({
     open: e => {
       setVisible(true);
       if (typeof open === "function") {
@@ -50,6 +50,9 @@ const enhance = compose(
     onPress: e => {},
     close: e => {
       if (typeof close === "function") {
+        setVisible(false);
+        setValueComparacao("");
+        setCompare(false);
         close();
       }
     },
@@ -79,6 +82,7 @@ const enhance = compose(
       onChange({ ...range, endDate: e.value });
     },
     setComparacao: ({
+      compare,
       comparacao,
       setCompare,
       range,
@@ -107,8 +111,18 @@ const enhance = compose(
         let comparacaoEnd = moment(range.endDate, "MM/YYYY")
           .subtract(1, "year")
           .format("MMM/YYYY");
-        setValueComparacao("(" + comparacaoStart + " - " + comparacaoEnd + ")");
+      
+        console.log('e o que meu', e);
         setCompare(e);
+        if (compare)
+        {
+          setValueComparacao("(" + comparacaoStart + " - " + comparacaoEnd + ")");
+        }
+        else
+        {
+          setValueComparacao("");
+        }
+        
         comparacao(e);
       }
     }
