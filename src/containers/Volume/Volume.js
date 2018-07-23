@@ -29,6 +29,8 @@ import {
   BarChartLine
 } from '~/components/shared';
 
+import { View, Text } from 'react-native';
+
 import { VolumeDetails, VolumeAverage } from '~/components/Volume';
 import { FilterCore } from '~/components/FilterCore';
 
@@ -54,6 +56,9 @@ const enhance = compose(
   withState('searchMonth', 'setSearchMonth', ''),
   withState('anoAnterior', 'setAnoAnterior', false),
   withState('changed', 'setChanged', { rangeAtual: null, rangeAnoAnterior: null }),
+  withState('isLegenda', 'setIsLegenda', false),
+  withState('anoAtualLegenda', 'setAnoAtualLegenda', 2002),
+  withState('anoAnteriorLegenda', 'setAnoAnteriorLegenda', 2001),
   withHandlers({
     handlerComparacao: ({
       setAnoAnterior,
@@ -67,20 +72,30 @@ const enhance = compose(
       changed,
       researched,
       setCollected,
-      setIsCompare
+      setIsCompare,
+      setIsLegenda,
+      setAnoAtualLegenda,
+      setAnoAnteriorLegenda
     }) => (e) => {
-      //console.log('éééééé', e);
+      console.log('changed', changed);
+      console.log('range', range);
+      console.log('rangeAnoAnterior', rangeAnoAnterior);
       setIsCollected(e);
       setIsCompare(e);
+      setIsLegenda(e);
       if (changed.rangeAtual != null && changed.rangeAnoAnterior != null) {
         setRange(changed.rangeAtual);
+        setAnoAtualLegenda(moment(changed.rangeAtual.startDate, "MM/YYYY").format('YYYY'));
         setRangeAnoAnterior(changed.rangeAnoAnterior);
+        setAnoAnteriorLegenda(moment(changed.rangeAnoAnterior.startDate, "MM/YYYY").format('YYYY'));
         setAnoAnterior(e);
         getSearchVolumeAnoAnterior(changed.rangeAtual, volume.all, changed.rangeAnoAnterior, volume.all);
       }
       else {
         setRange(range);
+        setAnoAtualLegenda(moment(range.startDate, "MM/YYYY").format('YYYY'));
         setRangeAnoAnterior(rangeAnoAnterior);
+        setAnoAnteriorLegenda(moment(rangeAnoAnterior.startDate, "MM/YYYY").format('YYYY'));
         setAnoAnterior(e);
         getSearchVolumeAnoAnterior(range, volume.all, rangeAnoAnterior, volume.all);
       }
@@ -97,7 +112,8 @@ const enhance = compose(
       getSearchVolume,
       setAnoAnterior,
       setRangeAnoAnterior,
-      setIsCompare
+      setIsCompare,
+      setIsLegenda
 		}) => () => {
       console.log('passei no close do Volume');
 			setRange({});
@@ -118,6 +134,7 @@ const enhance = compose(
         setRange({ ...range });
         setIsCollected(false);
         setIsCompare(false);
+        setIsLegenda(false);
         setDetails({});
 		},
     handlerClose: ({
@@ -423,7 +440,10 @@ export const Volume = enhance(
     handlerComparacao,
     anoAnterior,
     close,
-    isCompare
+    isCompare,
+    isLegenda,
+    anoAtualLegenda,
+    anoAnteriorLegenda
   }) => {
     return (
       <Wrapper secondary>
@@ -473,6 +493,12 @@ export const Volume = enhance(
               anoAnterior={anoAnterior}
               valuesAnoAnterior={researched.searchVolumeAnoAnterior.items}
             />
+            {isLegenda && (
+              <ViewLegenda>
+                <ViewBolinha><BolinhaAnoAnterior></BolinhaAnoAnterior><TextBola>{anoAnteriorLegenda}</TextBola></ViewBolinha>
+                <ViewBolinha><BolinhaAnoAtual></BolinhaAnoAtual><TextBola>{anoAtualLegenda}</TextBola></ViewBolinha>
+              </ViewLegenda>
+            )}
           </WrapperBar>
           <WrapperDetails>
             {!isEmpty(details) && <VolumeDetails details={details} />}
@@ -482,6 +508,43 @@ export const Volume = enhance(
     );
   }
 );
+
+const ViewBolinha = styled.View`
+  display: flex;
+  justify-content: center;
+  flex-direction: row;
+  /* border: 1px solid green; */
+  margin-left: 10;
+  margin-right: 10;
+`;
+
+const ViewLegenda = styled.View`
+  /* border: 1px solid red; */
+  display: flex;
+  justify-content: center;
+  flex-direction: row;
+  margin-top: 10;
+  margin-bottom: 10;
+`;
+
+const TextBola = styled.Text`
+  margin-left: 5;
+  font-size: 10;
+`;
+
+const BolinhaAnoAnterior = styled.View`
+  border-radius: 8;
+  height: 15;
+  width: 15;
+  background-color: #00cdff;
+`;
+
+const BolinhaAnoAtual = styled.View`
+  border-radius: 8;
+  height: 15;
+  width: 15;
+  background-color: #0093ff;
+`;
 
 const WrapperHeader = styled.View`
   padding-bottom: 2;
