@@ -75,10 +75,18 @@ export const ItemQuality = enhance(({type, onPress}) => {
 
 const Wrapper = styled.View`
   background-color: ${props => props.theme.bg};
+  height: 90;
 `;
 
 const WrapperContentSelected = styled.View`
   background-color: ${props => props.theme.info};
+  padding-top: 15;
+  padding-bottom: 10;
+  padding-left: 15;
+  padding-right: 10;
+`;
+
+const WrapperContent = styled.TouchableOpacity`
   padding-top: 10;
   padding-bottom: 10;
   padding-left: 10;
@@ -95,13 +103,6 @@ const WrapperValue = styled.View`
   padding-left: 10;
   padding-right: 10;
   padding-top: 10;
-`;
-
-const WrapperContent = styled(TouchableOpacity)`
-  padding-top: 10;
-  padding-bottom: 10;
-  padding-left: 10;
-  padding-right: 10;
 `;
 
 const DescriptioType = Text.extend`

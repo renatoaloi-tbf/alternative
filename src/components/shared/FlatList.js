@@ -7,7 +7,8 @@ import {
   RefreshControl,
   Platform,
   View,
-  ActivityIndicator
+  ActivityIndicator,
+  Text
 } from 'react-native';
 import {
   compose,
@@ -23,55 +24,57 @@ import {
 // Locals
 import {theme} from '~/config';
 
-export const FlatList = styled(
-  compose(
-    setPropTypes({
-      data: array.isRequired,
-      optimized: bool,
-      refreshing: bool,
-      loading: bool,
-      fetching: bool,
-      onRefresh: func
-    }),
-    defaultProps({
-      showsVerticalScrollIndicator: false,
-      showsHorizontalScrollIndicator: false,
-      removeClippedSubviews: true,
-      onEndReachedThreshold: Platform.select({ios: 0, android: 0.5}),
-      refreshing: false,
-      loading: false,
-      endRendering: false
-    }),
-    withProps(({onEndReached}) => ({
-      onEndReached: debounce(e => {
-        if (typeof onEndReached === 'function') {
-          onEndReached(e);
-        }
-      }, 800)
-    })),
-    branch(
-      ({loading}) => loading,
-      renderComponent(({loading}) => <View loading={loading} />)
-    ),
-    withHandlers({
-      renderFooter: ({endRendering}) => () => {
-        if (endRendering) return null;
-        return (
-          <View style={{paddingVertical: 10}}>
-            <ActivityIndicator size="small" />
-          </View>
-        );
+const enhance = compose(
+  setPropTypes({
+    data: array.isRequired,
+    optimized: bool,
+    refreshing: bool,
+    loading: bool,
+    fetching: bool,
+    onRefresh: func
+  }),
+  defaultProps({
+    showsVerticalScrollIndicator: false,
+    showsHorizontalScrollIndicator: false,
+    removeClippedSubviews: true,
+    onEndReachedThreshold: Platform.select({ios: 0, android: 0.5}),
+    refreshing: false,
+    loading: false,
+    endRendering: false
+  }),
+  withProps(({onEndReached}) => ({
+    onEndReached: debounce(e => {
+      if (typeof onEndReached === 'function') {
+        onEndReached(e);
       }
-    })
-  )(props => {
+    }, 800)
+  })),
+  branch(
+    ({loading}) => loading,
+    renderComponent(({loading}) => <View loading={loading} />)
+  ),
+  withHandlers({
+    renderFooter: ({endRendering}) => () => {
+      if (endRendering) return null;
+      return (
+        <View style={{paddingVertical: 10}}>
+          <ActivityIndicator size="small" />
+        </View>
+      );
+    }
+  })
+);
+
+export const FlatList = enhance(
+  (props) => {
     return (
-      <NativeFlatList
+      <NativeFlatList 
         {...omit(props, ['onRefresh', 'refreshing'])}
         ListFooterComponent={
           !!props.renderLoadingFooter ? props.renderFooter : null
         }
         refreshControl={
-          <RefreshControl
+          <RefreshControl 
             colors={[theme.textSecondary]}
             tintColor={theme.textSecondary}
             refreshing={props.refreshing}
@@ -80,14 +83,6 @@ export const FlatList = styled(
         }
       />
     );
-  })
-)`
-  flex: 1;
-  background: ${props => props.theme.bg};
+  }  
+);
 
-  ${props =>
-    props.secondary &&
-    css`
-      background: ${props => props.theme.bgSecondary};
-    `};
-`;

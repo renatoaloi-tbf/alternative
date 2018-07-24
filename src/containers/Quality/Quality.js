@@ -23,7 +23,8 @@ import {
 	BarChart,
 	FlatList,
 	EmptyText,
-	BarChartLine
+	BarChartLine,
+	ScrollWrapper
 } from '~/components/shared';
 import { DatePickerModal } from '~/components/DatePickerModal';
 import { FilterCore } from '~/components/FilterCore';
@@ -546,33 +547,33 @@ export const Quality = enhance(
 					leftComponent={<DrawerButton />}
 					rightComponent={<Icon inverted name="bell" />}
 				/>
-				<WrapperHeader>
-					<FilterCore
-						isFilter={isFilter}
-						onChange={onChange}
-						apply={apply}
-						value={searchMonth}
-						close={close}
-						isClose={isClose}
-						open={open}
-						comparacao={handlerComparacao}
-					/>
-				</WrapperHeader>
-				<WrapperFilter>
-					<FlatListStyle
-						showsHorizontalScrollIndicator={false}
-						progressViewOffset={51}
-						horizontal={true}
-						keyExtractor={types => types.value}
-						onEndReachedThreshold={1.5}
-						ListEmptyComponent={<EmptyText>Nenhum pedido realizado.</EmptyText>}
-						data={types}
-						renderItem={({ item }) => {
-							return <ItemQuality onPress={handlersFilter} type={item} />;
-						}}
-					/>
-				</WrapperFilter>
-				<WrapperBody>
+				<ScrollWrapperStyle>
+					<WrapperHeader>
+						<FilterCore
+							isFilter={isFilter}
+							onChange={onChange}
+							apply={apply}
+							value={searchMonth}
+							close={close}
+							isClose={isClose}
+							open={open}
+							comparacao={handlerComparacao}
+						/>
+					</WrapperHeader>
+					<WrapperFilter>
+						<FlatList
+							showsHorizontalScrollIndicator={false}
+							progressViewOffset={51}
+							horizontal={true}
+							keyExtractor={types => types.value}
+							onEndReachedThreshold={1.5}
+							ListEmptyComponent={<EmptyText>Nenhum pedido realizado.</EmptyText>}
+							data={types}
+							renderItem={({ item }) => {
+								return <ItemQuality onPress={handlersFilter} type={item} />;
+							}}
+						/>
+					</WrapperFilter>
 					<WrapperBar>
 						{!researched.searchQuality.items.lenght && (
 							<BarChartLine
@@ -588,40 +589,32 @@ export const Quality = enhance(
 							/>
 						)}
 					</WrapperBar>
-				</WrapperBody>
+				</ScrollWrapperStyle>
 			</Wrapper>
 		);
 	}
 );
 
-const WrapperBody = styled.View`
-	flex: 3;
-	padding-left: 8;
-	padding-right: 8;
-	padding-bottom: 8;
+const WrapperHeader = styled.View`
+  padding-bottom: 2;
 `;
 
 const WrapperBar = styled.View`
-	flex: 1;
-	background-color: ${props => props.theme.bg};
-	border-radius: ${props => props.theme.borderRadius};
-	box-shadow: 1px 0px 3px #0f0f0f;
-  	elevation: 3;
+  height: 250;
+  background-color: ${props => props.theme.bg};
+  padding-top: 1;
+  border-radius: ${props => props.theme.borderRadius};
+  box-shadow: 1px 0px 3px #0f0f0f;
+  elevation: 3;
 `;
-const WrapperHeader = styled.View`
-	padding-right: 8;
-	padding-left: 8;
-`;
-const WrapperFooter = styled.View``;
 
-const FlatListStyle = styled(FlatList)`
-	margin-top: 2;
-	margin-bottom: 2;
-	elevation: 1;
+const ScrollWrapperStyle = ScrollWrapper.extend`
+  padding-left: 8;
+  padding-right: 8;
+  padding-bottom: 8;
 `;
 
 const WrapperFilter = styled.View`
 	height: 90;
-	padding-right: 8;
-	padding-left: 8;
+	margin-bottom: 2;
 `;
