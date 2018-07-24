@@ -38,6 +38,7 @@ import {
 
 import Intl from 'intl';
 require('intl/locale-data/jsonp/pt');
+import { reduce } from 'lodash';
 const enhance = compose(
 	connect(
 		({ quality, researched }) => ({ quality, researched, getDetailsDayQuality }),
@@ -107,6 +108,7 @@ const enhance = compose(
 	withState('comparacao', 'setComparacao', false),
 	withState('detalheDia', 'setDetalheDia', false),
 	withState('dadosDia', 'setDadosDia', null),
+	withState('media', 'setMedia', null),
 	/* withState('groupByYear', 'setGroupByYear', {}), */
 	withHandlers({
 		handlerComparacao: ({
@@ -117,7 +119,7 @@ const enhance = compose(
 			setRange,
 			changed,
 			researched,
-			
+
 			getSearchQuality,
 			quality,
 			searchToMonth,
@@ -176,16 +178,17 @@ const enhance = compose(
 			setFilter,
 			setClose,
 			setDetalheDia,
-			setDadosDia
+			setDadosDia,
+			setType
 		}) => () => {
-			console.log('fechei 1');
+			console.log('fechei 1', quality);
 			setRange({});
 			setFilter(true);
 			setClose(false);
 			setSearchMonth('Mais recentes');
 			const range = {
-				startDate: moment().subtract(1, 'years'),
-				endDate: moment()
+				startDate: moment().startOf('month').subtract(12, 'month'),
+				endDate: moment().startOf('month')
 			};
 			setRange({ ...range });
 
@@ -196,7 +199,9 @@ const enhance = compose(
 			setDetalheDia(false);
 			setDadosDia(null);
 			const type = find(types, item => item.selected);
-			getSearchQuality(range, quality.groupByYear, type.value);
+			setType(type);
+			getSearchQuality(range, quality.groupByYear, 'fat');
+
 		},
 		handlersFilter: ({
 			types,
@@ -209,26 +214,30 @@ const enhance = compose(
 			getDetailsDayQuality,
 			searchMonth
 		}) => e => {
-			forEach(types, item => {
-				if (item.value === e.value) {
-					item.selected = !e.selected;
-				} else {
-					item.selected = false;
-				}
-			});
-			const type = find(types, item => item.selected);
-			setType(type);
-			setTpes(types);
-			if (__DEV__) console.log("Quality.js - handlersFilter", range);
-			if (!isEmpty(range)) {
-				if (!searchToMonth) {
-					getSearchQuality(range, quality.groupByYear, type.value);
-				} else {
-					if (quality.groupByMonth[searchMonth]) {
-						getDetailsDayQuality(quality.groupByMonth[searchMonth], type.value);
+			if (types[0].valor != null) {
+				forEach(types, item => {
+					if (item.value === e.value) {
+						item.selected = !e.selected;
+					} else {
+						item.selected = false;
+					}
+				});
+				const type = find(types, item => item.selected);
+				setType(type);
+				setTpes(types);
+				if (__DEV__) console.log("Quality.js - handlersFilter", quality);
+				if (!isEmpty(range)) {
+					if (!searchToMonth) {
+						getSearchQuality(range, quality.groupByYear, type.value);
+					} else {
+						let mes = moment(searchMonth, 'MMMM/YYYY').format('MM/YYYY');
+						if (quality.groupByMonth[mes]) {
+							getDetailsDayQuality(quality.groupByMonth[mes], type.value);
+						}
 					}
 				}
 			}
+
 		},
 		onChange: ({
 			quality,
@@ -242,12 +251,9 @@ const enhance = compose(
 			setClose,
 			setChanged,
 			anoAnterior,
-			setRangeAnoAnterior
+			setRangeAnoAnterior,
+			setMedia
 		}) => e => {
-			console.log('RANGE ONCHANGE', e);
-
-
-			
 			if (size(e) === 2) {
 				rangeAnterior = {
 					startDate: moment(e.startDate, 'MM/YYYY').subtract(1, 'year').format('MM/YYYY'),
@@ -259,19 +265,24 @@ const enhance = compose(
 					//aqui em baixo vai a função de comparação
 				}
 				else {
-					setRange(e);					
+					setRange(e);
 					const type = find(types, item => item.selected);
 					if (!searchToMonth) {
 						getSearchQuality(e, quality.groupByYear, type.value);
+						console.log('OI', researched.searchQuality.items);
+
+						const totalPesquisa = reduce(
+							map(researched.searchQuality.items, item => item.y),
+							(prev, next) => prev + next
+						);
+						let media = totalPesquisa / researched.searchQuality.items.length;
+						setMedia(media);
 					} else {
 						if (quality.groupByMonth[searchMonth]) {
 							getDetailsDayQuality(quality.groupByMonth[searchMonth], type.value);
 						}
 					}
 				}
-
-
-
 
 				setClose(false);
 			}
@@ -288,7 +299,8 @@ const enhance = compose(
 			setFilter,
 			comparacao,
 			setDetalheDia,
-			setDadosDia
+			setDadosDia,
+			setMedia
 		}) => e => {
 			console.log('Teste passando aqui 8', quality);
 			if (e && !isEmpty(e)) {
@@ -296,7 +308,7 @@ const enhance = compose(
 				let month;
 				if (comparacao)
 					month = researched.searchQuality.byIndex[parseInt(e.x)];
-				else 
+				else
 					month = researched.searchQuality.byIndex[e.x];
 				const type = find(types, item => item.selected);
 				console.log('MONTH', month);
@@ -308,8 +320,21 @@ const enhance = compose(
 					console.log('DATA PESQUISA', month);
 					setSearchMonth(dateFormat);
 					setSearchToMonth(true);
+					console.log('TESTE DOS VALORES DO MES', quality.groupByMonth[month]);
 					let valoresMes = getDetailsDayQuality(quality.groupByMonth[month], type.value);
 					console.log('VALORES MES', valoresMes);
+					console.log('TYPE ATUAL', type.value);
+
+
+
+
+
+
+
+
+
+
+
 					let fat, prot, cbt, ccs, est, esd;
 
 					var totalFat = valoresMes.payload.qualities.reduce(function (tot, elemento) {
@@ -362,7 +387,7 @@ const enhance = compose(
 					types[4].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 4 }).format(est);
 					types[5].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 4 }).format(esd);
 				}
-				else {
+				/* else {
 					console.log('Teste passando aqui 11', type);
 					if (type.valor != null) {
 						console.log('Teste passando aqui 12');
@@ -387,7 +412,7 @@ const enhance = compose(
 						else console.log("erro do fat");
 					}
 
-				}
+				} */
 			}
 		},
 		apply: ({
@@ -398,7 +423,7 @@ const enhance = compose(
 			setRange,
 			changed,
 			researched,
-			
+
 			getSearchQuality,
 			quality,
 			searchToMonth,
@@ -418,11 +443,9 @@ const enhance = compose(
 				endDate: moment()
 			};
 
-			
-
 			const initDateFormat = moment(range.startDate, 'MM/YYYY').format('MMM/YY');
 			const endDateFormat = moment(range.endDate, 'MM/YYYY').format('MMM/YY');
-			
+
 			const type = find(types, item => item.selected);
 			if (comparacao) {
 				setRange(changed.rangeAtual);
@@ -460,7 +483,7 @@ const enhance = compose(
 
 				setSearchMonth(`${initDateFormat} - ${endDateFormat}`);
 			}
-					
+
 		},
 		open: ({ setClose }) => () => {
 			setClose(true);
@@ -468,18 +491,27 @@ const enhance = compose(
 	}),
 	lifecycle({
 		componentWillMount() {
+			console.log('PROPS', this.props);
 			const range = {
 				startDate: moment().startOf('month').subtract(12, 'month'),
 				endDate: moment().startOf('month')
-			  };
+			};
 			console.log('THIS PROPS QUALITY GROUPBYYEAR', this.props.quality.groupByYear);
 			const type = find(this.props.types, item => item.selected);
+
 			this.props.setType(type);
 			this.props.getSearchQuality(
 				range,
 				this.props.quality.groupByYear,
 				type.value
 			);
+			
+			const totalPesquisa = reduce(
+				map(this.props.researched.searchQuality.items, item => item.y),
+				(prev, next) => prev + next
+			);
+			let media = totalPesquisa / this.props.researched.searchQuality.items.length
+			this.props.setMedia(media);
 		}
 	})
 );
@@ -503,7 +535,8 @@ export const Quality = enhance(
 		handlerComparacao,
 		anoAnterior,
 		detalheDia,
-		dadosDia
+		dadosDia,
+		media
 	}) => {
 		console.log('VALUES TESTE', researched);
 		return (
@@ -546,8 +579,8 @@ export const Quality = enhance(
 								values={researched.searchQuality.items}
 								valueFormatter={researched.searchQuality.period}
 								onSelect={onSelect}
-								media={researched.searchQuality.media}
-              					tipo={"quality"}
+								media={media}
+								tipo={"quality"}
 								anoAnterior={anoAnterior}
 								valuesAnoAnterior={researched.searchQualityAnoAnterior.items}
 								detalheDia={detalheDia}

@@ -75,13 +75,7 @@ const getData = (state, { payload }) => {
   newState.searchQuality.items = map(list, item => ({ y: item[type] ? item[type] : 0 }));
   if (__DEV__) console.log("researched.js - getData2", newState);
 
-  const totalPesquisa = reduce(
-    map(newState.searchQuality.items, item => item.y),
-    (prev, next) => prev + next
-  );
-
-  newState.searchQuality.media = totalPesquisa / newState.searchQuality.items.length;
-
+  
   return newState;
 };
 
