@@ -433,30 +433,13 @@ const enhance = compose(
 				}
 				setChanged({ rangeAtual: e, rangeAnoAnterior: rangeAnterior });
 				if (anoAnterior) {
-					console.log('ENTRANDO NO CHANGE DO ANO ANTERIOR');
 					setRangeAnoAnterior(rangeAnterior);
-					/* forEach(types, item => {
-						if (item.value === e.value) {
-							item.selected = !e.selected;
-						} else {
-							item.selected = false;
-						}
-					});
-					const type = find(types, item => item.selected);
-					setType(type);
-					setTpes(types); */
-					let valoresMes = getSearchQualityComparacao(e, quality.groupByYear, 'fat', rangeAnterior);
+					getSearchQualityComparacao(e, quality.groupByYear, 'fat', rangeAnterior);
 				}
 				else {
 					setRange(e);
 					const type = find(types, item => item.selected);
-					if (!searchToMonth) {
-						getSearchQuality(e, quality.groupByYear, type.value);
-					} else {
-						if (quality.groupByMonth[searchMonth]) {
-							getDetailsDayQuality(quality.groupByMonth[searchMonth], type.value);
-						}
-					}
+					getSearchQuality(e, quality.groupByYear, type.value);
 				}
 
 				setClose(false);
@@ -599,8 +582,8 @@ const enhance = compose(
 				setComparacao(true)
 
 				console.log('ENTROU NA COMPARAÇÃO', comparacao);
-				let initDateFormat = moment(changed.rangeAtual.startDate, 'MM/YYYY').format('MMM/YYYY');
-				let endDateFormat = moment(changed.rangeAtual.endDate, 'MM/YYYY').format('MMM/YYYY');
+				let initDateFormat = moment(changed.rangeAtual.startDate, 'MM/YYYY').format('MMM/YY');
+				let endDateFormat = moment(changed.rangeAtual.endDate, 'MM/YYYY').format('MMM/YY');
 
 
 				let initDateFormatAnterior = moment(changed.rangeAnoAnterior.startDate, 'MM/YYYY').format('MMM/YY');
