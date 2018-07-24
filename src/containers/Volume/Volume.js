@@ -127,17 +127,16 @@ const enhance = compose(
         endDate: moment()
       };
 			const { startDate } = range;
-        setSearchMonth(
-          `${moment(startDate, 'MM/YYYY').format('MMMM/YYYY').charAt(0).toUpperCase() 
-              + moment(startDate, 'MM/YYYY').format('MMMM/YYYY').slice(1)}`
-        );
-        getSearchVolume(range, volume.all, true);
-        setRange({ ...range });
-        setIsCollected(false);
-        setIsCompare(false);
-        setIsLegenda(false);
-        setDetails({});
-        setFilter(true);
+      let initDateFormat = moment(startDate, 'MM/YYYY').format('MMMM/YYYY');
+      let stringData = `${initDateFormat.charAt(0).toUpperCase() + initDateFormat.slice(1)}`;
+      setSearchMonth(stringData);
+      getSearchVolume(range, volume.all, true);
+      setRange({ ...range });
+      setIsCollected(false);
+      setIsCompare(false);
+      setIsLegenda(false);
+      setDetails({});
+      setFilter(true);
 		},
     apply: ({
       setRange,
@@ -149,25 +148,39 @@ const enhance = compose(
       setInverted
     }) => () => {
       console.log('passei no apply do Volume');
-      setRange({});
-      setClose(true);
-      setFilter(false);
-      setInverted(true); // inverte a cor do X
-      if (anoAnterior)
+      if (changed.rangeAtual)
       {
-        let initDateFormat = moment(changed.rangeAtual.startDate, 'MM/YYYY').format('MMM/YY');
-        let endDateFormat = moment(changed.rangeAtual.endDate, 'MM/YYYY').format('MMM/YY');
-        let initDateFormatAnterior = moment(changed.rangeAnoAnterior.startDate, 'MM/YYYY').format('MMM/YY');
-        let endDateFormatAnterior = moment(changed.rangeAnoAnterior.endDate, 'MM/YYYY').format('MMM/YY');
-        let stringData = `${initDateFormat.charAt(0).toUpperCase() + initDateFormat.slice(1)} - ${endDateFormat.charAt(0).toUpperCase() + endDateFormat.slice(1)} (${initDateFormatAnterior.charAt(0).toUpperCase() + initDateFormatAnterior.slice(1)} - ${endDateFormatAnterior.charAt(0).toUpperCase() + endDateFormatAnterior.slice(1)})`;
-        setSearchMonth(stringData);
+        setRange({});
+        setClose(true);
+        setFilter(false);
+        setInverted(true); // inverte a cor do X
+        if (anoAnterior)
+        {
+          let initDateFormat = moment(changed.rangeAtual.startDate, 'MM/YYYY').format('MMM/YY');
+          let endDateFormat = moment(changed.rangeAtual.endDate, 'MM/YYYY').format('MMM/YY');
+          let initDateFormatAnterior = moment(changed.rangeAnoAnterior.startDate, 'MM/YYYY').format('MMM/YY');
+          let endDateFormatAnterior = moment(changed.rangeAnoAnterior.endDate, 'MM/YYYY').format('MMM/YY');
+          let stringData = `${initDateFormat.charAt(0).toUpperCase() + initDateFormat.slice(1)} - ${endDateFormat.charAt(0).toUpperCase() + endDateFormat.slice(1)} (${initDateFormatAnterior.charAt(0).toUpperCase() + initDateFormatAnterior.slice(1)} - ${endDateFormatAnterior.charAt(0).toUpperCase() + endDateFormatAnterior.slice(1)})`;
+          setSearchMonth(stringData);
+        }
+        else
+        {
+          let initDateFormat = moment(changed.rangeAtual.startDate, 'MM/YYYY').format('MMMM/YYYY');
+          let endDateFormat = moment(changed.rangeAtual.endDate, 'MM/YYYY').format('MMMM/YYYY');
+          let stringData = `${initDateFormat.charAt(0).toUpperCase() + initDateFormat.slice(1)} - ${endDateFormat.charAt(0).toUpperCase() + endDateFormat.slice(1)}`;
+          setSearchMonth(stringData);
+        }
       }
       else
       {
-        let initDateFormat = moment(changed.rangeAtual.startDate, 'MM/YYYY').format('MMMM/YYYY');
-			  let endDateFormat = moment(changed.rangeAtual.endDate, 'MM/YYYY').format('MMMM/YYYY');
-        let stringData = `${initDateFormat.charAt(0).toUpperCase() + initDateFormat.slice(1)} - ${endDateFormat.charAt(0).toUpperCase() + endDateFormat.slice(1)}`;
-				setSearchMonth(stringData);
+        const range = {
+          startDate: moment(), 
+          endDate: moment()
+        };
+        const { startDate } = range;
+        let initDateFormat = moment(startDate, 'MM/YYYY').format('MMMM/YYYY');
+        let stringData = `${initDateFormat.charAt(0).toUpperCase() + initDateFormat.slice(1)}`;
+        setSearchMonth(stringData);
       }
     },
     onChange: ({

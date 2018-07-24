@@ -131,8 +131,6 @@ const getDataComparacaoAnoAnterior = (state, { payload }) => {
   return newState;
 };
 
-
-
 const setArray = number => {
   const arr = [];
   if (!number) arr;
@@ -158,19 +156,21 @@ const getVolumeData = (state, { payload }) => {
   });
   newState.searchVolume.items = map(filterVolumes, item => ({ y: item.volume }));
   newState.searchVolume.period = setArray(newState.searchVolume.items.length);
-  newState.searchVolume.currentMonth = moment().format('MMMM');
-  newState.searchVolume.lastMonth = moment().subtract(1, 'month').format('MMMM');
-  const filterVolumesCurrentMonth = volumes.filter(item => {
-    return moment(item.searchDate).format('MMMM') == newState.searchVolume.currentMonth
+  
+  newState.searchVolume.currentMonth = moment().format('MMMM/YYYY');
+  const filterVolumesCurrentMonth = filterVolumes.filter(item => {
+    return moment(item.searchDate).format('MMMM/YYYY') == newState.searchVolume.currentMonth
   });
   newState.searchVolume.total = reduce(
     map(filterVolumesCurrentMonth, item => item.volume),
     (prev, next) => prev + next
-  );
+  ); 
+
+  newState.searchVolume.lastMonth = moment().subtract(1, 'month').format('MMMM/YYYY');
   newState.searchVolume.average =
     newState.searchVolume.total / newState.searchVolume.items.length;
   const filterMesAnterior = volumes.filter(item => {
-    return moment(item.searchDate).format('MMMM') == newState.searchVolume.lastMonth
+    return moment(item.searchDate).format('MMMM/YYYY') == newState.searchVolume.lastMonth
   });
   const totalLastMonth = reduce(
     map(filterMesAnterior, item => item.volume),
@@ -213,9 +213,9 @@ const getVolumeDataAnoAnterior = (state, { payload }) =>
     newState.searchVolume.period = setArray(newState.searchVolume.items.length);
 
     // Conta do Total do Mês Corrente
-    newState.searchVolume.currentMonth = moment().format('MMMM');
-    const filterVolumesCurrentMonth = volumes.filter(item => {
-      return moment(item.searchDate).format('MMMM') == newState.searchVolume.currentMonth
+    newState.searchVolume.currentMonth = moment().format('MMMM/YYYY');
+    const filterVolumesCurrentMonth = filterVolumes.filter(item => {
+      return moment(item.searchDate).format('MMMM/YYYY') == newState.searchVolume.currentMonth
     });
     newState.searchVolume.total = reduce(
       map(filterVolumesCurrentMonth, item => item.volume),
@@ -226,9 +226,9 @@ const getVolumeDataAnoAnterior = (state, { payload }) =>
 
 
     // Conta da Média do Mês Anterior
-    newState.searchVolume.lastMonth = moment().subtract(1, 'month').format('MMMM');
+    newState.searchVolume.lastMonth = moment().subtract(1, 'month').format('MMMM/YYYY');
     const filterMesAnterior = volumes.filter(item => {
-      return moment(item.searchDate).format('MMMM') == newState.searchVolume.lastMonth
+      return moment(item.searchDate).format('MMMM/YYYY') == newState.searchVolume.lastMonth
     });
     const totalLastMonth = reduce(
       map(filterMesAnterior, item => item.volume),
@@ -237,9 +237,6 @@ const getVolumeDataAnoAnterior = (state, { payload }) =>
     newState.searchVolume.averageLastMonth = totalLastMonth / filterMesAnterior.length;
 
     console.log('depois desses', newState.searchVolume);
-    
-
-
 
 
     /**
@@ -279,7 +276,7 @@ const getVolumeDataAnoAnterior = (state, { payload }) =>
       newState.searchVolumeAnoAnterior.lastYear =  moment(rangeAnterior.startDate, 'MM/YYYY').format('YYYY');
       
 
-      //Calculando direferença percentual entre os anos
+      //Calculando diferença percentual entre os anos
       if (!newState.searchVolumeAnoAnterior.total) {
         if (!newState.searchVolume.totalAnoAtual) {
           newState.searchVolumeAnoAnterior.diferenca_percent = "" + 0;
