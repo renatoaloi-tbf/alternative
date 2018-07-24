@@ -136,6 +136,7 @@ const enhance = compose(
         setIsCompare(false);
         setIsLegenda(false);
         setDetails({});
+        setFilter(false);
 		},
     handlerClose: ({
       setDetails,
@@ -145,12 +146,13 @@ const enhance = compose(
       setSearchMonth,
       volume,
       setClose,
-      changed
+      changed,
+      setFilter
     }) => () => {
       console.log('passei no handlerClose do Volume');
       setRange({});
       setClose(true);
-
+      setFilter(true);
 
       if (changed.rangeAtual) {
         setSearchMonth(
