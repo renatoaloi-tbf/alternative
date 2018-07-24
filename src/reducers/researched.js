@@ -176,109 +176,123 @@ const getVolumeData = (state, { payload }) => {
 };
 
 
-const getVolumeDataAnoAnterior = (state, { payload }) => {
-  console.log('aqui eu passei');
-  const newState = cloneDeep(INITIAL_STATE);
-  const { range, volumes, rangeAnterior, volumesAnteriores } = payload;
+const getVolumeDataAnoAnterior = (state, { payload }) => 
+{
+    console.log('aqui eu passei');
+    const newState = cloneDeep(INITIAL_STATE);
+    const { range, volumes, rangeAnterior, volumesAnteriores } = payload;
 
-  /**
-   * VOLUME DO ANO ATUAL
-   */
-  const start = moment(range.startDate, 'MM/YYYY').startOf('month');
-  const end = moment(range.endDate, 'MM/YYYY').endOf('month');
-  const ra = moment.range(start, end);
-  const filterVolumes = filter(volumes, item =>
-    ra.contains(moment(item.searchDate))
-  );
-  console.log('filterVolumes', filterVolumes);
+    /**
+     * VOLUME DO ANO ATUAL
+     */
+    const start = moment(range.startDate, 'MM/YYYY').startOf('month');
+    const end = moment(range.endDate, 'MM/YYYY').endOf('month');
+    const ra = moment.range(start, end);
 
-  forEach(filterVolumes, (item, index) => {
-    newState.searchVolume.byIndex[index] = item;
-  });
-  newState.searchVolume.items = map(filterVolumes, item => ({ y: item.volume,  searchDate: item.searchDate }));
-
-  console.log('getVolumeDataAnoAnterior - newState.searchVolume.items', newState.searchVolume.items);
-
-  newState.searchVolume.period = setArray(newState.searchVolume.items.length);
-  newState.searchVolume.currentMonth = moment().format('MMMM');
-  newState.searchVolume.lastMonth = moment().subtract(1, 'month').format('MMMM');
-
-  const filterVolumesCurrentMonth = volumes.filter(item => {
-    return moment(item.searchDate).format('MMMM') == newState.searchVolume.currentMonth
-  });
-  newState.searchVolume.total = reduce(
-    map(filterVolumesCurrentMonth, item => item.volume),
-    (prev, next) => prev + next
-  );
-
-  newState.searchVolume.average =
-    newState.searchVolume.total / newState.searchVolume.items.length;
-
-  const filterMesAnterior = volumes.filter(item => {
-    return moment(item.searchDate).format('MMMM') == newState.searchVolume.lastMonth
-  });
-
-  const totalLastMonth = reduce(
-    map(filterMesAnterior, item => item.volume),
-    (prev, next) => prev + next
-  );
-
-  newState.searchVolume.averageLastMonth = totalLastMonth / filterMesAnterior.length;
-
-  
-  /**
-   * VOLUME DO ANO ANTERIOR
-   */
-    //console.log('RANGE DO ANO ANTERIOR STARTDATE', rangeAnterior.startDate);
-    const startAnterior = moment(rangeAnterior.startDate, 'MM/YYYY').startOf('month');
-    const endAnterior = moment(rangeAnterior.endDate, 'MM/YYYY').endOf('month');
-    const raAnterior = moment.range(startAnterior, endAnterior);
-
-    const filterVolumesAnteriores = filter(volumesAnteriores, item =>
-      raAnterior.contains(moment(item.searchDate))
+    // Filtro Atual
+    const filterVolumes = filter(volumes, item =>
+      ra.contains(moment(item.searchDate))
     );
+    forEach(filterVolumes, (item, index) => {
+      newState.searchVolume.byIndex[index] = item;
+    });
+    newState.searchVolume.items = map(filterVolumes, item => ({ y: item.volume,  searchDate: item.searchDate }));
 
-    //console.log('FILTER VOLUMES ANO ANTERIOR', filterVolumesAnteriores);
-    if (filterVolumesAnteriores.length > 0) {
-      forEach(filterVolumesAnteriores, (item, index) => {
-        newState.searchVolumeAnoAnterior.byIndex[index] = item;
-      });
-    }
-    else {
-      newState.searchVolumeAnoAnterior.byIndex = newState.searchVolume.byIndex;
-    }
-
-
-    newState.searchVolumeAnoAnterior.items = map(filterVolumesAnteriores, item => ({ y: item.volume, searchDate: item.searchDate }));
-    newState.searchVolumeAnoAnterior.period = setArray(newState.searchVolumeAnoAnterior.items.length);
-    newState.searchVolumeAnoAnterior.currentMonth = startAnterior.format('MMMM');
-    newState.searchVolumeAnoAnterior.lastMonth = startAnterior.subtract(1, 'month').format('MMMM');
-
-    newState.searchVolumeAnoAnterior.lastYear =  moment(rangeAnterior.startDate, 'MM/YYYY').format('YYYY');
-    newState.searchVolumeAnoAnterior.total = reduce(
-      map(filterVolumesAnteriores, item => item.volume),
+    // Soma do total coletado no ano atual
+    newState.searchVolume.totalAnoAtual = reduce(
+      map(filterVolumes, item => item.volume),
       (prev, next) => prev + next
     );
 
-    //Calculando direferença percentual entre os anos
-    if (!newState.searchVolumeAnoAnterior.total) {
-      if (!newState.searchVolume.total) {
-        newState.searchVolumeAnoAnterior.diferenca_percent = "" + 0;
+    // ???????????????
+    newState.searchVolume.period = setArray(newState.searchVolume.items.length);
+
+    // Conta do Total do Mês Corrente
+    newState.searchVolume.currentMonth = moment().format('MMMM');
+    const filterVolumesCurrentMonth = volumes.filter(item => {
+      return moment(item.searchDate).format('MMMM') == newState.searchVolume.currentMonth
+    });
+    newState.searchVolume.total = reduce(
+      map(filterVolumesCurrentMonth, item => item.volume),
+      (prev, next) => prev + next
+    );
+    //newState.searchVolume.average =
+    //  newState.searchVolume.total / newState.searchVolume.items.length;
+
+
+    // Conta da Média do Mês Anterior
+    newState.searchVolume.lastMonth = moment().subtract(1, 'month').format('MMMM');
+    const filterMesAnterior = volumes.filter(item => {
+      return moment(item.searchDate).format('MMMM') == newState.searchVolume.lastMonth
+    });
+    const totalLastMonth = reduce(
+      map(filterMesAnterior, item => item.volume),
+      (prev, next) => prev + next
+    );
+    newState.searchVolume.averageLastMonth = totalLastMonth / filterMesAnterior.length;
+
+    console.log('depois desses', newState.searchVolume);
+    
+
+
+
+
+    /**
+     * VOLUME DO ANO ANTERIOR
+     */
+      
+
+      // Range do ano anterior
+      const startAnterior = moment(rangeAnterior.startDate, 'MM/YYYY').startOf('month');
+      const endAnterior = moment(rangeAnterior.endDate, 'MM/YYYY').endOf('month');
+      const raAnterior = moment.range(startAnterior, endAnterior);
+      const filterVolumesAnteriores = filter(volumesAnteriores, item =>
+        raAnterior.contains(moment(item.searchDate))
+      );
+
+      //console.log('FILTER VOLUMES ANO ANTERIOR', filterVolumesAnteriores);
+      if (filterVolumesAnteriores.length > 0) {
+        forEach(filterVolumesAnteriores, (item, index) => {
+          newState.searchVolumeAnoAnterior.byIndex[index] = item;
+        });
       }
       else {
-        newState.searchVolumeAnoAnterior.diferenca_percent = "+" + 100;
+        newState.searchVolumeAnoAnterior.byIndex = newState.searchVolume.byIndex;
       }
-      newState.searchVolume.total = 0;
-      newState.searchVolumeAnoAnterior.total = 0;
-    }
-    else {
-      if (!newState.searchVolume.total)
-        newState.searchVolume.total = 0;
-      let diferenca = newState.searchVolume.total - newState.searchVolumeAnoAnterior.total;
-      let decimal = diferenca / newState.searchVolumeAnoAnterior.total;
-      let percentual = decimal * 100;
-      newState.searchVolumeAnoAnterior.diferenca_percent = percentual > 0 ? "+" + percentual.toFixed(2) : percentual.toFixed(2);
-    }
+
+      newState.searchVolumeAnoAnterior.total = reduce(
+        map(filterVolumesAnteriores, item => item.volume),
+        (prev, next) => prev + next
+      );
+
+
+      newState.searchVolumeAnoAnterior.items = map(filterVolumesAnteriores, item => ({ y: item.volume, searchDate: item.searchDate }));
+      newState.searchVolumeAnoAnterior.period = setArray(newState.searchVolumeAnoAnterior.items.length);
+      newState.searchVolumeAnoAnterior.currentMonth = startAnterior.format('MMMM');
+      newState.searchVolumeAnoAnterior.lastMonth = startAnterior.subtract(1, 'month').format('MMMM');
+
+      newState.searchVolumeAnoAnterior.lastYear =  moment(rangeAnterior.startDate, 'MM/YYYY').format('YYYY');
+      
+
+      //Calculando direferença percentual entre os anos
+      if (!newState.searchVolumeAnoAnterior.total) {
+        if (!newState.searchVolume.totalAnoAtual) {
+          newState.searchVolumeAnoAnterior.diferenca_percent = "" + 0;
+        }
+        else {
+          newState.searchVolumeAnoAnterior.diferenca_percent = "+" + 100;
+        }
+        newState.searchVolume.totalAnoAtual = 0;
+        newState.searchVolumeAnoAnterior.total = 0;
+      }
+      else {
+        if (!newState.searchVolume.totalAnoAtual)
+          newState.searchVolume.totalAnoAtual = 0;
+        let diferenca = newState.searchVolume.totalAnoAtual - newState.searchVolumeAnoAnterior.total;
+        let decimal = diferenca / newState.searchVolumeAnoAnterior.total;
+        let percentual = decimal * 100;
+        newState.searchVolumeAnoAnterior.diferenca_percent = percentual > 0 ? "+" + percentual.toFixed(2) : percentual.toFixed(2);
+      }
   
 
   return newState;
