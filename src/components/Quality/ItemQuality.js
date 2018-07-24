@@ -1,6 +1,6 @@
 import React from 'react';
 import { isEqual } from 'lodash';
-import styled from 'styled-components/native';
+import styled, { css } from "styled-components/native";
 import { object, func, number, bool } from 'prop-types';
 import {
   compose,
@@ -53,7 +53,7 @@ export const ItemQuality = enhance(({ type, onPress, anoAnterior }) => {
     percentual = 0;
   }
   return (
-    <Wrapper>
+    <Wrapper selected={type.selected}>
       {!type.selected && (
         <WrapperContent onPress={onPress}>
           <WrapperDescription>
@@ -109,14 +109,18 @@ export const ItemQuality = enhance(({ type, onPress, anoAnterior }) => {
 
 const Wrapper = styled.View`
   background-color: ${props => props.theme.bg};
+  ${props =>
+    props.selected &&
+    css`
+    background-color: ${props => props.theme.info};
+  `};
   height: 90;
 `;
 
 const WrapperContentSelected = styled.View`
-  background-color: ${props => props.theme.info};
-  padding-top: 15;
+  padding-top: 10;
   padding-bottom: 10;
-  padding-left: 15;
+  padding-left: 10;
   padding-right: 10;
 `;
 
