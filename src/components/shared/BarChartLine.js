@@ -160,10 +160,9 @@ const enhancer = compose(
                         }
                     }
                     else {
+                        console.log('É AQUI QUE ENTRA');
                         if (valuesAnoAnterior.length > 0) {
-                            values = [];
-                            valuesAnoAnterior.forEach(vaa => {
-                                values.push({ y: 0 });
+                            valuesAnoAnterior.forEach(vaa => {                                
                                 if (vaa.y < media && moment(valueFormatter[0], 'MM/YYYY', true).isValid())
                                     trataCoresAnoAnterior.push(processColor('#ffbd00'));
                                 else
@@ -505,7 +504,7 @@ const enhancer = compose(
                 else {
                     if (valueFormatter.length == 1) {
                         return {
-                            scaleX: 0.1145833 * values.length,
+                            scaleX: 0.15 * values.length,
                             scaleY: 0,
                             xValue: 0,
                             yValue: 0
@@ -513,7 +512,7 @@ const enhancer = compose(
                     }
                     else {
                         return {
-                            scaleX: 0.1145833 * values.length,
+                            scaleX: 0.15 * values.length,
                             scaleY: 1,
                             xValue: 0,
                             yValue: 1

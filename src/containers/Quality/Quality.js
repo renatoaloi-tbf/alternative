@@ -13,7 +13,11 @@ import { connect } from 'react-redux';
 import { ScrollView } from 'react-native';
 import { processColor } from 'react-native';
 import { size, map, forEach, find, isEmpty } from 'lodash';
-import moment from 'moment';
+
+import Moment from 'moment';
+import { extendMoment } from 'moment-range';
+const moment = extendMoment(Moment);
+
 import {
 	Wrapper,
 	TopBar,
@@ -52,42 +56,48 @@ const enhance = compose(
 			value: 'fat',
 			measure: 'g/100',
 			selected: true,
-			valor: null
+			valor: null,
+			percentual: null
 		},
 		{
 			name: 'Proteína',
 			value: 'prot',
 			measure: 'g/100',
 			selected: false,
-			valor: null
+			valor: null,
+			percentual: null
 		},
 		{
 			name: 'CBT',
 			value: 'cbt',
 			measure: 'g/100',
 			selected: false,
-			valor: null
+			valor: null,
+			percentual: null
 		},
 		{
 			name: 'CCS',
 			value: 'ccs',
 			measure: 'g/100',
 			selected: false,
-			valor: null
+			valor: null,
+			percentual: null
 		},
 		{
 			name: 'EST',
 			value: 'est',
 			measure: 'g/100',
 			selected: false,
-			valor: null
+			valor: null,
+			percentual: null
 		},
 		{
 			name: 'ESD',
 			value: 'esd',
 			measure: 'g/100',
 			selected: false,
-			valor: null
+			valor: null,
+			percentual: null
 		},
 	]),
 	withState('range', 'setRange', {
@@ -110,7 +120,9 @@ const enhance = compose(
 	withState('detalheDia', 'setDetalheDia', false),
 	withState('dadosDia', 'setDadosDia', null),
 	withState('media', 'setMedia', null),
-	/* withState('groupByYear', 'setGroupByYear', {}), */
+	withState('isLegenda', 'setIsLegenda', false),
+	withState('anoAtualLegenda', 'setAnoAtualLegenda', 2002),
+	withState('anoAnteriorLegenda', 'setAnoAnteriorLegenda', 2001),
 	withHandlers({
 		handlerComparacao: ({
 			setAnoAnterior,
@@ -120,58 +132,171 @@ const enhance = compose(
 			setRange,
 			changed,
 			researched,
-
-			getSearchQuality,
 			quality,
-			searchToMonth,
-			getDetailsDayQuality,
 			getSearchQualityComparacao,
 			setComparacao,
-			types
+			types,
+			setMedia,
+			anoAnterior,
+			setIsLegenda,
+			setAnoAtualLegenda,
+			setAnoAnteriorLegenda
 		}) => (e) => {
-			console.log('CHANGED', changed);
-			//
-			if (changed.rangeAtual != null && changed.rangeAnoAnterior != null) {
+
+
+			if (changed.rangeAtual != null && changed.rangeAnoAnterior != null && e) {
 				setRange(changed.rangeAtual);
 				setRangeAnoAnterior(changed.rangeAnoAnterior);
 				setAnoAnterior(e);
-				console.log('OPA 1');
+				setIsLegenda(e);
+
+				//console.group('COMPARAÇÃO');
+
 				const type = find(types, item => item.selected);
-				console.log('TYPES', types);
-				getSearchQualityComparacao(changed.rangeAtual, quality.groupByYear, type.value, changed.rangeAnoAnterior);
-				console.log('RESEARCHED NA COMPARAÇÃO', researched.newState);
-				setComparacao(true)
-				//getSearchVolumeAnoAnterior(changed.rangeAtual, volume.all, changed.rangeAnoAnterior, volume.all);
+				let valoresMes = getSearchQualityComparacao(changed.rangeAtual, quality.groupByYear, type.value, changed.rangeAnoAnterior);
+
+				const startAnoAtual = moment(changed.rangeAtual.startDate, 'MM/YYYY').startOf('month');
+				setAnoAtualLegenda(moment(startAnoAtual, "MM/YYYY").format('YYYY'));
+				const endAnoAtual = moment(changed.rangeAtual.endDate, 'MM/YYYY').endOf('month');
+				const raAnoAtual = moment.range(startAnoAtual, endAnoAtual);
+
+				const startAnoAnterior = moment(changed.rangeAnoAnterior.startDate, 'MM/YYYY').startOf('month');
+				setAnoAnteriorLegenda(moment(startAnoAnterior, "MM/YYYY").format('YYYY'));
+				const endAnoAnterior = moment(changed.rangeAnoAnterior.endDate, 'MM/YYYY').endOf('month');
+				const raAnoAnterior = moment.range(startAnoAnterior, endAnoAnterior);
+
+
+				let valoresAnoAtual = [], valoresAnoAnterior = [];
+				for (const key in valoresMes.payload.qualities) {
+					if (raAnoAtual.contains(moment(key, 'MM/YYYY'))) {
+						valoresAnoAtual.push(valoresMes.payload.qualities[key]);
+					}
+				}
+
+				for (const key in valoresMes.payload.qualities) {
+					if (raAnoAnterior.contains(moment(key, 'MM/YYYY'))) {
+						valoresAnoAnterior.push(valoresMes.payload.qualities[key]);
+					}
+				}
+
+				var totalFatAtual = valoresAnoAtual.reduce(function (tot, elemento) {
+					return tot + elemento.fat;
+				}, 0);
+
+				var totalFatAnterior = valoresAnoAnterior.reduce(function (tot, elemento) {
+					return tot + elemento.fat;
+				}, 0);
+				let diferencaFat = 0, decimalFat = 0, percentualFat = 0;
+				diferencaFat = totalFatAtual - totalFatAnterior;
+				decimalFat = diferencaFat / totalFatAnterior;
+				percentualFat = decimalFat * 100;
+				types[0].percentual = percentualFat;
+				types[0].valor = totalFatAtual.toFixed(2) + " vs " + totalFatAnterior.toFixed(2);
+
+				var totalProtAtual = valoresAnoAtual.reduce(function (tot, elemento) {
+					return tot + elemento.prot;
+				}, 0);
+
+				var totalProtAnterior = valoresAnoAnterior.reduce(function (tot, elemento) {
+					return tot + elemento.prot;
+				}, 0);
+
+				let diferencaProt = 0, decimalProt = 0, percentualProt = 0;
+				diferencaProt = totalProtAtual - totalProtAnterior;
+				decimalProt = diferencaProt / totalProtAnterior;
+				percentualProt = decimalProt * 100;
+				types[1].percentual = percentualProt;
+				types[1].valor = totalProtAtual.toFixed(2) + " vs " + totalProtAnterior.toFixed(2);
+
+				var totalCbtAtual = valoresAnoAtual.reduce(function (tot, elemento) {
+					return tot + elemento.cbt;
+				}, 0);
+
+				var totalCbtAnterior = valoresAnoAnterior.reduce(function (tot, elemento) {
+					return tot + elemento.cbt;
+				}, 0);
+
+				let diferencaCbt = 0, decimalCbt = 0, percentualCbt = 0;
+				diferencaCbt = totalCbtAtual - totalCbtAnterior;
+				decimalCbt = diferencaCbt / totalCbtAnterior;
+				percentualCbt = decimalCbt * 100;
+				types[2].percentual = percentualCbt;
+				types[2].valor = parseInt(totalCbtAtual) + " vs " + parseInt(totalCbtAnterior);
+
+				var totalCcsAtual = valoresAnoAtual.reduce(function (tot, elemento) {
+					return tot + elemento.ccs;
+				}, 0);
+
+				var totalCcsAnterior = valoresAnoAnterior.reduce(function (tot, elemento) {
+					return tot + elemento.ccs;
+				}, 0);
+
+				let diferencaCcs = 0, decimalCcs = 0, percentualCcs = 0;
+				diferencaCcs = totalCcsAtual - totalCcsAnterior;
+				decimalCcs = diferencaCcs / totalCcsAnterior;
+				percentualCcs = decimalCcs * 100;
+				types[3].percentual = percentualCcs;
+				types[3].valor = parseInt(totalCcsAtual) + " vs " + parseInt(totalCcsAnterior);
+
+				var totalEstAtual = valoresAnoAtual.reduce(function (tot, elemento) {
+					return tot + elemento.est;
+				}, 0);
+
+				var totalEstAnterior = valoresAnoAnterior.reduce(function (tot, elemento) {
+					return tot + elemento.est;
+				}, 0);
+
+				let diferencaEst = 0, decimalEst = 0, percentualEst = 0;
+				diferencaEst = totalEstAtual - totalEstAnterior;
+				decimalEst = diferencaEst / totalEstAnterior;
+				percentualEst = decimalEst * 100;
+				types[4].percentual = percentualEst;
+				types[4].valor = totalEstAtual.toFixed(2) + " vs " + totalEstAnterior.toFixed(2);
+
+				var totalEsdAtual = valoresAnoAtual.reduce(function (tot, elemento) {
+					return tot + elemento.esd;
+				}, 0);
+
+				var totalEsdAnterior = valoresAnoAnterior.reduce(function (tot, elemento) {
+					return tot + elemento.esd;
+				}, 0);
+
+				let diferencaEsd = 0, decimalEsd = 0, percentualEsd = 0;
+				diferencaEsd = totalEsdAtual - totalEsdAnterior;
+				decimalEsd = diferencaEsd / totalEsdAnterior;
+				percentualEsd = decimalEsd * 100;
+				types[5].percentual = percentualEsd;
+				types[5].valor = totalEsdAtual.toFixed(2) + " vs " + totalEsdAnterior.toFixed(2);
+
+
+				setComparacao(true);
+				setMedia(null);
+				//console.groupEnd('COMPARAÇÃO');
 			}
 			else {
+				types[0].percentual = null;
+				types[0].valor = 0;
+				types[1].percentual = null;
+				types[1].valor = 0;
+				types[2].percentual = null;
+				types[2].valor = 0;
+				types[3].percentual = null;
+				types[3].valor = 0;
+				types[4].percentual = null;
+				types[4].valor = 0;
+				types[5].percentual = null;
+				types[5].valor = 0;
 				setRange(range);
 				setRangeAnoAnterior(rangeAnoAnterior);
 				setAnoAnterior(e);
 				setComparacao(false)
-				console.log('OPA 2');
-				//getSearchVolumeAnoAnterior(range, volume.all, rangeAnoAnterior, volume.all);
 			}
-			//setCollected(researched.searchVolume.total);
-			//console.log('RESEARCHED VOLUME', researched);
-
-
-
-			/* if (!searchToMonth) {
-				getSearchQuality(changed.rangeAtual, quality.groupByYear, type.value);
-			} else {
-				if (quality.groupByMonth[searchMonth])
-					getDetailsDayQuality(quality.groupByMonth[searchMonth], type.value);
-			} */
-
-
 		},
 		open: ({ setVisible }) => () => {
 			setVisible(true);
 		},
 		close: ({
-			closeSearchQuality,
 			setRange,
-			setSearchToMonth,
 			setSearchMonth,
 			types,
 			quality,
@@ -180,7 +305,10 @@ const enhance = compose(
 			setClose,
 			setDetalheDia,
 			setDadosDia,
-			setType
+			setType,
+			anoAnterior,
+			setAnoAnterior,
+			setIsLegenda
 		}) => () => {
 			console.log('fechei 1', quality);
 			setRange({});
@@ -192,16 +320,31 @@ const enhance = compose(
 				endDate: moment().startOf('month')
 			};
 			setRange({ ...range });
-
 			forEach(types, item => {
-				//item.selected = false;
 				item.valor = null;
 			});
 			setDetalheDia(false);
 			setDadosDia(null);
+
+			if (anoAnterior) {
+				setAnoAnterior(false);
+				types[0].percentual = null;
+				types[0].valor = 0;
+				types[1].percentual = null;
+				types[1].valor = 0;
+				types[2].percentual = null;
+				types[2].valor = 0;
+				types[3].percentual = null;
+				types[3].valor = 0;
+				types[4].percentual = null;
+				types[4].valor = 0;
+				types[5].percentual = null;
+				types[5].valor = 0;
+			}
 			const type = find(types, item => item.selected);
 			setType(type);
 			getSearchQuality(range, quality.groupByYear, 'fat');
+			setIsLegenda(false);
 
 		},
 		handlersFilter: ({
@@ -213,30 +356,55 @@ const enhance = compose(
 			quality,
 			searchToMonth,
 			getDetailsDayQuality,
-			searchMonth
+			searchMonth,
+			anoAnterior,
+			changed,
+			getSearchQualityComparacao
 		}) => e => {
+
+
 			if (types[0].valor != null) {
-				forEach(types, item => {
-					if (item.value === e.value) {
-						item.selected = !e.selected;
-					} else {
-						item.selected = false;
-					}
-				});
-				const type = find(types, item => item.selected);
-				setType(type);
-				setTpes(types);
-				if (__DEV__) console.log("Quality.js - handlersFilter", quality);
-				if (!isEmpty(range)) {
-					if (!searchToMonth) {
-						getSearchQuality(range, quality.groupByYear, type.value);
-					} else {
-						let mes = moment(searchMonth, 'MMMM/YYYY').format('MM/YYYY');
-						if (quality.groupByMonth[mes]) {
-							getDetailsDayQuality(quality.groupByMonth[mes], type.value);
+				if (!anoAnterior) {
+					forEach(types, item => {
+						if (item.value === e.value) {
+							item.selected = !e.selected;
+						} else {
+							item.selected = false;
+						}
+					});
+					const type = find(types, item => item.selected);
+					setType(type);
+					setTpes(types);
+					if (__DEV__) console.log("Quality.js - handlersFilter", quality);
+					if (!isEmpty(range)) {
+						if (!searchToMonth) {
+							getSearchQuality(range, quality.groupByYear, type.value);
+						} else {
+							let mes = moment(searchMonth, 'MMMM/YYYY').format('MM/YYYY');
+							if (quality.groupByMonth[mes]) {
+								getDetailsDayQuality(quality.groupByMonth[mes], type.value);
+							}
 						}
 					}
+					
 				}
+				else {
+					console.log('HANDLERS FILTER COMPARATIVO', e);
+					forEach(types, item => {
+						if (item.value === e.value) {
+							item.selected = !e.selected;
+						} else {
+							item.selected = false;
+						}
+					});
+					const type = find(types, item => item.selected);
+					console.log('Types quality', type);
+					setType(type);
+					setTpes(types);
+					let valoresMes = getSearchQualityComparacao(changed.rangeAtual, quality.groupByYear, type.value, changed.rangeAnoAnterior);
+
+				}
+				
 			}
 
 		},
@@ -253,7 +421,10 @@ const enhance = compose(
 			setChanged,
 			anoAnterior,
 			setRangeAnoAnterior,
-			setMedia
+			setMedia,
+			setType,
+			setTpes,
+			getSearchQualityComparacao
 		}) => e => {
 			if (size(e) === 2) {
 				rangeAnterior = {
@@ -262,22 +433,25 @@ const enhance = compose(
 				}
 				setChanged({ rangeAtual: e, rangeAnoAnterior: rangeAnterior });
 				if (anoAnterior) {
+					console.log('ENTRANDO NO CHANGE DO ANO ANTERIOR');
 					setRangeAnoAnterior(rangeAnterior);
-					//aqui em baixo vai a função de comparação
+					/* forEach(types, item => {
+						if (item.value === e.value) {
+							item.selected = !e.selected;
+						} else {
+							item.selected = false;
+						}
+					});
+					const type = find(types, item => item.selected);
+					setType(type);
+					setTpes(types); */
+					let valoresMes = getSearchQualityComparacao(e, quality.groupByYear, 'fat', rangeAnterior);
 				}
 				else {
 					setRange(e);
 					const type = find(types, item => item.selected);
 					if (!searchToMonth) {
 						getSearchQuality(e, quality.groupByYear, type.value);
-						console.log('OI', researched.searchQuality.items);
-
-						const totalPesquisa = reduce(
-							map(researched.searchQuality.items, item => item.y),
-							(prev, next) => prev + next
-						);
-						let media = totalPesquisa / researched.searchQuality.items.length;
-						setMedia(media);
 					} else {
 						if (quality.groupByMonth[searchMonth]) {
 							getDetailsDayQuality(quality.groupByMonth[searchMonth], type.value);
@@ -301,130 +475,99 @@ const enhance = compose(
 			comparacao,
 			setDetalheDia,
 			setDadosDia,
-			setMedia
+			setMedia,
+			anoAnterior
 		}) => e => {
-			console.log('Teste passando aqui 8', quality);
-			if (e && !isEmpty(e)) {
-				console.log('Teste passando aqui 9', types);
-				let month;
-				if (comparacao)
-					month = researched.searchQuality.byIndex[parseInt(e.x)];
-				else
-					month = researched.searchQuality.byIndex[e.x];
-				const type = find(types, item => item.selected);
-				console.log('MONTH', month);
-				if (quality.groupByMonth[month]) {
-					console.log('Teste passando aqui 10', quality);
-					setClose(true);
-					setFilter(false);
-					const dateFormat = moment(month, 'MM/YYYY').format('MMMM/YYYY');
-					console.log('DATA PESQUISA', month);
-					setSearchMonth(dateFormat);
-					setSearchToMonth(true);
-					console.log('TESTE DOS VALORES DO MES', quality.groupByMonth[month]);
-					let valoresMes = getDetailsDayQuality(quality.groupByMonth[month], type.value);
-					console.log('VALORES MES', valoresMes);
-					console.log('TYPE ATUAL', type.value);
+
+			if (!anoAnterior) {
+				const ex = Math.round(Math.abs(e.x));
+
+				if (e && !isEmpty(e)) {
+
+					let month;
+					/* if (comparacao)
+						month = researched.searchQuality.byIndex[ex];
+					else */
+					month = researched.searchQuality.byIndex[ex];
+					const type = find(types, item => item.selected);
+					if (quality.groupByMonth[month]) {
+						setClose(true);
+						setFilter(false);
+						const dateFormat = moment(month, 'MM/YYYY').format('MMMM/YYYY');
+						setSearchMonth(dateFormat);
+						setSearchToMonth(true);
+						console.log('TESTE DOS VALORES DO MES', quality.groupByMonth[month]);
+						let valoresMes = getDetailsDayQuality(quality.groupByMonth[month], type.value);
+						console.log('VALORES MES', valoresMes);
+						console.log('TYPE ATUAL', type.value);
 
 
+						console.log('VALORES MES 2', researched.searchQuality.items);
 
 
+						let fat, prot, cbt, ccs, est, esd;
 
+						var totalFat = valoresMes.payload.qualities.reduce(function (tot, elemento) {
+							return tot + elemento.fat;
+						}, 0);
 
+						var totalProt = valoresMes.payload.qualities.reduce(function (tot, elemento) {
+							return tot + elemento.prot;
+						}, 0);
 
+						var totalCbt = valoresMes.payload.qualities.reduce(function (tot, elemento) {
+							return tot + elemento.cbt;
+						}, 0);
 
+						var totalCcs = valoresMes.payload.qualities.reduce(function (tot, elemento) {
+							return tot + elemento.ccs;
+						}, 0);
 
+						var totalEst = valoresMes.payload.qualities.reduce(function (tot, elemento) {
+							return tot + elemento.est;
+						}, 0);
 
+						var totalEsd = valoresMes.payload.qualities.reduce(function (tot, elemento) {
+							return tot + elemento.esd;
+						}, 0);
 
-					let fat, prot, cbt, ccs, est, esd;
-
-					var totalFat = valoresMes.payload.qualities.reduce(function (tot, elemento) {
-						return tot + elemento.fat;
-					}, 0);
-
-					var totalProt = valoresMes.payload.qualities.reduce(function (tot, elemento) {
-						return tot + elemento.prot;
-					}, 0);
-
-					var totalCbt = valoresMes.payload.qualities.reduce(function (tot, elemento) {
-						return tot + elemento.cbt;
-					}, 0);
-
-					var totalCcs = valoresMes.payload.qualities.reduce(function (tot, elemento) {
-						return tot + elemento.ccs;
-					}, 0);
-
-					var totalEst = valoresMes.payload.qualities.reduce(function (tot, elemento) {
-						return tot + elemento.est;
-					}, 0);
-
-					var totalEsd = valoresMes.payload.qualities.reduce(function (tot, elemento) {
-						return tot + elemento.esd;
-					}, 0);
-
-					console.log('TOTAL CBT', totalCbt);
-					console.log('TOTAL CBT QUANTIDADE MES', valoresMes.payload.qualities.length);
-					if (isNaN(totalCbt) || !totalCbt || totalCbt == 0) {
-						console.log('não existe cbt', totalCbt)
-						cbt = '0,0000';
-						types[2].valor = cbt;
-					}
-					else {
-						cbt = totalCbt / valoresMes.payload.qualities.length;
-						types[2].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 4 }).format(cbt);
-					}
-
-					fat = totalFat / valoresMes.payload.qualities.length;
-					prot = totalProt / valoresMes.payload.qualities.length;
-
-					ccs = totalCcs / valoresMes.payload.qualities.length;
-					est = totalEst / valoresMes.payload.qualities.length;
-					esd = totalEsd / valoresMes.payload.qualities.length;
-
-					types[0].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 4 }).format(fat);
-					types[1].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 4 }).format(prot);
-
-					types[3].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 4 }).format(ccs);
-					types[4].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 4 }).format(est);
-					types[5].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 4 }).format(esd);
-				}
-				/* else {
-					console.log('Teste passando aqui 11', type);
-					if (type.valor != null) {
-						console.log('Teste passando aqui 12');
-						if (month) {
-							console.log('Teste passando aqui 13', month);
-							getDetailsDayQuality(month, type.value);
-							setDetalheDia(true);
-							setDadosDia(month.period.substr(0,2));
-							types[0].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 4 }).format(month.fat);
-							types[1].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 4 }).format(month.prot);
-							if (month.cbt) {
-								types[2].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 4 }).format(month.cbt);
-							}
-							else {
-								types[2].valor = '0,0000';
-							}
-
-							types[3].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 4 }).format(month.ccs);
-							types[4].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 4 }).format(month.est);
-							types[5].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 4 }).format(month.esd);
+						console.log('TOTAL CBT', totalCbt);
+						console.log('TOTAL CBT QUANTIDADE MES', valoresMes.payload.qualities.length);
+						if (isNaN(totalCbt) || !totalCbt || totalCbt == 0) {
+							console.log('não existe cbt', totalCbt)
+							cbt = '00000';
+							types[2].valor = cbt;
 						}
-						else console.log("erro do fat");
-					}
+						else {
+							cbt = totalCbt / valoresMes.payload.qualities.length;
+							types[2].valor = parseInt(cbt);
+						}
 
-				} */
+						fat = totalFat / valoresMes.payload.qualities.length;
+						prot = totalProt / valoresMes.payload.qualities.length;
+
+						ccs = totalCcs / valoresMes.payload.qualities.length;
+						est = totalEst / valoresMes.payload.qualities.length;
+						esd = totalEsd / valoresMes.payload.qualities.length;
+
+						types[0].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 4 }).format(fat);
+						types[1].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 4 }).format(prot);
+
+						types[3].valor = parseInt(ccs);
+						types[4].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 4 }).format(est);
+						types[5].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 4 }).format(esd);
+					}
+				}
 			}
+
 		},
 		apply: ({
 			setFilter,
 			setSearchMonth,
-			range,
 			setClose,
 			setRange,
 			changed,
 			researched,
-
 			getSearchQuality,
 			quality,
 			searchToMonth,
@@ -439,13 +582,10 @@ const enhance = compose(
 		}) => e => {
 			setFilter(false);
 			setClose(true);
-			const range = {
-				startDate: moment().subtract(1, 'years'),
-				endDate: moment()
-			};
+			console.log('Changed', changed);
 
-			const initDateFormat = moment(range.startDate, 'MM/YYYY').format('MMM/YY');
-			const endDateFormat = moment(range.endDate, 'MM/YYYY').format('MMM/YY');
+			let initDateFormat = moment(changed.rangeAtual.startDate, 'MM/YYYY').format('MMMM/YYYY');
+			let endDateFormat = moment(changed.rangeAtual.endDate, 'MM/YYYY').format('MMMM/YYYY');
 
 			const type = find(types, item => item.selected);
 			if (comparacao) {
@@ -459,12 +599,16 @@ const enhance = compose(
 				setComparacao(true)
 
 				console.log('ENTROU NA COMPARAÇÃO', comparacao);
-				const initDateFormatAnterior = moment(changed.rangeAnoAnterior.startDate, 'MM/YYYY').format('MMM/YY');
-				const endDateFormatAnterior = moment(changed.rangeAnoAnterior.endDate, 'MM/YYYY').format('MMM/YY');
-				setSearchMonth(`(${initDateFormat} - ${endDateFormat}) / (${initDateFormatAnterior} - ${endDateFormatAnterior}) `);
+				let initDateFormat = moment(changed.rangeAtual.startDate, 'MM/YYYY').format('MMM/YYYY');
+				let endDateFormat = moment(changed.rangeAtual.endDate, 'MM/YYYY').format('MMM/YYYY');
+
+
+				let initDateFormatAnterior = moment(changed.rangeAnoAnterior.startDate, 'MM/YYYY').format('MMM/YY');
+				let endDateFormatAnterior = moment(changed.rangeAnoAnterior.endDate, 'MM/YYYY').format('MMM/YY');
+				let stringData = `(${initDateFormat.charAt(0).toUpperCase() + initDateFormat.slice(1)} - ${endDateFormat.charAt(0).toUpperCase() + endDateFormat.slice(1)}) / (${initDateFormatAnterior.charAt(0).toUpperCase() + initDateFormatAnterior.slice(1)} - ${endDateFormatAnterior.charAt(0).toUpperCase() + endDateFormatAnterior.slice(1)})`;
+				setSearchMonth(stringData);
 			}
 			else {
-				console.log('OPA 2');
 				if (changed.rangeAtual) {
 					if (!searchToMonth) {
 						getSearchQuality(changed.rangeAtual, quality.groupByYear, type.value);
@@ -481,8 +625,8 @@ const enhance = compose(
 							getDetailsDayQuality(quality.groupByMonth[searchMonth], type.value);
 					}
 				}
-
-				setSearchMonth(`${initDateFormat} - ${endDateFormat}`);
+				let stringData = `${initDateFormat.charAt(0).toUpperCase() + initDateFormat.slice(1)} - ${endDateFormat.charAt(0).toUpperCase() + endDateFormat.slice(1)}`;
+				setSearchMonth(stringData);
 			}
 
 		},
@@ -506,7 +650,7 @@ const enhance = compose(
 				this.props.quality.groupByYear,
 				type.value
 			);
-			
+
 			const totalPesquisa = reduce(
 				map(this.props.researched.searchQuality.items, item => item.y),
 				(prev, next) => prev + next
@@ -537,7 +681,10 @@ export const Quality = enhance(
 		anoAnterior,
 		detalheDia,
 		dadosDia,
-		media
+		media,
+		isLegenda,
+		anoAtualLegenda,
+		anoAnteriorLegenda
 	}) => {
 		console.log('VALUES TESTE', researched);
 		return (
@@ -570,7 +717,8 @@ export const Quality = enhance(
 							ListEmptyComponent={<EmptyText>Nenhum pedido realizado.</EmptyText>}
 							data={types}
 							renderItem={({ item }) => {
-								return <ItemQuality onPress={handlersFilter} type={item} />;
+								console.log('ITEM DO RENDER ITEM', item);
+								return <ItemQuality onPress={handlersFilter} type={item} anoAnterior={anoAnterior} />;
 							}}
 						/>
 					</WrapperFilter>
@@ -587,6 +735,13 @@ export const Quality = enhance(
 								detalheDia={detalheDia}
 								dia={dadosDia}
 							/>
+
+						)}
+						{isLegenda && (
+							<ViewLegenda>
+								<ViewBolinha><BolinhaAnoAnterior></BolinhaAnoAnterior><TextBola>{anoAnteriorLegenda}</TextBola></ViewBolinha>
+								<ViewBolinha><BolinhaAnoAtual></BolinhaAnoAtual><TextBola>{anoAtualLegenda}</TextBola></ViewBolinha>
+							</ViewLegenda>
 						)}
 					</WrapperBar>
 				</ScrollWrapperStyle>
@@ -594,6 +749,42 @@ export const Quality = enhance(
 		);
 	}
 );
+const ViewBolinha = styled.View`
+  display: flex;
+  justify-content: center;
+  flex-direction: row;
+  /* border: 1px solid green; */
+  margin-left: 10;
+  margin-right: 10;
+`;
+
+const ViewLegenda = styled.View`
+  /* border: 1px solid red; */
+  display: flex;
+  justify-content: center;
+  flex-direction: row;
+  margin-top: 10;
+  margin-bottom: 10;
+`;
+
+const TextBola = styled.Text`
+  margin-left: 5;
+  font-size: 10;
+`;
+
+const BolinhaAnoAnterior = styled.View`
+  border-radius: 8;
+  height: 15;
+  width: 15;
+  background-color: #00cdff;
+`;
+
+const BolinhaAnoAtual = styled.View`
+  border-radius: 8;
+  height: 15;
+  width: 15;
+  background-color: #0093ff;
+`;
 
 const WrapperHeader = styled.View`
   padding-bottom: 2;
