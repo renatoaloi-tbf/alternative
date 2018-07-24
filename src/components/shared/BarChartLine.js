@@ -424,7 +424,7 @@ const enhancer = compose(
                     axisMinimum: 0,
                     limitLines: [{
                         limit: media,
-                        label: new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 0 }).format(media),
+                        label: parseInt(media).toString(),
                         lineColor: processColor('#FF8600'),
                         lineWidth: 1,
                         valueTextColor: processColor('white'),

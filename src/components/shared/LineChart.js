@@ -102,7 +102,7 @@ const enhancer = compose(
     })(),
     xAxis: (() => {
       valueFormatterUpper = valueFormatter.map(function (x) { return x.toUpperCase() });
-      console.log('VALUE FORMARTTER CHECK', valueFormatterUpper)
+      console.log('VALUE FORMARTTER CHECK', valueFormatterUpper.shift())
       if (!valueFormatter.length) return {};
       return {
         valueFormatter: [...valueFormatterUpper],

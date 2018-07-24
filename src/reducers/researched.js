@@ -73,7 +73,15 @@ const getData = (state, { payload }) => {
   });
   //console.log('ITEM TYPE', type);
   newState.searchQuality.items = map(list, item => ({ y: item[type] ? item[type] : 0 }));
-  //if (__DEV__) console.log("researched.js - getData2", newState);
+  if (__DEV__) console.log("researched.js - getData2", newState);
+
+  const totalPesquisa = reduce(
+    map(newState.searchQuality.items, item => item.y),
+    (prev, next) => prev + next
+  );
+
+  newState.searchQuality.media = totalPesquisa / newState.searchQuality.items.length;
+
   return newState;
 };
 
@@ -398,7 +406,12 @@ const getPriceData = (state, { payload }) => {
     };
   });
 
-  //if (__DEV__) console.log("researched.js - getPriceData", newState);
+  const totalPesquisa = reduce(
+    map(newState.searchPrice.filter, item => item.price),
+    (prev, next) => prev + next
+  );
+
+  newState.searchPrice.media = totalPesquisa / newState.searchPrice.filter.length;
 
   return newState;
 };

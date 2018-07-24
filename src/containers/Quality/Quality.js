@@ -468,11 +468,15 @@ const enhance = compose(
 	}),
 	lifecycle({
 		componentWillMount() {
+			const range = {
+				startDate: moment().startOf('month').subtract(12, 'month'),
+				endDate: moment().startOf('month')
+			  };
 			console.log('THIS PROPS QUALITY GROUPBYYEAR', this.props.quality.groupByYear);
 			const type = find(this.props.types, item => item.selected);
 			this.props.setType(type);
 			this.props.getSearchQuality(
-				this.props.range,
+				range,
 				this.props.quality.groupByYear,
 				type.value
 			);
@@ -542,7 +546,7 @@ export const Quality = enhance(
 								values={researched.searchQuality.items}
 								valueFormatter={researched.searchQuality.period}
 								onSelect={onSelect}
-								media={50}
+								media={researched.searchQuality.media}
               					tipo={"quality"}
 								anoAnterior={anoAnterior}
 								valuesAnoAnterior={researched.searchQualityAnoAnterior.items}
