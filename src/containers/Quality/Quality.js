@@ -588,7 +588,7 @@ const enhance = compose(
 
 				let initDateFormatAnterior = moment(changed.rangeAnoAnterior.startDate, 'MM/YYYY').format('MMM/YY');
 				let endDateFormatAnterior = moment(changed.rangeAnoAnterior.endDate, 'MM/YYYY').format('MMM/YY');
-				let stringData = `(${initDateFormat.charAt(0).toUpperCase() + initDateFormat.slice(1)} - ${endDateFormat.charAt(0).toUpperCase() + endDateFormat.slice(1)}) / (${initDateFormatAnterior.charAt(0).toUpperCase() + initDateFormatAnterior.slice(1)} - ${endDateFormatAnterior.charAt(0).toUpperCase() + endDateFormatAnterior.slice(1)})`;
+				let stringData = `${initDateFormat.charAt(0).toUpperCase() + initDateFormat.slice(1)} - ${endDateFormat.charAt(0).toUpperCase() + endDateFormat.slice(1)} (${initDateFormatAnterior.charAt(0).toUpperCase() + initDateFormatAnterior.slice(1)} - ${endDateFormatAnterior.charAt(0).toUpperCase() + endDateFormatAnterior.slice(1)})`;
 				setSearchMonth(stringData);
 			}
 			else {

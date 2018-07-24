@@ -59,6 +59,7 @@ const enhance = compose(
   withState('isLegenda', 'setIsLegenda', false),
   withState('anoAtualLegenda', 'setAnoAtualLegenda', 2002),
   withState('anoAnteriorLegenda', 'setAnoAnteriorLegenda', 2001),
+  withState('inverted', 'setInverted', false),
   withHandlers({
     handlerComparacao: ({
       setAnoAnterior,
@@ -125,7 +126,7 @@ const enhance = compose(
         startDate: moment(), 
         endDate: moment()
       };
-			const { startDate, endDate } = range;
+			const { startDate } = range;
         setSearchMonth(
           `${moment(startDate, 'MM/YYYY').format('MMMM/YYYY').charAt(0).toUpperCase() 
               + moment(startDate, 'MM/YYYY').format('MMMM/YYYY').slice(1)}`
@@ -136,74 +137,43 @@ const enhance = compose(
         setIsCompare(false);
         setIsLegenda(false);
         setDetails({});
-        setFilter(false);
+        setFilter(true);
 		},
-    handlerClose: ({
-      setDetails,
-      closeSearchQuality,
-      setIsCollected,
+    apply: ({
       setRange,
       setSearchMonth,
-      volume,
       setClose,
       changed,
-      setFilter
+      setFilter,
+      anoAnterior,
+      setInverted
     }) => () => {
-      console.log('passei no handlerClose do Volume');
+      console.log('passei no apply do Volume');
       setRange({});
       setClose(true);
-      setFilter(true);
-
-      if (changed.rangeAtual) {
-        setSearchMonth(
-          `${moment(changed.rangeAtual.startDate, 'MM/YYYY').format('MMM/YYYY')} - ${moment(
-            changed.rangeAtual.endDate,
-            'MM/YYYY'
-          ).format('MMM/YYYY')}`
-        );
+      setFilter(false);
+      setInverted(true); // inverte a cor do X
+      if (anoAnterior)
+      {
+        let initDateFormat = moment(changed.rangeAtual.startDate, 'MM/YYYY').format('MMM/YY');
+        let endDateFormat = moment(changed.rangeAtual.endDate, 'MM/YYYY').format('MMM/YY');
+        let initDateFormatAnterior = moment(changed.rangeAnoAnterior.startDate, 'MM/YYYY').format('MMM/YY');
+        let endDateFormatAnterior = moment(changed.rangeAnoAnterior.endDate, 'MM/YYYY').format('MMM/YY');
+        let stringData = `${initDateFormat.charAt(0).toUpperCase() + initDateFormat.slice(1)} - ${endDateFormat.charAt(0).toUpperCase() + endDateFormat.slice(1)} (${initDateFormatAnterior.charAt(0).toUpperCase() + initDateFormatAnterior.slice(1)} - ${endDateFormatAnterior.charAt(0).toUpperCase() + endDateFormatAnterior.slice(1)})`;
+        setSearchMonth(stringData);
       }
-      else {
-        const { startDate } = range;
-        setSearchMonth(
-          `${moment(startDate, 'MM/YYYY').format('MMMM/YYYY').charAt(0).toUpperCase() 
-              + moment(startDate, 'MM/YYYY').format('MMMM/YYYY').slice(1)}`
-        );
+      else
+      {
+        let initDateFormat = moment(changed.rangeAtual.startDate, 'MM/YYYY').format('MMMM/YYYY');
+			  let endDateFormat = moment(changed.rangeAtual.endDate, 'MM/YYYY').format('MMMM/YYYY');
+        let stringData = `${initDateFormat.charAt(0).toUpperCase() + initDateFormat.slice(1)} - ${endDateFormat.charAt(0).toUpperCase() + endDateFormat.slice(1)}`;
+				setSearchMonth(stringData);
       }
-
-      /* setClose(false);
-      const range = {
-        startDate: moment(),
-        endDate: moment()
-      };
-      if (changed.rangeAtual) {
-        setSearchMonth(
-          `${moment(changed.rangeAtual.startDate, 'MM/YYYY').format('MMM/YYYY')} - ${moment(
-            changed.rangeAtual.endDate,
-            'MM/YYYY'
-          ).format('MMM/YYYY')}`
-        );
-        getSearchVolume(changed.rangeAtual, volume.all, false);
-        setRange({ ...changed.rangeAtual });
-        setClose(true);
-      }
-      else {
-        const { startDate, endDate } = range;
-        setSearchMonth(
-          `${moment(startDate, 'MM/YYYY').format('MMMM/YYYY').charAt(0).toUpperCase() 
-              + moment(startDate, 'MM/YYYY').format('MMMM/YYYY').slice(1)}`
-        );
-        getSearchVolume(range, volume.all, true);
-        setRange({ ...range });
-      }
-      setIsCollected(false);
-      setDetails({}); */
     },
     onChange: ({
       researched,
       setRange,
-      getSearchVolume,
       volume,
-      setFilter,
       anoAnterior,
       setRangeAnoAnterior,
       getSearchVolumeAnoAnterior,
@@ -241,11 +211,14 @@ const enhance = compose(
       anoAnterior,
       volume,
       getSearchVolumeAnoAnterior,
-      setIsCompare
+      setIsCompare,
+      setInverted,
+      setFilter
     }) => e => {
       console.log('passei no onSelect do Volume', e);
       if (!isEmpty(e)) 
       {
+        setInverted(true); // inverte a cor do X
         if (anoAnterior) 
         {
           console.log('entrei na parte do anoAnterior do onSelect');
@@ -396,6 +369,8 @@ const enhance = compose(
           }
           else
           {
+            setFilter(true);
+            setInverted(false); // inverte a cor do X
             let volumelocal = researched.searchVolume.byIndex[e.x];
             setIsCollected(false);
             setCollected(0);
@@ -427,8 +402,7 @@ const enhance = compose(
 
 export const Volume = enhance(
   ({
-    handlerClose,
-    handlerChange,
+    apply,
     researched,
     onSelect,
     details,
@@ -445,7 +419,8 @@ export const Volume = enhance(
     isCompare,
     isLegenda,
     anoAtualLegenda,
-    anoAnteriorLegenda
+    anoAnteriorLegenda,
+    inverted
   }) => {
     return (
       <Wrapper secondary>
@@ -457,15 +432,14 @@ export const Volume = enhance(
         <ScrollWrapperStyle>
           <WrapperHeader>
             <FilterCore
-              onClose={handlerClose}
               value={range.label}
               onChange={onChange}
               isFilter={isFilter}
               isClose={isClose}
-              apply={handlerClose}
+              apply={apply}
               close={close}
               value={searchMonth}
-              inverted={false}
+              inverted={inverted}
               comparacao={handlerComparacao}
             />
           </WrapperHeader>

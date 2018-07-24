@@ -106,10 +106,7 @@ const enhance = compose(
         let comparacaoEnd = moment(range.endDate, "MM/YYYY")
           .subtract(1, "year")
           .format("MMM/YYYY");
-        if (e)
-          setValueComparacao("(" + comparacaoStart + " - " + comparacaoEnd + ")");
-        else
-          setValueComparacao("");
+        setValueComparacao("(" + comparacaoStart + " - " + comparacaoEnd + ")");
         setCompare(e);
         comparacao(e);
       }
