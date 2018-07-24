@@ -468,7 +468,6 @@ const enhancer = compose(
             //console.log('TRATACORES NOVO', novoFormato);
             return {
                 axisMinimum: -0.5,
-                limitLine: 115,
                 centerAxisLabels: testeUnique ? false : false,
                 drawGridLines: false,
                 valueFormatter: [...testeUnique ? testeUnique : novoFormato],
@@ -479,37 +478,64 @@ const enhancer = compose(
             };
         })(),
         yAxis: (() => {
-            //console.log('TRATACORES NOVO asdasdsadasd')
-            return {
-                left: {
-                    drawLabels: true,
-                    drawAxisLine: false,
-                    drawGridLines: true,
-                    axisMinimum: 0,
-                    limitLines: [{
-                        limit: media,
-                        label: parseInt(media).toString(),
-                        lineColor: processColor('#FF8600'),
-                        lineWidth: 1,
-                        valueTextColor: processColor('white'),
-                        labelPosition: 'LEFT_BOX'
-                    }],
-                    zeroLine: {
-                        enabled: false,
-                        lineWidth: 1.5
-                    }
-                },
-                right: {
-                    drawLabels: false,
-                    drawAxisLine: false,
-                    drawGridLines: false,
-                    zeroLine: {
-                        enabled: false,
-                        lineWidth: 1.5
-                    }
-                },
-                axisMinimum: 0
-            };
+            console.log('MEDIAAAAAAAAAAAS', media);
+            if (media) {
+                return {
+                    left: {
+                        drawLabels: true,
+                        drawAxisLine: false,
+                        drawGridLines: true,
+                        axisMinimum: 0,
+                        limitLines: [{
+                            limit: media,
+                            label: parseInt(media).toString(),
+                            lineColor: processColor('#FF8600'),
+                            lineWidth: 1,
+                            valueTextColor: processColor('white'),
+                            labelPosition: 'LEFT_BOX'
+                        }],
+                        zeroLine: {
+                            enabled: false,
+                            lineWidth: 1.5
+                        }
+                    },
+                    right: {
+                        drawLabels: false,
+                        drawAxisLine: false,
+                        drawGridLines: false,
+                        zeroLine: {
+                            enabled: false,
+                            lineWidth: 1.5
+                        }
+                    },
+                    axisMinimum: 0
+                };
+            }
+            else {
+                return {
+                    left: {
+                        drawLabels: true,
+                        drawAxisLine: false,
+                        drawGridLines: true,
+                        axisMinimum: 0,
+                        zeroLine: {
+                            enabled: false,
+                            lineWidth: 1.5
+                        }
+                    },
+                    right: {
+                        drawLabels: false,
+                        drawAxisLine: false,
+                        drawGridLines: false,
+                        zeroLine: {
+                            enabled: false,
+                            lineWidth: 1.5
+                        }
+                    },
+                    axisMinimum: 0
+                };
+            }
+            
         })(),
         zoom: (() => {
             if (moment(valueFormatter[0], 'MM/YYYY', true).isValid()) {
@@ -582,7 +608,17 @@ export const BarChartLine = enhancer(({ data, xAxis, yAxis, onSelect, zoom }) =>
     return (
         <Wrapper>
             <BarStyle
+                
                 data={data}
+                legend={{
+                    enabled: true,
+                    textSize: 14,
+                    form: "SQUARE",
+                    formSize: 14,
+                    xEntrySpace: 10,
+                    yEntrySpace: 5,
+                    wordWrapEnabled: true, position: 2
+                  }}
                 drawBarShadow={false}
                 pinchZoom={false}
                 legend={{ enabled: false }}
