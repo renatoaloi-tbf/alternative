@@ -27,7 +27,7 @@ import {
 import { FilterPrice } from '~/components/FilterPrice';
 import { PriceDetails } from '~/components/Price';
 import { getPrices, getPriceCompareData } from '~/actions';
-import {navigatorStyle} from '~/config';
+import { navigatorStyle } from '~/config';
 
 const enhance = compose(
   connect(
@@ -54,8 +54,11 @@ const enhance = compose(
   withState('anoAnterior', 'setAnoAnterior', false),
   withState('allPrices', 'setAllPrices', null),
   withState('comparacao', 'setComparacao', false),
+  withState('inverted', 'setInverted', false),
+  withState('isLegenda', 'setIsLegenda', false),
+	withState('anoAtualLegenda', 'setAnoAtualLegenda', 2002),
+	withState('anoAnteriorLegenda', 'setAnoAnteriorLegenda', 2001),
   withState('periodPrice', 'setPeriodPrice', ({ researched }) => {
-    console.log('RESEARCHED PERIOD'.researched);
     return {
       pricePeriod: researched.searchPrice.byIndex[0],
       pricePeriodAfter: researched.searchPrice.byIndex[1]
@@ -64,20 +67,20 @@ const enhance = compose(
   lifecycle({
     async componentWillMount() {
       const { startDate, endDate } = this.props.range;
-      
+
       this.props.setSearchMonth(
         `${moment().format('YYYY')}`
       );
       const range = {
-        startDate: moment().startOf('month').subtract(12, 'month'),
+        startDate: moment().startOf('month').subtract(11, 'month'),
         endDate: moment().startOf('month')
       };
       let pricePeriod, pricePeriodAfter, valorLtLeiteMesAnterior;
 
-      valorLtLeiteMesAnterior = this.props.price.items.filter(function(item) {
+      valorLtLeiteMesAnterior = this.props.price.items.filter(function (item) {
         return item.period == moment().subtract(1, 'month').format('MM/YYYY');
       });
-      
+
       console.log('PREÇO DO LEITE DO MES ANTERIOR', valorLtLeiteMesAnterior);
 
       pricePeriod = { y: valorLtLeiteMesAnterior[0].price, period: moment().subtract(1, 'month').format('MMMM/YYYY') };
@@ -88,7 +91,7 @@ const enhance = compose(
           pricePeriodAfter
         }
       )
-      
+
       console.log('ITEM', this.props.price.items);
       console.log('ITEM PERIOD', this.props.price.period);
       await this.props.setAllPrices(this.props.price.items);
@@ -99,7 +102,7 @@ const enhance = compose(
     handlerComparacao: ({
       researched,
       changed,
-      setRange, 
+      setRange,
       range,
       setRangeAnoAnterior,
       setAnoAnterior,
@@ -107,9 +110,15 @@ const enhance = compose(
       getPriceCompareData,
       getPrices,
       allPrices,
-      setComparacao
+      setComparacao,
+      setIsLegenda,
+      setAnoAtualLegenda,
+      setAnoAnteriorLegenda
     }) => e => {
       if (changed.rangeAtual != null && changed.rangeAnoAnterior != null) {
+        setIsLegenda(true);
+        setAnoAtualLegenda(moment(changed.rangeAtual.startDate, "MM/YYYY").format('YYYY'));
+        setAnoAnteriorLegenda(moment(changed.rangeAnoAnterior.startDate, "MM/YYYY").format('YYYY'));
         setRange(changed.rangeAtual);
         setRangeAnoAnterior(changed.rangeAnoAnterior);
         setAnoAnterior(e);
@@ -127,8 +136,8 @@ const enhance = compose(
         setRangeAnoAnterior(rangeAnoAnterior);
         setAnoAnterior(e);
         getPrices(
-          researched.searchPrice.filter, 
-          range, 
+          researched.searchPrice.filter,
+          range,
           moment(range.startDate, 'MM/YYYY').format('YYYY')
         );
       }
@@ -143,14 +152,21 @@ const enhance = compose(
       range,
       allPrices,
       comparacao,
-      changed
+      changed,
+      setFilter,
+      setInverted,
+      setClose
     }) => e => {
-      setSearchMonth(
-        `${moment(range.startDate, 'MM/YYYY').format('MMM/YYYY')} - ${moment(range.endDate, 'MM/YYYY').format('MMM/YYYY')}`
-      );
-      setYear(e);
+      setFilter(false);
+      setInverted(true);
+      setClose(true);
+      
+      setYear(moment().year());
       if (!comparacao) {
         getPrices(researched.searchPrice.filter, range, moment(range.startDate, 'MM/YYYY').format('YYYY'));
+        setSearchMonth(
+          `${moment(range.startDate, 'MM/YYYY').format('MMM/YYYY')} - ${moment(range.endDate, 'MM/YYYY').format('MMM/YYYY')}`
+        );
       }
       else {
         getPriceCompareData(
@@ -160,9 +176,12 @@ const enhance = compose(
           changed.rangeAnoAnterior,
           allPrices
         );
+        setSearchMonth(
+          `(${moment(range.startDate, 'MM/YYYY').format('MMM/YYYY')} - ${moment(range.endDate, 'MM/YYYY').format('MMM/YYYY')})  (${moment(range.startDate, 'MM/YYYY').subtract(1, 'year').format('MMM/YYYY')} - ${moment(range.endDate, 'MM/YYYY').subtract(1, 'year').format('MMM/YYYY')})`          
+        );
       }
-      
-      
+
+
       let pricePeriod, pricePeriodAfter;
       let myArrayPeriod = Object.values(researched.searchPrice.byIndex);
       for (var i = 0; i < myArrayPeriod.length; i++) {
@@ -180,18 +199,19 @@ const enhance = compose(
 
       pricePeriod = pricePeriod ? pricePeriod : { y: 0, period: moment(range.startDate, 'MM/YYYY').format('MMMM/YYYY') };
       pricePeriodAfter = pricePeriodAfter ? pricePeriodAfter : { y: 0, period: moment(range.endDate, 'MM/YYYY').format('MMMM/YYYY') };
+
       /* setPeriodPrice({
         pricePeriod,
         pricePeriodAfter
       }); */
-      
+
 
     },
-    previsao: ({navigator}) => e => {
+    previsao: ({ navigator }) => e => {
       navigator.push({
         screen: 'PriceMinimum',
         navigatorStyle,
-       
+
       });
     },
     handlerClick: ({ researched, setPeriodPrice, year }) => e => {
@@ -214,11 +234,24 @@ const enhance = compose(
       setRange,
       setSearchMonth,
       volume,
-      setClose
+      setClose,
+      setFilter,
+      setInverted,
+      researched,
+      setPeriodPrice,
+      allPrices,
+      getPrices,
+      year,
+      setComparacao,
+      setIsLegenda
     }) => () => {
+      setIsLegenda(false);
+      setComparacao(false);
+      setFilter(true);
+      setInverted(false);
       setRange({});
       setClose(false);
-      const range = {
+      /* const range = {
         startDate: moment().subtract(1, 'month'),
         endDate: moment()
       };
@@ -227,50 +260,92 @@ const enhance = compose(
           range.endDate,
           'MM/YYYY'
         ).format('MMM/YYYY')}`
+      ); */
+
+      setSearchMonth(
+        `${moment().format('YYYY')}`
       );
+      const range = {
+        startDate: moment().startOf('month').subtract(11, 'month'),
+        endDate: moment().startOf('month')
+      };
+      /* let pricePeriod, pricePeriodAfter, valorLtLeiteMesAnterior;
+      console.log('SEARCH PRICE', researched);
+      valorLtLeiteMesAnterior = researched.searchPrice.items.filter(function (item) {
+        return item.period == moment().subtract(1, 'month').format('MM/YYYY');
+      });
+
+      console.log('PREÇO DO LEITE DO MES ANTERIOR', valorLtLeiteMesAnterior);
+
+      pricePeriod = { y: valorLtLeiteMesAnterior[0].price, period: moment().subtract(1, 'month').format('MMMM/YYYY') };
+      pricePeriodAfter = { y: 0, period: moment().format('MMMM/YYYY') };
+      setPeriodPrice(
+        {
+          pricePeriod,
+          pricePeriodAfter
+        }
+      )
+ */
+
+      
+
       setRange({ ...range });
       setIsCollected(false);
       setDetails({});
+      console.log('ALL PRICES', allPrices);
+      console.log('RANGE', range);
+      console.log('ANO', year);
+      getPrices(allPrices, range, moment().format('YYYY'));
     },
-    onChange: ({ 
-      setRange, 
-      researched, 
-      setPeriodPrice, 
+    onChange: ({
+      setRange,
+      researched,
+      setPeriodPrice,
       getPrices,
-      setChanged
+      setChanged,
+      anoAnterior,
+      getPriceCompareData,
+      allPrices,
+      changed
     }) => e => {
-      console.log('RESEARCHED ONCHANGE', researched);
+      
+      const rangeAnterior = {
+        startDate: moment(e.startDate, 'MM/YYYY').subtract(1, 'year').format('MM/YYYY'),
+        endDate: moment(e.endDate, 'MM/YYYY').subtract(1, 'year').format('MM/YYYY')
+      };
       if (size(e) === 2) {
         setRange(e);
-        const range = {
-          startDate: e.startDate,
-          endDate: e.endDate
-        };
-        const rangeAnterior = {
-          startDate: moment(e.startDate, 'MM/YYYY').subtract(1, 'year').format('MM/YYYY'),
-          endDate: moment(e.endDate, 'MM/YYYY').subtract(1, 'year').format('MM/YYYY')
-        };
-        
-        getPrices(researched.searchPrice.filter, range, moment().format('YYYY'));
+        if (anoAnterior) {
+          getPriceCompareData(
+            researched.searchPrice.filter,
+            e,
+            moment(e.startDate, 'MM/YYYY').format('YYYY'),
+            rangeAnterior,
+            allPrices
+          );
+        }
+        else {
+          getPrices(researched.searchPrice.filter, e, moment().format('YYYY'));         
+        }
+
         let pricePeriod, pricePeriodAfter;
         let myArrayPeriod = Object.values(researched.searchPrice.byIndex);
         for (var i = 0; i < myArrayPeriod.length; i++) {
-          if (myArrayPeriod[i].period === moment(range.startDate, 'MM/YYYY').format('MMMM/YYYY')) {
+          if (myArrayPeriod[i].period === moment(e.startDate, 'MM/YYYY').format('MMMM/YYYY')) {
             pricePeriod = myArrayPeriod[i];
           }
         }
 
         let myArrayPeriodAfter = Object.values(researched.searchPrice.byIndex);
         for (var i = 0; i < myArrayPeriodAfter.length; i++) {
-          if (myArrayPeriodAfter[i].period === moment(range.endDate, 'MM/YYYY').format('MMMM/YYYY')) {
+          if (myArrayPeriodAfter[i].period === moment(e.endDate, 'MM/YYYY').format('MMMM/YYYY')) {
             pricePeriodAfter = myArrayPeriodAfter[i];
           }
         }
 
-        pricePeriod = pricePeriod ? pricePeriod : { y: 0, period: moment(range.startDate, 'MM/YYYY').format('MMMM/YYYY') };
-        pricePeriodAfter = pricePeriodAfter ? pricePeriodAfter : { y: 0, period: moment(range.endDate, 'MM/YYYY').format('MMMM/YYYY') };
-
-        setChanged({ rangeAtual: range, rangeAnoAnterior: rangeAnterior });
+        pricePeriod = pricePeriod ? pricePeriod : { y: 0, period: moment(e.startDate, 'MM/YYYY').format('MMMM/YYYY') };
+        pricePeriodAfter = pricePeriodAfter ? pricePeriodAfter : { y: 0, period: moment(e.endDate, 'MM/YYYY').format('MMMM/YYYY') };
+        setChanged({ rangeAtual: e, rangeAnoAnterior: rangeAnterior });
 
         /* setPeriodPrice({
           pricePeriod,
@@ -319,7 +394,11 @@ export const Price = enhance(
     searchMonth,
     handlerComparacao,
     comparacao,
-    previsao
+    previsao,
+    inverted,
+    isLegenda,
+		anoAtualLegenda,
+		anoAnteriorLegenda
   }) => {
     console.log('RESEARCH', researched);
     return (
@@ -336,10 +415,10 @@ export const Price = enhance(
               onChange={onChange}
               isFilter={isFilter}
               isClose={isClose}
-              close={handlersPress}
+              close={handlerClose}
               apply={handlersPress}
               value={searchMonth}
-              inverted={false}
+              inverted={inverted}
               comparacao={handlerComparacao}
             />
             {/* <FilterPrice value={year} onPress={handlersPress} /> */}
@@ -360,12 +439,55 @@ export const Price = enhance(
               media={researched.searchPrice.media}
               valuesComparacao={researched.searchPriceAnoAnterior.items}
             />
+            {isLegenda && (
+							<ViewLegenda>
+								<ViewBolinha><BolinhaAnoAnterior></BolinhaAnoAnterior><TextBola>{anoAnteriorLegenda}</TextBola></ViewBolinha>
+								<ViewBolinha><BolinhaAnoAtual></BolinhaAnoAtual><TextBola>{anoAtualLegenda}</TextBola></ViewBolinha>
+							</ViewLegenda>
+						)}
           </WrapperBar>
         </ScrollWrapperStyle>
       </Wrapper>
     );
   }
 );
+
+const ViewBolinha = styled.View`
+  display: flex;
+  justify-content: center;
+  flex-direction: row;
+  /* border: 1px solid green; */
+  margin-left: 10;
+  margin-right: 10;
+`;
+
+const ViewLegenda = styled.View`
+  /* border: 1px solid red; */
+  display: flex;
+  justify-content: center;
+  flex-direction: row;
+  margin-top: 10;
+  margin-bottom: 10;
+`;
+
+const TextBola = styled.Text`
+  margin-left: 5;
+  font-size: 10;
+`;
+
+const BolinhaAnoAnterior = styled.View`
+  border-radius: 8;
+  height: 15;
+  width: 15;
+  background-color: #00cdff;
+`;
+
+const BolinhaAnoAtual = styled.View`
+  border-radius: 8;
+  height: 15;
+  width: 15;
+  background-color: #0093ff;
+`;
 
 const ScrollWrapperStyle = ScrollWrapper.extend`
   padding-left: 8;
