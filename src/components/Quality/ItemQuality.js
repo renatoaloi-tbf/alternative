@@ -1,7 +1,7 @@
 import React from 'react';
-import {isEqual} from 'lodash';
+import { isEqual } from 'lodash';
 import styled from 'styled-components/native';
-import {object, func, number} from 'prop-types';
+import { object, func, number, bool } from 'prop-types';
 import {
   compose,
   setPropTypes,
@@ -10,17 +10,18 @@ import {
   shouldUpdate,
   pure
 } from 'recompose';
-import {TouchableOpacity} from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
 // locals
-import {getNavigatorContext} from '~/enhancers';
-import {Text} from '~/components/shared';
+import { getNavigatorContext } from '~/enhancers';
+import { Text } from '~/components/shared';
 
 const enhance = compose(
   setPropTypes({
     type: object.isRequired,
-    onPress: func.isRequired
+    onPress: func.isRequired,
+    anoAnterior: bool
   }),
-  withProps(({onPress, type, value}) => ({
+  withProps(({ onPress, type, value }) => ({
     onPress: e => {
       if (typeof onPress === 'function') {
         onPress(type);
@@ -29,13 +30,27 @@ const enhance = compose(
   }))
 );
 
-export const ItemQuality = enhance(({type, onPress}) => {
-  let valor;
+export const ItemQuality = enhance(({ type, onPress, anoAnterior }) => {
+  let valor, percentual;
   if (type.valor != null) {
     valor = type.valor;
   }
   else {
     valor = 0;
+  }
+  if (type.percentual != null) {
+    if (type.percentual > 0) {
+      
+      percentual = '+' + type.percentual.toFixed(2);
+    }
+    else {
+      
+      percentual = '' + type.percentual.toFixed(2);
+    }
+    
+  }
+  else {
+    percentual = 0;
   }
   return (
     <Wrapper>
@@ -47,9 +62,20 @@ export const ItemQuality = enhance(({type, onPress}) => {
               {type.measure}
             </DescriptioType>
           </WrapperDescription>
-          <WrapperValue>
-            <Text size={30}>{valor}</Text>
-          </WrapperValue>
+          {!anoAnterior && (
+            <WrapperValue>
+              <Text size={30}>{valor}</Text>
+            </WrapperValue>
+          )}
+          {anoAnterior && (
+            <WrapperValueAnoAnterior>
+              <View>
+                <Text size={30}>{percentual}%</Text>
+                <Text size={12} secondary>{valor}</Text>
+              </View>
+            </WrapperValueAnoAnterior>
+          )}
+
         </WrapperContent>
       )}
       {type.selected && (
@@ -62,11 +88,19 @@ export const ItemQuality = enhance(({type, onPress}) => {
               {type.measure}
             </DescriptioType>
           </WrapperDescription>
-          <WrapperValue>
-            <Text inverted size={30}>
-            {valor}
-            </Text>
-          </WrapperValue>
+          {!anoAnterior && (
+            <WrapperValue>
+              <Text inverted size={30}>{valor}</Text>
+            </WrapperValue>
+          )}
+          {anoAnterior && (
+            <WrapperValueAnoAnterior>
+              <View>
+                <Text inverted size={30}>{percentual}%</Text>
+                <Text inverted size={12}>{valor}</Text>
+              </View>
+            </WrapperValueAnoAnterior>
+          )}
         </WrapperContentSelected>
       )}
     </Wrapper>
@@ -95,6 +129,11 @@ const WrapperValue = styled.View`
   padding-left: 10;
   padding-right: 10;
   padding-top: 10;
+`;
+const WrapperValueAnoAnterior = styled.View`
+  padding-left: 10;
+  padding-right: 10;
+  padding-top: 0;
 `;
 
 const WrapperContent = styled(TouchableOpacity)`

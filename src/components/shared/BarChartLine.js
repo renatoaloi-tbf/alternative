@@ -160,10 +160,9 @@ const enhancer = compose(
                         }
                     }
                     else {
+                        console.log('É AQUI QUE ENTRA');
                         if (valuesAnoAnterior.length > 0) {
-                            values = [];
-                            valuesAnoAnterior.forEach(vaa => {
-                                values.push({ y: 0 });
+                            valuesAnoAnterior.forEach(vaa => {                                
                                 if (vaa.y < media && moment(valueFormatter[0], 'MM/YYYY', true).isValid())
                                     trataCoresAnoAnterior.push(processColor('#ffbd00'));
                                 else

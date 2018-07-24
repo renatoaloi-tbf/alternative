@@ -12,7 +12,8 @@ const qualityConstant = {
   fat: 0,
   lact: 0,
   prot: 0,
-  ufc: 0
+  ufc: 0,
+  cbt: 0
 };
 const INITIAL_STATE = {
   searchQuality: {
@@ -100,29 +101,31 @@ const getDataComparacaoAnoAnterior = (state, { payload }) => {
       list.push(qualityConstant);
     }
   });
-  //console.log('ITEM TYPE', type);
+  console.log('ITEM TYPE', type);
   newState.searchQuality.items = map(list, item => ({ y: item[type] }));
   //if (__DEV__) console.log("researched.js - getData2", newState);
-
+  console.log('newState.searchQuality.items AAAAAAAAAAAAAAAAAAAA', newState.searchQuality.items);
   /** PESQUISA PERIODO ATUAL END */
 
   /** PESQUISA PERIODO ANTERIOR */
   const listAnoAnterior = [];
   newState.searchQualityAnoAnterior.period = dateDiffList(rangeAnterior.startDate, rangeAnterior.endDate);
   //console.log('newState.searchQualityAnoAnterior.period', newState.searchQuality.period);
-  //console.log('qualitiesAnterior', qualities);
+  console.log('qualitiesAnterior', qualities);
   forEach(newState.searchQualityAnoAnterior.period, (item, index) => {
     newState.searchQualityAnoAnterior.byIndex[index] = item;
-    //console.log('Teste qualities item', item);
+    console.log('Teste qualities item', item);
     if (qualities[item]) {
+      console.log('QUALITIES ITEM CADA', qualities[item]);
       listAnoAnterior.push(qualities[item]);
     } else {
+      
       listAnoAnterior.push(qualityConstant);
     }
   });
-  //console.log('ITEM TYPE', type);
+  console.log('LIST ANO ANTERIOR', listAnoAnterior);
   newState.searchQualityAnoAnterior.items = map(listAnoAnterior, item => ({ y: item[type] }));
-  //console.log('newState.searchQualityAnoAnterior.items', newState.searchQualityAnoAnterior.items);
+  console.log('newState.searchQualityAnoAnterior.items', newState.searchQualityAnoAnterior.items);
   /** PESQUISA PERIODO ANTERIOR END */
 
   return newState;
