@@ -176,7 +176,7 @@ const enhance = compose(
           allPrices
         );
         setSearchMonth(
-          `(${moment(range.startDate, 'MM/YYYY').format('MMM/YY')} - ${moment(range.endDate, 'MM/YYYY').format('MMM/YY')})  (${moment(range.startDate, 'MM/YY').subtract(1, 'year').format('MMM/YYYY')} - ${moment(range.endDate, 'MM/YYYY').subtract(1, 'year').format('MMM/YY')})`
+          `${moment(range.startDate, 'MM/YYYY').format('MMM/YY')} - ${moment(range.endDate, 'MM/YYYY').format('MMM/YY')} (${moment(range.startDate, 'MM/YYYY').subtract(1, 'year').format('MMM/YY')} - ${moment(range.endDate, 'MM/YYYY').subtract(1, 'year').format('MMM/YY')})`
         );
       }
 
