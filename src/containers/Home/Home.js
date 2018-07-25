@@ -59,8 +59,9 @@ const enhance = compose(
 export const Home = enhance(({ openMenu, user }) => {
   console.log('USUARRRRRIO', user);
 
-  let image = '', cor = '';
-  switch (user.category.toString()) {
+  let image = '', cor = '', category = '';
+  category = user.category ? user.category.toString() : '';
+  switch (category) {
     case '':
       image = null;
       cor = null;
@@ -126,9 +127,9 @@ export const Home = enhance(({ openMenu, user }) => {
                 </Text>
           </TitleRecentNumbers>
           <WrapperRecentNumbers>
-            <RecentNumbers result={`${new Intl.NumberFormat('pt-BR', { style: 'decimal' }).format(user.recent.lastPickup.volume)}L`} description="Última coleta" />
-            <RecentNumbers result={`${new Intl.NumberFormat('pt-BR', { style: 'decimal' }).format(user.recent.currentMonth.volume)}L`} description={`Total ${moment(user.recent.currentMonth.period, 'MM/YYYY').format('MMMM')}`} />
-            <RecentNumbers result={`${new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(user.recent.lastMonth.price)}/L`} description={`${moment(user.recent.lastMonth.period, 'MM/YYYY').format('MMMM')}`} />
+            <RecentNumbers result={`${new Intl.NumberFormat('pt-BR', { style: 'decimal' }).format(user.recent.lastPickup.volume ? user.recent.lastPickup.volume : 0)}L`} description="Última coleta" />
+            <RecentNumbers result={`${new Intl.NumberFormat('pt-BR', { style: 'decimal' }).format(user.recent.currentMonth.volume ? user.recent.lastPickup.volume : 0)}L`} description={`Total ${moment(user.recent.currentMonth.period ? user.recent.currentMonth.period : '' , 'MM/YYYY').format('MMMM')}`} />
+            <RecentNumbers result={`${new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(user.recent.lastMonth.price ? user.recent.lastMonth.price : 0)}/L`} description={`${moment(user.recent.lastMonth.period ? user.recent.lastMonth.period : '' , 'MM/YYYY').format('MMMM')}`} />
           </WrapperRecentNumbers>
         </Card>
       </WrapperCard>

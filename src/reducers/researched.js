@@ -72,7 +72,8 @@ const getData = (state, { payload }) => {
       list.push(qualityConstant);
     }
   });
-  //console.log('ITEM TYPE', type);
+  console.log('LISTA ITEMS', list);
+
   newState.searchQuality.items = map(list, item => ({ y: item[type] ? item[type] : 0 }));
   if (__DEV__) console.log("researched.js - getData2", newState);
 
@@ -311,32 +312,29 @@ const close = () => {
 const getDetailsDayQuality = (state, { payload }) => {
   const newState = cloneDeep(INITIAL_STATE);
   const { qualities, type } = payload;
-  //console.log('ARRAY QUALITY', qualities);
   if (qualities) {
     if (!qualities.length) {
       let arrayQuality = [];
-      arrayQuality.push(qualities);
-      
+      arrayQuality.push(qualities);      
       newState.searchQuality.period = map(arrayQuality, item => item.period);
-
-      /* forEach(arrayQuality, (item, index) => {
-        console.log('sem cbt ' + index, item[type]);
-      }); */
-
-
+      
       newState.searchQuality.items = map(arrayQuality, item => ({
         y: item[type] ? parseInt(item[type]) : 0
       }));
+
       forEach(arrayQuality, (item, index) => {
         newState.searchQuality.byIndex[index] = item;
       });
     }
     else {
+      console.log('qualities', qualities);
+      console.log('qualities type', type);
       newState.searchQuality.period = map(qualities, item => item.period);
-
       newState.searchQuality.items = map(qualities, item => ({
-        y: item[type] ? parseInt(item[type]) : 0
+        y: item[type] ? item[type] : 0
       }));
+      console.log('newState.searchQuality.items', newState.searchQuality.items);
+
       forEach(qualities, (item, index) => {
         newState.searchQuality.byIndex[index] = item;
       });

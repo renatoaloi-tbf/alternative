@@ -11,7 +11,7 @@ import {
 import { func, object } from 'prop-types';
 import { connect } from 'react-redux';
 import { ScrollView } from 'react-native';
-import { processColor } from 'react-native';
+import { processColor, TouchableOpacity, Image} from 'react-native';
 import { size, map, forEach, find, isEmpty } from 'lodash';
 
 import Moment from 'moment';
@@ -44,6 +44,8 @@ import {
 import Intl from 'intl';
 require('intl/locale-data/jsonp/pt');
 import { reduce } from 'lodash';
+import { DocumentationModal } from '~/components/Documentation/'
+
 const enhance = compose(
 	connect(
 		({ quality, researched }) => ({ quality, researched, getDetailsDayQuality }),
@@ -123,6 +125,8 @@ const enhance = compose(
 	withState('isLegenda', 'setIsLegenda', false),
 	withState('anoAtualLegenda', 'setAnoAtualLegenda', 2002),
 	withState('anoAnteriorLegenda', 'setAnoAnteriorLegenda', 2001),
+	withState('isIN62', 'setIsIN62', false),
+	withState('modalVisible', 'setModalVisible', false),
 	withHandlers({
 		handlerComparacao: ({
 			setAnoAnterior,
@@ -295,6 +299,13 @@ const enhance = compose(
 		open: ({ setVisible }) => () => {
 			setVisible(true);
 		},
+		openModal: ({setModalVisible}) => () => {
+			console.log('OI É PARA O MODAL APARECER');
+			setModalVisible(true);
+		},
+		closeModal: ({setModalVisible}) => () => {
+			setModalVisible(false);
+		},
 		close: ({
 			setRange,
 			setSearchMonth,
@@ -308,12 +319,14 @@ const enhance = compose(
 			setType,
 			anoAnterior,
 			setAnoAnterior,
-			setIsLegenda
+			setIsLegenda,
+			setComparacao
 		}) => () => {
 			console.log('fechei 1', quality);
 			setRange({});
 			setFilter(true);
 			setClose(false);
+			setComparacao(false);
 			setSearchMonth('Mais recentes');
 			const range = {
 				startDate: moment().startOf('month').subtract(12, 'month'),
@@ -378,15 +391,18 @@ const enhance = compose(
 					if (__DEV__) console.log("Quality.js - handlersFilter", quality);
 					if (!isEmpty(range)) {
 						if (!searchToMonth) {
+							console.log('TESTE ENTRE AI');
 							getSearchQuality(range, quality.groupByYear, type.value);
 						} else {
+							console.log('TESTE ENTRE AI 2');
 							let mes = moment(searchMonth, 'MMMM/YYYY').format('MM/YYYY');
 							if (quality.groupByMonth[mes]) {
+								console.log('TESTE ENTRE AI 2 2');
 								getDetailsDayQuality(quality.groupByMonth[mes], type.value);
 							}
 						}
 					}
-					
+
 				}
 				else {
 					console.log('HANDLERS FILTER COMPARATIVO', e);
@@ -404,7 +420,7 @@ const enhance = compose(
 					let valoresMes = getSearchQualityComparacao(changed.rangeAtual, quality.groupByYear, type.value, changed.rangeAnoAnterior);
 
 				}
-				
+
 			}
 
 		},
@@ -459,86 +475,94 @@ const enhance = compose(
 			setDetalheDia,
 			setDadosDia,
 			setMedia,
-			anoAnterior
+			anoAnterior,
+			media,
+			setIsIN62
 		}) => e => {
-
+			console.log('ESSE É O E CLICAVEL', e);
+			console.log('ESSA É A MEDIA', media);
 			if (!anoAnterior) {
 				const ex = Math.round(Math.abs(e.x));
 
 				if (e && !isEmpty(e)) {
-
-					let month;
-					/* if (comparacao)
+					if (media > e.y && quality.groupByMonth[researched.searchQuality.byIndex[ex]]) {
+						setIsIN62(true);
+					}
+					else {
+						setIsIN62(false);
+						let month;
+						/* if (comparacao)
+							month = researched.searchQuality.byIndex[ex];
+						else */
 						month = researched.searchQuality.byIndex[ex];
-					else */
-					month = researched.searchQuality.byIndex[ex];
-					const type = find(types, item => item.selected);
-					if (quality.groupByMonth[month]) {
-						setClose(true);
-						setFilter(false);
-						const dateFormat = moment(month, 'MM/YYYY').format('MMMM/YYYY');
-						setSearchMonth(dateFormat);
-						setSearchToMonth(true);
-						console.log('TESTE DOS VALORES DO MES', quality.groupByMonth[month]);
-						let valoresMes = getDetailsDayQuality(quality.groupByMonth[month], type.value);
-						console.log('VALORES MES', valoresMes);
-						console.log('TYPE ATUAL', type.value);
+						const type = find(types, item => item.selected);
+						if (quality.groupByMonth[month]) {
+							setClose(true);
+							setFilter(false);
+							const dateFormat = moment(month, 'MM/YYYY').format('MMMM/YYYY');
+							setSearchMonth(dateFormat);
+							setSearchToMonth(true);
+							console.log('TESTE DOS VALORES DO MES', quality.groupByMonth[month]);
+							let valoresMes = getDetailsDayQuality(quality.groupByMonth[month], type.value);
+							console.log('VALORES MES', valoresMes);
+							console.log('TYPE ATUAL', type.value);
 
 
-						console.log('VALORES MES 2', researched.searchQuality.items);
+							console.log('VALORES MES 2', researched.searchQuality.items);
 
 
-						let fat, prot, cbt, ccs, est, esd;
+							let fat, prot, cbt, ccs, est, esd;
 
-						var totalFat = valoresMes.payload.qualities.reduce(function (tot, elemento) {
-							return tot + elemento.fat;
-						}, 0);
+							var totalFat = valoresMes.payload.qualities.reduce(function (tot, elemento) {
+								return tot + elemento.fat;
+							}, 0);
 
-						var totalProt = valoresMes.payload.qualities.reduce(function (tot, elemento) {
-							return tot + elemento.prot;
-						}, 0);
+							var totalProt = valoresMes.payload.qualities.reduce(function (tot, elemento) {
+								return tot + elemento.prot;
+							}, 0);
 
-						var totalCbt = valoresMes.payload.qualities.reduce(function (tot, elemento) {
-							return tot + elemento.cbt;
-						}, 0);
+							var totalCbt = valoresMes.payload.qualities.reduce(function (tot, elemento) {
+								return tot + elemento.cbt;
+							}, 0);
 
-						var totalCcs = valoresMes.payload.qualities.reduce(function (tot, elemento) {
-							return tot + elemento.ccs;
-						}, 0);
+							var totalCcs = valoresMes.payload.qualities.reduce(function (tot, elemento) {
+								return tot + elemento.ccs;
+							}, 0);
 
-						var totalEst = valoresMes.payload.qualities.reduce(function (tot, elemento) {
-							return tot + elemento.est;
-						}, 0);
+							var totalEst = valoresMes.payload.qualities.reduce(function (tot, elemento) {
+								return tot + elemento.est;
+							}, 0);
 
-						var totalEsd = valoresMes.payload.qualities.reduce(function (tot, elemento) {
-							return tot + elemento.esd;
-						}, 0);
+							var totalEsd = valoresMes.payload.qualities.reduce(function (tot, elemento) {
+								return tot + elemento.esd;
+							}, 0);
 
-						console.log('TOTAL CBT', totalCbt);
-						console.log('TOTAL CBT QUANTIDADE MES', valoresMes.payload.qualities.length);
-						if (isNaN(totalCbt) || !totalCbt || totalCbt == 0) {
-							console.log('não existe cbt', totalCbt)
-							cbt = '00000';
-							types[2].valor = cbt;
+							console.log('TOTAL CBT', totalCbt);
+							console.log('TOTAL CBT QUANTIDADE MES', valoresMes.payload.qualities.length);
+							if (isNaN(totalCbt) || !totalCbt || totalCbt == 0) {
+								console.log('não existe cbt', totalCbt)
+								cbt = '00000';
+								types[2].valor = cbt;
+							}
+							else {
+								cbt = totalCbt / valoresMes.payload.qualities.length;
+								types[2].valor = parseInt(cbt);
+							}
+
+							fat = totalFat / valoresMes.payload.qualities.length;
+							prot = totalProt / valoresMes.payload.qualities.length;
+
+							ccs = totalCcs / valoresMes.payload.qualities.length;
+							est = totalEst / valoresMes.payload.qualities.length;
+							esd = totalEsd / valoresMes.payload.qualities.length;
+
+							types[0].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 4 }).format(fat);
+							types[1].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 4 }).format(prot);
+
+							types[3].valor = parseInt(ccs);
+							types[4].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 4 }).format(est);
+							types[5].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 4 }).format(esd);
 						}
-						else {
-							cbt = totalCbt / valoresMes.payload.qualities.length;
-							types[2].valor = parseInt(cbt);
-						}
-
-						fat = totalFat / valoresMes.payload.qualities.length;
-						prot = totalProt / valoresMes.payload.qualities.length;
-
-						ccs = totalCcs / valoresMes.payload.qualities.length;
-						est = totalEst / valoresMes.payload.qualities.length;
-						esd = totalEsd / valoresMes.payload.qualities.length;
-
-						types[0].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 4 }).format(fat);
-						types[1].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 4 }).format(prot);
-
-						types[3].valor = parseInt(ccs);
-						types[4].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 4 }).format(est);
-						types[5].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 4 }).format(esd);
 					}
 				}
 			}
@@ -667,7 +691,11 @@ export const Quality = enhance(
 		media,
 		isLegenda,
 		anoAtualLegenda,
-		anoAnteriorLegenda
+		anoAnteriorLegenda,
+		isIN62,
+		modalVisible,
+		closeModal,
+		openModal
 	}) => {
 		console.log('VALUES TESTE', researched);
 		return (
@@ -700,7 +728,7 @@ export const Quality = enhance(
 							ListEmptyComponent={<EmptyText>Nenhum pedido realizado.</EmptyText>}
 							data={types}
 							renderItem={({ item }) => {
-								console.log('ITEM DO RENDER ITEM', item);
+								
 								return <ItemQuality onPress={handlersFilter} type={item} anoAnterior={anoAnterior} />;
 							}}
 						/>
@@ -726,12 +754,45 @@ export const Quality = enhance(
 								<ViewBolinha><BolinhaAnoAtual></BolinhaAnoAtual><TextBola>{anoAtualLegenda}</TextBola></ViewBolinha>
 							</ViewLegenda>
 						)}
+						{isIN62 && (
+							<ViewAlertIN62 onPress={openModal}>
+								<Image source={require('../../images/ic_warning_white.png')} style={{ height: 70, width: 70, marginTop: 10 , marginRight: 10}} />
+								<ViewAlertIN62Inside>
+									<Text style={{color: '#ffffff', marginTop: 23, fontSize: 16}} >
+										Análise de leite fora dos padrões
+									</Text>
+									<Text style={{color: '#ffffff', fontSize: 13}}>
+										Preencher checklist de qualidade
+									</Text>
+								</ViewAlertIN62Inside>								
+							</ViewAlertIN62>
+							
+						)}
 					</WrapperBar>
+					<DocumentationModal
+								close={closeModal}
+								title="IN62"
+								buttonText="Estou Ciente"
+								visible={modalVisible}
+						  	/>
 				</ScrollWrapperStyle>
 			</Wrapper>
 		);
 	}
 );
+
+const ViewAlertIN62Inside = styled.View`
+	flex-direction: column;
+`;
+const ViewAlertIN62 = styled.TouchableOpacity `
+  /* border: 1px solid red; */
+  display: flex;
+  justify-content: center;
+  flex-direction: row;
+  margin-top: 10;
+  margin-bottom: 0;
+  background-color: #ffbd00
+`;
 const ViewBolinha = styled.View`
   display: flex;
   justify-content: center;
@@ -774,7 +835,7 @@ const WrapperHeader = styled.View`
 `;
 
 const WrapperBar = styled.View`
-  height: 250;
+  height: 350;
   background-color: ${props => props.theme.bg};
   padding-top: 1;
   border-radius: ${props => props.theme.borderRadius};
