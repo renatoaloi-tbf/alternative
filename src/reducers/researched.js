@@ -102,20 +102,22 @@ const getData = (state, { payload }) => {
     (prev, next) => prev + next
   ); */
 
-  console.log('total recolhido', mediaPeriodo);
+  //console.log('total recolhido', mediaPeriodo);
   newState.searchQuality.mediaPeriodo = mediaPeriodo;
   newState.searchQuality.items = map(list, item => ({ y: item[type] ? item[type] : 0 }));
 
-  newState.searchQuality.total = reduce(
-    map(newState.searchQuality.items, item => item.y),
-    (prev, next) => prev + next
-  );
-
-  newState.searchQuality.average = newState.searchQuality.total / newState.searchQuality.items.length;
-  console.log('LIST GETDATA', list);
-  console.log('QUALITIES GETDATA', qualities);
-  console.log('TYPE GETDATA', type);
-  console.log('NEW STATE GETDATA', newState);
+  if (type != 'ccs')
+  {
+    newState.searchQuality.total = reduce(
+      map(newState.searchQuality.items, item => item.y),
+      (prev, next) => prev + next
+    );
+    newState.searchQuality.average = newState.searchQuality.total / newState.searchQuality.items.length;
+  }
+  //console.log('LIST GETDATA', list);
+  //console.log('QUALITIES GETDATA', qualities);
+  //console.log('TYPE GETDATA', type);
+  //console.log('NEW STATE GETDATA', newState);
   return newState;
 };
 
@@ -170,19 +172,19 @@ const getDataComparacaoAnoAnterior = (state, { payload }) => {
     (prev, next) => prev + next
   ); */
 
-  console.log('total recolhido', mediaPeriodo);
+  //console.log('total recolhido', mediaPeriodo);
   newState.searchQuality.mediaPeriodo = mediaPeriodo;
-  console.log('ITEM TYPE', type);
+  //console.log('ITEM TYPE', type);
   newState.searchQuality.items = map(list, item => ({ y: item[type] }));
   //if (__DEV__) console.log("researched.js - getData2", newState);
-  console.log('newState.searchQuality.items AAAAAAAAAAAAAAAAAAAA', newState.searchQuality.items);
+  //console.log('newState.searchQuality.items AAAAAAAAAAAAAAAAAAAA', newState.searchQuality.items);
   /** PESQUISA PERIODO ATUAL END */
 
   /** PESQUISA PERIODO ANTERIOR */
   const listAnoAnterior = [];
   newState.searchQualityAnoAnterior.period = dateDiffList(rangeAnterior.startDate, rangeAnterior.endDate);
   //console.log('newState.searchQualityAnoAnterior.period', newState.searchQuality.period);
-  console.log('qualitiesAnterior', qualities);
+  //console.log('qualitiesAnterior', qualities);
   forEach(newState.searchQualityAnoAnterior.period, (item, index) => {
     newState.searchQualityAnoAnterior.byIndex[index] = item;
     console.log('Teste qualities item', item);
@@ -194,9 +196,9 @@ const getDataComparacaoAnoAnterior = (state, { payload }) => {
       listAnoAnterior.push(qualityConstant);
     }
   });
-  console.log('LIST ANO ANTERIOR', listAnoAnterior);
+  //console.log('LIST ANO ANTERIOR', listAnoAnterior);
   newState.searchQualityAnoAnterior.items = map(listAnoAnterior, item => ({ y: item[type] }));
-  console.log('newState.searchQualityAnoAnterior.items', newState.searchQualityAnoAnterior.items);
+  //console.log('newState.searchQualityAnoAnterior.items', newState.searchQualityAnoAnterior.items);
   /** PESQUISA PERIODO ANTERIOR END */
 
   return newState;
@@ -233,13 +235,16 @@ const getDetailsDayQuality = (state, { payload }) => {
       });
     }
 
-    newState.searchQuality.total = reduce(
-      map(newState.searchQuality.items, item => item.y),
-      (prev, next) => prev + next
-    );
-    newState.searchQuality.average =
-      newState.searchQuality.total / newState.searchQuality.items.length;
-
+    console.log('entrou ou não entrou, eis a questão', type);
+    if (type != 'ccs')
+    {
+      newState.searchQuality.total = reduce(
+        map(newState.searchQuality.items, item => item.y),
+        (prev, next) => prev + next
+      );
+      newState.searchQuality.average =
+        newState.searchQuality.total / newState.searchQuality.items.length;
+    }
     //console.log('newState.searchQuality.total', newState.searchQuality.total);
     //console.log('newState.searchQuality.items.length', newState.searchQuality.items.length);
     //console.log('newState.searchQuality.average', newState.searchQuality.average);
