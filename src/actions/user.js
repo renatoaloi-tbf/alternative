@@ -23,12 +23,12 @@ export const login = (user, password) => {
         Authorization: `Basic ${code}`
       }
     };
-    if (__DEV__) console.log("users.js - config", config);
+    //if (__DEV__) console.log("users.js - config", config);
     try {
-      const url = `${apiUrl}/auth/authenticate`;
-      //const url = `${apiUrl}`;
-      const res = await fetch(url, config);
-      //const res = await fetch(url);
+      //const url = `${apiUrl}/auth/authenticate`;
+      const url = `${apiUrl}`;
+      //const res = await fetch(url, config);
+      const res = await fetch(url);
       if (__DEV__) console.log('res', res);
       if (res.status === 401) {
         return fail({ token: res.status });

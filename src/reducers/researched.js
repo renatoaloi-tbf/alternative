@@ -345,7 +345,7 @@ const getDetailsDayQuality = (state, { payload }) => {
 const getPriceData = (state, { payload }) => {
   const newState = cloneDeep(INITIAL_STATE);
   const { prices, range, year } = payload;
-  //console.log('PREÇOS POR PADRÃO', prices);
+  console.log('PREÇOS POR PADRÃO', prices);
   const start = moment(range.startDate, 'MM/YYYY').startOf('month').format('YYYYMM');
   const end = moment(range.endDate, 'MM/YYYY').endOf('month').format('YYYYMM');
   const start2 = moment(range.startDate, 'MM/YYYY').startOf('month').format('YYYY-MM-DD');
@@ -373,11 +373,11 @@ const getPriceData = (state, { payload }) => {
   });
 
   newState.searchPrice.filter = filterPrices;
-  //console.log('FILTER PRICE', filterPrices);
+  console.log('FILTER PRICE', filterPrices);
   newState.searchPrice.items = map(range2map, (item, index) => {
     const findPrice = find(filterPrices, price => moment(price.period, 'MM/YYYY').format('MMYYYY') === item);
     if (findPrice) {
-      console.log('FIND PRICE:', { y: parseFloat(findPrice.price), ano: findPrice.year, anoMes: moment(findPrice.period, 'MM/YYYY').format('MMMM/YYYY')});
+      //console.log('FIND PRICE:', { y: parseFloat(findPrice.price), ano: findPrice.year, anoMes: moment(findPrice.period, 'MM/YYYY').format('MMMM/YYYY')});
       return { y: parseFloat(findPrice.price), ano: findPrice.year, anoMes: moment(findPrice.period, 'MM/YYYY').format('MMMM/YYYY')};
     }
     return { y: 0, ano: moment(item.toString(), 'MM/YYYY').format('YYYY'), anoMes: moment(item.toString(), 'MM/YYYY').format('MMMM/YYYY')};
@@ -393,6 +393,8 @@ const getPriceData = (state, { payload }) => {
       .format('MMM')
   );
 
+
+  console.log('PRICE PERIOD', newState.searchPrice.period);
   forEach(newState.searchPrice.items, (item, index) => {
     newState.searchPrice.byIndex[index] = {
       ...item,

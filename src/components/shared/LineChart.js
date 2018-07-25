@@ -34,7 +34,7 @@ const enhancer = compose(
               label: 'Qualidade',
               config: {
                 drawValues: false,
-                lineWidth: 3,
+                lineWidth: 2,
                 drawCubicIntensity: 0.1,
                 circleRadius: 1,
                 drawHighlightIndicators: false,
@@ -66,7 +66,7 @@ const enhancer = compose(
               label: 'Ano atual',
               config: {
                 drawValues: false,
-                lineWidth: 3,
+                lineWidth: 2,
                 drawCubicIntensity: 0.1,
                 circleRadius: 1,
                 drawHighlightIndicators: false,
@@ -83,7 +83,7 @@ const enhancer = compose(
               label: 'Ano anterior',
               config: {
                 drawValues: false,
-                lineWidth: 3,
+                lineWidth: 2,
                 drawCubicIntensity: 0.1,
                 circleRadius: 1,
                 drawHighlightIndicators: false,
@@ -102,7 +102,7 @@ const enhancer = compose(
     })(),
     xAxis: (() => {
       valueFormatterUpper = valueFormatter.map(function (x) { return x.toUpperCase() });
-      console.log('VALUE FORMARTTER CHECK', valueFormatterUpper.shift())
+      
       if (!valueFormatter.length) return {};
       return {
         valueFormatter: [...valueFormatterUpper],
@@ -112,46 +112,78 @@ const enhancer = compose(
         position: 'BOTTOM',
         axisMinimum: 0,
         axisLineWidth: 0,
+        
       };
     })(),
     yAxis: (() => {
       valuesEmReais = values.map(function (x) { return 'R$ ' + new Intl.NumberFormat('pt-BR', { style: 'decimal', maximumFractionDigits: 2 }).format(x.y) });
-      return {
-        left: {
-          drawLabels: false,
-          drawAxisLine: true,
-          drawGridLines: true,
-          axisMinimum: 0,
-          labelCount: 4,
-          granularityEnabled: true,
-          granularity: 0,
-          zeroLine: {
-            enabled: true,
-            lineWidth: 1
-          }
-        },
-        right: {
-          valueFormatter: [...valuesEmReais],
-          drawLabels: true,
-          drawAxisLine: false,
-          drawGridLines: false,
-          axisMinimum: 0,
-          zeroLine: {
-            enabled: true,
-            lineWidth: 1.5
+      if (media) {
+        return {
+          left: {
+            drawLabels: false,
+            drawAxisLine: true,
+            drawGridLines: true,
+            axisMinimum: 0,
+            labelCount: 4,
+            granularityEnabled: true,
+            granularity: 0,
+            zeroLine: {
+              enabled: true,
+              lineWidth: 1
+            }
           },
-          limitLines: [{
-              limit: media,
-              label: new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 2 }).format(media),
-              lineColor: processColor('#FF8600'),
-              lineWidth: 1,
-              valueTextColor: processColor('white'),
-              labelPosition: 'RIGHT_BOX'
-          }],
-        },
-
-
-      };
+          right: {
+            valueFormatter: [...valuesEmReais],
+            drawLabels: true,
+            drawAxisLine: false,
+            drawGridLines: false,
+            axisMinimum: 0,
+            zeroLine: {
+              enabled: true,
+              lineWidth: 1.5
+            },
+            limitLines: [{
+                limit: media,
+                label: new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 2 }).format(media),
+                lineColor: processColor('#FF8600'),
+                lineWidth: 1,
+                valueTextColor: processColor('white'),
+                labelPosition: 'RIGHT_BOX'
+            }],
+          },
+  
+  
+        };
+      }
+      else {
+        return {
+          left: {
+            drawLabels: false,
+            drawAxisLine: true,
+            drawGridLines: true,
+            axisMinimum: 0,
+            labelCount: 4,
+            granularityEnabled: true,
+            granularity: 0,
+            zeroLine: {
+              enabled: true,
+              lineWidth: 1
+            }
+          },
+          right: {
+            valueFormatter: [...valuesEmReais],
+            drawLabels: true,
+            drawAxisLine: false,
+            drawGridLines: false,
+            axisMinimum: 0,
+            zeroLine: {
+              enabled: true,
+              lineWidth: 1.5
+            },
+          },  
+        };
+      }
+      
     })(),
     onSelect: e => {
       if (typeof onSelect === 'function') {
