@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components/native';
-import { compose, withProps, setPropTypes, lifecycle, withState } from 'recompose';
+import { compose, withProps, setPropTypes, lifecycle, withState, pure, onlyUpdateForKeys } from 'recompose';
 import { BarChart as BarChartNative } from 'react-native-charts-wrapper';
 import { array, func, number, string, object, bool } from 'prop-types';
 import { processColor } from 'react-native';
@@ -14,7 +14,7 @@ import Intl from 'intl';
 
 require('intl/locale-data/jsonp/pt');
 
-const enhancer = compose(
+const enhance = compose(
     setPropTypes({
         values: array.isRequired,
         valueFormatter: array.isRequired,
@@ -26,6 +26,7 @@ const enhancer = compose(
         valuesAnoAnterior: array,
         detalheDia: bool,
         dia: string,
+        update: bool
     }),
     withProps(({ values, valueFormatter, valueFormatterIndex, onSelect, media, tipo, anoAnterior, valuesAnoAnterior, detalheDia, dia, formatterMeses, testeUnique}) => ({
 
@@ -529,11 +530,10 @@ const enhancer = compose(
     }))
 );
 
-export const BarChartLine = enhancer(({ data, xAxis, yAxis, onSelect, zoom }) => {
+const BarChartLinePure = enhance(({ data, xAxis, yAxis, onSelect, zoom }) => {
     return (
         <Wrapper>
             <BarStyle
-                
                 data={data}
                 legend={{
                     enabled: true,
@@ -557,6 +557,8 @@ export const BarChartLine = enhancer(({ data, xAxis, yAxis, onSelect, zoom }) =>
         </Wrapper>
     );
 });
+
+export const BarChartLine = onlyUpdateForKeys(['values'])(BarChartLinePure);
 
 
 const BarStyle = styled(BarChartNative)`

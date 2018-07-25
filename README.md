@@ -230,6 +230,12 @@ dependencies {
 }
 ```
 
+Adicione também o código abaixo na linha 287 do arquivo ```node_modules\react-native-charts-wrapper\android\src\main\java\com\github\wuxudong\rncharts\charts\ChartBaseManager.java```
+
+```
+axis.removeAllLimitLines();
+```
+
 Agora basta executar o ```react-native run-android``` normalmente.
 
 ### Ferramentas de Depuração

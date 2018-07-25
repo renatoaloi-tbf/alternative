@@ -16,7 +16,6 @@ import { extendMoment } from 'moment-range';
 const moment = extendMoment(Moment);
 // Local
 
-import { FilterOneDatePicker } from '~/components/FilterOneDatePicker';
 import { getSearchVolume, closeSearchQuality, getSearchVolumeAnoAnterior } from '~/actions';
 import {
   Wrapper,
@@ -60,6 +59,7 @@ const enhance = compose(
   withState('anoAtualLegenda', 'setAnoAtualLegenda', 2002),
   withState('anoAnteriorLegenda', 'setAnoAnteriorLegenda', 2001),
   withState('inverted', 'setInverted', false),
+  withState('update', 'setUpdate', false),
   withHandlers({
     handlerComparacao: ({
       setAnoAnterior,
@@ -192,7 +192,9 @@ const enhance = compose(
       getSearchVolumeAnoAnterior,
       setChanged,
       setIsCollected,
-      setCollected
+      setCollected,
+      update,
+      setUpdate
     }) => async e => {
       if (size(e) === 2) {
         var rangeAnterior = {
@@ -211,6 +213,7 @@ const enhance = compose(
         }
         await getSearchVolumeAnoAnterior(e, volume.all, rangeAnterior, volume.all);
         setCollected(researched.searchVolume.totalAnoAtual);
+        setUpdate(!update);
       }
     },
     onSelect: ({
@@ -409,6 +412,7 @@ const enhance = compose(
             + moment(startDate, 'MM/YYYY').format('MMMM/YYYY').slice(1)}`
       );
       this.props.getSearchVolume(this.props.range, this.props.volume.all, true);
+      //this.props.setUpdate(!this.props.update);
     }
   })
 );
@@ -433,7 +437,8 @@ export const Volume = enhance(
     isLegenda,
     anoAtualLegenda,
     anoAnteriorLegenda,
-    inverted
+    inverted,
+    update
   }) => {
     return (
       <Wrapper secondary>
@@ -477,10 +482,11 @@ export const Volume = enhance(
               values={researched.searchVolume.items}
               valueFormatter={researched.searchVolume.period}
               valueFormatterIndex={researched.searchVolume.byIndex}
-              media={300}
+              media={researched.searchVolume.average}
               tipo={"volume"}
               anoAnterior={anoAnterior}
               valuesAnoAnterior={researched.searchVolumeAnoAnterior.items}
+              update={update}
             />
             {isLegenda && (
               <ViewLegenda>

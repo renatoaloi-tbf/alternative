@@ -210,6 +210,28 @@ const getVolumeDataAnoAnterior = (state, { payload }) =>
       (prev, next) => prev + next
     );
 
+    // Média do volume ano atual
+    var meses = [];
+    var countMes = 0;
+    var somaMes = 0;
+    console.log('newState.searchVolume.items', newState.searchVolume.items);
+    newState.searchVolume.items.forEach((item, i) => { 
+        var mesValue = moment(item.searchDate).format('MMM');
+        if (meses.indexOf(mesValue) == -1)
+        {
+            countMes++;
+            meses.push(mesValue);
+        }
+        somaMes += item.y;
+    });
+    console.log('countMes', countMes);
+    console.log('somaMes', somaMes);
+    if (countMes > 1)
+      newState.searchVolume.average = somaMes / countMes;
+    else
+      newState.searchVolume.average =
+        newState.searchVolume.total / newState.searchVolume.items.length;
+
     // ???????????????
     newState.searchVolume.period = setArray(newState.searchVolume.items.length);
 
@@ -222,9 +244,6 @@ const getVolumeDataAnoAnterior = (state, { payload }) =>
       map(filterVolumesCurrentMonth, item => item.volume),
       (prev, next) => prev + next
     );
-    //newState.searchVolume.average =
-    //  newState.searchVolume.total / newState.searchVolume.items.length;
-
 
     // Conta da Média do Mês Anterior
     newState.searchVolume.lastMonth = moment().subtract(1, 'month').format('MMMM/YYYY');
