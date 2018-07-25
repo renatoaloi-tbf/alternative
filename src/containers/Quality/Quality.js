@@ -121,12 +121,12 @@ const enhance = compose(
 	withState('comparacao', 'setComparacao', false),
 	withState('detalheDia', 'setDetalheDia', false),
 	withState('dadosDia', 'setDadosDia', null),
-	withState('media', 'setMedia', null),
 	withState('isLegenda', 'setIsLegenda', false),
 	withState('anoAtualLegenda', 'setAnoAtualLegenda', 2002),
 	withState('anoAnteriorLegenda', 'setAnoAnteriorLegenda', 2001),
 	withState('isIN62', 'setIsIN62', false),
 	withState('modalVisible', 'setModalVisible', false),
+	withState('decimalPlaces', 'setDecimalPlaces', 0),
 	withHandlers({
 		handlerComparacao: ({
 			setAnoAnterior,
@@ -140,14 +140,11 @@ const enhance = compose(
 			getSearchQualityComparacao,
 			setComparacao,
 			types,
-			setMedia,
 			anoAnterior,
 			setIsLegenda,
 			setAnoAtualLegenda,
 			setAnoAnteriorLegenda
 		}) => (e) => {
-
-
 			if (changed.rangeAtual != null && changed.rangeAnoAnterior != null && e) {
 				setRange(changed.rangeAtual);
 				setRangeAnoAnterior(changed.rangeAnoAnterior);
@@ -274,7 +271,6 @@ const enhance = compose(
 
 
 				setComparacao(true);
-				setMedia(null);
 				//console.groupEnd('COMPARAÇÃO');
 			}
 			else {
@@ -300,7 +296,6 @@ const enhance = compose(
 			setVisible(true);
 		},
 		openModal: ({setModalVisible}) => () => {
-			console.log('OI É PARA O MODAL APARECER');
 			setModalVisible(true);
 		},
 		closeModal: ({setModalVisible}) => () => {
@@ -322,7 +317,6 @@ const enhance = compose(
 			setIsLegenda,
 			setComparacao
 		}) => () => {
-			console.log('fechei 1', quality);
 			setRange({});
 			setFilter(true);
 			setClose(false);
@@ -374,8 +368,6 @@ const enhance = compose(
 			changed,
 			getSearchQualityComparacao
 		}) => e => {
-
-
 			if (types[0].valor != null) {
 				if (!anoAnterior) {
 					forEach(types, item => {
@@ -388,24 +380,23 @@ const enhance = compose(
 					const type = find(types, item => item.selected);
 					setType(type);
 					setTpes(types);
-					if (__DEV__) console.log("Quality.js - handlersFilter", quality);
+					//if (__DEV__) console.log("Quality.js - handlersFilter", quality);
 					if (!isEmpty(range)) {
 						if (!searchToMonth) {
-							console.log('TESTE ENTRE AI');
+							//console.log('TESTE ENTRE AI');
 							getSearchQuality(range, quality.groupByYear, type.value);
 						} else {
-							console.log('TESTE ENTRE AI 2');
+							//console.log('TESTE ENTRE AI 2');
 							let mes = moment(searchMonth, 'MMMM/YYYY').format('MM/YYYY');
 							if (quality.groupByMonth[mes]) {
-								console.log('TESTE ENTRE AI 2 2');
+								//console.log('TESTE ENTRE AI 2 2');
 								getDetailsDayQuality(quality.groupByMonth[mes], type.value);
 							}
 						}
 					}
-
 				}
 				else {
-					console.log('HANDLERS FILTER COMPARATIVO', e);
+					//console.log('HANDLERS FILTER COMPARATIVO', e);
 					forEach(types, item => {
 						if (item.value === e.value) {
 							item.selected = !e.selected;
@@ -414,15 +405,12 @@ const enhance = compose(
 						}
 					});
 					const type = find(types, item => item.selected);
-					console.log('Types quality', type);
+					//console.log('Types quality', type);
 					setType(type);
 					setTpes(types);
 					let valoresMes = getSearchQualityComparacao(changed.rangeAtual, quality.groupByYear, type.value, changed.rangeAnoAnterior);
-
 				}
-
 			}
-
 		},
 		onChange: ({
 			quality,
@@ -437,7 +425,6 @@ const enhance = compose(
 			setChanged,
 			anoAnterior,
 			setRangeAnoAnterior,
-			setMedia,
 			setType,
 			setTpes,
 			getSearchQualityComparacao
@@ -474,18 +461,17 @@ const enhance = compose(
 			comparacao,
 			setDetalheDia,
 			setDadosDia,
-			setMedia,
 			anoAnterior,
-			media,
-			setIsIN62
+			setIsIN62,
+			setDecimalPlaces
 		}) => e => {
-			console.log('ESSE É O E CLICAVEL', e);
-			console.log('ESSA É A MEDIA', media);
+			//console.log('ESSE É O E CLICAVEL', e);
+			console.log('ESSA É A MEDIA', researched.searchQuality.average);
 			if (!anoAnterior) {
 				const ex = Math.round(Math.abs(e.x));
 
 				if (e && !isEmpty(e)) {
-					if (media > e.y && quality.groupByMonth[researched.searchQuality.byIndex[ex]]) {
+					if (researched.searchQuality.average > e.y && quality.groupByMonth[researched.searchQuality.byIndex[ex]]) {
 						setIsIN62(true);
 					}
 					else {
@@ -502,13 +488,14 @@ const enhance = compose(
 							const dateFormat = moment(month, 'MM/YYYY').format('MMMM/YYYY');
 							setSearchMonth(dateFormat);
 							setSearchToMonth(true);
-							console.log('TESTE DOS VALORES DO MES', quality.groupByMonth[month]);
+							setDecimalPlaces(1);
+							//console.log('TESTE DOS VALORES DO MES', quality.groupByMonth[month]);
 							let valoresMes = getDetailsDayQuality(quality.groupByMonth[month], type.value);
-							console.log('VALORES MES', valoresMes);
-							console.log('TYPE ATUAL', type.value);
+							//console.log('VALORES MES', valoresMes);
+							//console.log('TYPE ATUAL', type.value);
 
 
-							console.log('VALORES MES 2', researched.searchQuality.items);
+							//console.log('VALORES MES 2', researched.searchQuality.items);
 
 
 							let fat, prot, cbt, ccs, est, esd;
@@ -537,10 +524,10 @@ const enhance = compose(
 								return tot + elemento.esd;
 							}, 0);
 
-							console.log('TOTAL CBT', totalCbt);
-							console.log('TOTAL CBT QUANTIDADE MES', valoresMes.payload.qualities.length);
+							//console.log('TOTAL CBT', totalCbt);
+							//console.log('TOTAL CBT QUANTIDADE MES', valoresMes.payload.qualities.length);
 							if (isNaN(totalCbt) || !totalCbt || totalCbt == 0) {
-								console.log('não existe cbt', totalCbt)
+								//console.log('não existe cbt', totalCbt)
 								cbt = '00000';
 								types[2].valor = cbt;
 							}
@@ -589,7 +576,7 @@ const enhance = compose(
 		}) => e => {
 			setFilter(false);
 			setClose(true);
-			console.log('Changed', changed);
+			//console.log('Changed', changed);
 
 			let initDateFormat = moment(changed.rangeAtual.startDate, 'MM/YYYY').format('MMMM/YYYY');
 			let endDateFormat = moment(changed.rangeAtual.endDate, 'MM/YYYY').format('MMMM/YYYY');
@@ -599,13 +586,13 @@ const enhance = compose(
 				setRange(changed.rangeAtual);
 				setRangeAnoAnterior(changed.rangeAnoAnterior);
 				setAnoAnterior(true);
-				console.log('OPA 1');
-				console.log('TYPES', types);
+				//console.log('OPA 1');
+				//console.log('TYPES', types);
 				getSearchQualityComparacao(changed.rangeAtual, quality.groupByYear, type.value, changed.rangeAnoAnterior);
-				console.log('RESEARCHED NA COMPARAÇÃO', researched.newState);
+				//console.log('RESEARCHED NA COMPARAÇÃO', researched.newState);
 				setComparacao(true)
 
-				console.log('ENTROU NA COMPARAÇÃO', comparacao);
+				//console.log('ENTROU NA COMPARAÇÃO', comparacao);
 				let initDateFormat = moment(changed.rangeAtual.startDate, 'MM/YYYY').format('MMM/YY');
 				let endDateFormat = moment(changed.rangeAtual.endDate, 'MM/YYYY').format('MMM/YY');
 
@@ -643,12 +630,12 @@ const enhance = compose(
 	}),
 	lifecycle({
 		componentWillMount() {
-			console.log('PROPS', this.props);
+			//console.log('PROPS', this.props);
 			const range = {
 				startDate: moment().startOf('month').subtract(12, 'month'),
 				endDate: moment().startOf('month')
 			};
-			console.log('THIS PROPS QUALITY GROUPBYYEAR', this.props.quality.groupByYear);
+			//console.log('THIS PROPS QUALITY GROUPBYYEAR', this.props.quality.groupByYear);
 			const type = find(this.props.types, item => item.selected);
 
 			this.props.setType(type);
@@ -657,13 +644,6 @@ const enhance = compose(
 				this.props.quality.groupByYear,
 				type.value
 			);
-
-			const totalPesquisa = reduce(
-				map(this.props.researched.searchQuality.items, item => item.y),
-				(prev, next) => prev + next
-			);
-			let media = totalPesquisa / this.props.researched.searchQuality.items.length
-			this.props.setMedia(media);
 		}
 	})
 );
@@ -688,16 +668,16 @@ export const Quality = enhance(
 		anoAnterior,
 		detalheDia,
 		dadosDia,
-		media,
 		isLegenda,
 		anoAtualLegenda,
 		anoAnteriorLegenda,
 		isIN62,
 		modalVisible,
 		closeModal,
-		openModal
+		openModal,
+		decimalPlaces
 	}) => {
-		console.log('VALUES TESTE', researched);
+		//console.log('VALUES TESTE', researched);
 		return (
 			<Wrapper secondary>
 				<TopBar
@@ -739,14 +719,14 @@ export const Quality = enhance(
 								values={researched.searchQuality.items}
 								valueFormatter={researched.searchQuality.period}
 								onSelect={onSelect}
-								media={media}
+								media={researched.searchQuality.average}
 								tipo={"quality"}
 								anoAnterior={anoAnterior}
 								valuesAnoAnterior={researched.searchQualityAnoAnterior.items}
 								detalheDia={detalheDia}
 								dia={dadosDia}
+								decimalPlaces={decimalPlaces}
 							/>
-
 						)}
 						{isLegenda && (
 							<ViewLegenda>

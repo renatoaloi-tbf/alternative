@@ -3,7 +3,7 @@ import styled from 'styled-components/native';
 import { compose, withProps, setPropTypes, lifecycle, withState, pure, onlyUpdateForKeys } from 'recompose';
 import { BarChart as BarChartNative } from 'react-native-charts-wrapper';
 import { array, func, number, string, object, bool } from 'prop-types';
-import { processColor } from 'react-native';
+import { processColor, Text } from 'react-native';
 import moment from 'moment';
 
 // Local
@@ -26,10 +26,13 @@ const enhance = compose(
         valuesAnoAnterior: array,
         detalheDia: bool,
         dia: string,
-        update: bool
+        update: bool,
+        decimalPlaces: number
     }),
-    withProps(({ values, valueFormatter, valueFormatterIndex, onSelect, media, tipo, anoAnterior, valuesAnoAnterior, detalheDia, dia, formatterMeses, testeUnique}) => ({
-
+    withProps(({ values, valueFormatter, valueFormatterIndex, onSelect, media, 
+        tipo, anoAnterior, valuesAnoAnterior, detalheDia, dia, 
+        formatterMeses, testeUnique, decimalPlaces
+    }) => ({
         data: (() => {
             let arrayTeste = [{ y: 0, searchDate: '' }];
             if (anoAnterior) {
@@ -250,7 +253,7 @@ const enhance = compose(
 
                                 config: {
                                     barSpacePercent: 100,
-                                    highlightAlpha: 50,
+                                    highlightAlpha: 0,
                                     drawValues: false,
                                     axisDependency: 'left',
                                     colors: trataCoresAnoAnterior,
@@ -264,7 +267,7 @@ const enhance = compose(
 
                                 config: {
                                     barSpacePercent: 100,
-                                    highlightAlpha: 50,
+                                    highlightAlpha: 0,
                                     drawValues: false,
                                     axisDependency: 'left',
                                     colors: trataCores,
@@ -291,7 +294,7 @@ const enhance = compose(
                             label: 'Qualidade',
                             config: {
                                 barSpacePercent: 100,
-                                highlightAlpha: 50,
+                                highlightAlpha: 0,
                                 drawValues: false,
                                 axisDependency: 'left',
                                 colors: trataCores,
@@ -314,7 +317,7 @@ const enhance = compose(
                             label: 'Volume',
                             config: {
                                 barSpacePercent: 100,
-                                highlightAlpha: 50,
+                                highlightAlpha: 0,
                                 drawValues: false,
                                 axisDependency: 'left',
                                 colors: [...trataCores],
@@ -331,7 +334,7 @@ const enhance = compose(
                             label: 'Qualidade',
                             config: {
                                 barSpacePercent: 100,
-                                highlightAlpha: 50,
+                                highlightAlpha: 0,
                                 drawValues: false,
                                 axisDependency: 'left',
                                 colors: trataCores,
@@ -415,7 +418,7 @@ const enhance = compose(
             };
         })(),
         yAxis: (() => {
-            console.log('MEDIAAAAAAAAAAAS', media);
+            //console.log('MEDIAAAAAAAAAAAS', media);
             if (media) {
                 return {
                     left: {
@@ -425,7 +428,7 @@ const enhance = compose(
                         axisMinimum: 0,
                         limitLines: [{
                             limit: media,
-                            label: parseInt(media).toString(),
+                            label: parseFloat(media).toFixed(decimalPlaces ? decimalPlaces : 0),
                             lineColor: processColor('#FF8600'),
                             lineWidth: 1,
                             valueTextColor: processColor('white'),
@@ -475,52 +478,13 @@ const enhance = compose(
             
         })(),
         zoom: (() => {
-            if (moment(valueFormatter[0], 'MM/YYYY', true).isValid()) {
-                return {
-                    scaleX: 0.1145833 * values.length,
-                    scaleY: 1,
-                    xValue: 0,
-                    yValue: 1
-                };
-            }
-            else {
-                if (tipo == 'volume') {
-                    if (anoAnterior) {
-                        return {
-                            scaleX: 0.1145833 * values.length,
-                            scaleY: 1,
-                            xValue: 0,
-                            yValue: 1
-                        };
-                    }
-                    else {
-                        return {
-                            scaleX: 0.1145833 * values.length,
-                            scaleY: 1,
-                            xValue: 2,
-                            yValue: 1
-                        };
-                    }
-                }
-                else {
-                    if (valueFormatter.length == 1) {
-                        return {
-                            scaleX: 0.15 * values.length,
-                            scaleY: 0,
-                            xValue: 0,
-                            yValue: 0
-                        };
-                    }
-                    else {
-                        return {
-                            scaleX: 0.15 * values.length,
-                            scaleY: 1,
-                            xValue: 0,
-                            yValue: 1
-                        };
-                    }
-                }
-            }
+            console.log('values.length', values.length);
+            return {
+                scaleX: 0.1145833 * values.length,
+                scaleY: 1,
+                xValue: 1,
+                yValue: 1
+            };
         })(),
         onSelect: e => {
             if (typeof onSelect === 'function') {
@@ -530,7 +494,8 @@ const enhance = compose(
     }))
 );
 
-const BarChartLinePure = enhance(({ data, xAxis, yAxis, onSelect, zoom }) => {
+const BarChartLinePure = enhance(({ data, xAxis, yAxis, onSelect, zoom, media, decimalPlaces }) => {
+    //console.log('decimalPlaces', decimalPlaces);
     return (
         <Wrapper>
             <BarStyle

@@ -72,10 +72,17 @@ const getData = (state, { payload }) => {
       list.push(qualityConstant);
     }
   });
-  console.log('LISTA ITEMS', list);
+  //console.log('LISTA ITEMS', list);
 
   newState.searchQuality.items = map(list, item => ({ y: item[type] ? item[type] : 0 }));
-  if (__DEV__) console.log("researched.js - getData2", newState);
+  //if (__DEV__) console.log("researched.js - getData2", newState);
+
+  newState.searchQuality.total = reduce(
+    map(newState.searchQuality.items, item => item.y),
+    (prev, next) => prev + next
+  ); 
+  newState.searchQuality.average =
+    newState.searchQuality.total / newState.searchQuality.items.length;
 
   
   return newState;
@@ -129,6 +136,52 @@ const getDataComparacaoAnoAnterior = (state, { payload }) => {
   console.log('newState.searchQualityAnoAnterior.items', newState.searchQualityAnoAnterior.items);
   /** PESQUISA PERIODO ANTERIOR END */
 
+  return newState;
+};
+
+const getDetailsDayQuality = (state, { payload }) => {
+  const newState = cloneDeep(INITIAL_STATE);
+  const { qualities, type } = payload;
+  if (qualities) {
+    if (!qualities.length) {
+      let arrayQuality = [];
+      arrayQuality.push(qualities);      
+      newState.searchQuality.period = map(arrayQuality, item => item.period);
+      
+      newState.searchQuality.items = map(arrayQuality, item => ({
+        y: item[type] ? parseInt(item[type]) : 0
+      }));
+
+      forEach(arrayQuality, (item, index) => {
+        newState.searchQuality.byIndex[index] = item;
+      });
+    }
+    else {
+      //console.log('qualities', qualities);
+      //console.log('qualities type', type);
+      newState.searchQuality.period = map(qualities, item => item.period);
+      newState.searchQuality.items = map(qualities, item => ({
+        y: item[type] ? item[type] : 0
+      }));
+      //console.log('newState.searchQuality.items', newState.searchQuality.items);
+
+      forEach(qualities, (item, index) => {
+        newState.searchQuality.byIndex[index] = item;
+      });
+    }
+
+    newState.searchQuality.total = reduce(
+      map(newState.searchQuality.items, item => item.y),
+      (prev, next) => prev + next
+    ); 
+    newState.searchQuality.average =
+      newState.searchQuality.total / newState.searchQuality.items.length;
+    
+    //console.log('newState.searchQuality.total', newState.searchQuality.total);
+    //console.log('newState.searchQuality.items.length', newState.searchQuality.items.length);
+    //console.log('newState.searchQuality.average', newState.searchQuality.average);
+  
+  }
   return newState;
 };
 
@@ -322,40 +375,6 @@ const getVolumeDataAnoAnterior = (state, { payload }) =>
 
 const close = () => {
   const newState = cloneDeep(INITIAL_STATE);
-  return newState;
-};
-
-const getDetailsDayQuality = (state, { payload }) => {
-  const newState = cloneDeep(INITIAL_STATE);
-  const { qualities, type } = payload;
-  if (qualities) {
-    if (!qualities.length) {
-      let arrayQuality = [];
-      arrayQuality.push(qualities);      
-      newState.searchQuality.period = map(arrayQuality, item => item.period);
-      
-      newState.searchQuality.items = map(arrayQuality, item => ({
-        y: item[type] ? parseInt(item[type]) : 0
-      }));
-
-      forEach(arrayQuality, (item, index) => {
-        newState.searchQuality.byIndex[index] = item;
-      });
-    }
-    else {
-      console.log('qualities', qualities);
-      console.log('qualities type', type);
-      newState.searchQuality.period = map(qualities, item => item.period);
-      newState.searchQuality.items = map(qualities, item => ({
-        y: item[type] ? item[type] : 0
-      }));
-      console.log('newState.searchQuality.items', newState.searchQuality.items);
-
-      forEach(qualities, (item, index) => {
-        newState.searchQuality.byIndex[index] = item;
-      });
-    }
-  }
   return newState;
 };
 
