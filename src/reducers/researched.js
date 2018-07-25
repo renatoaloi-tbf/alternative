@@ -63,6 +63,8 @@ const getData = (state, { payload }) => {
   const { qualities, range, type } = payload;
   //if (__DEV__) console.log("researched.js - getData1", range);
   const list = [];
+  console.log('quality newState', newState);
+  console.log('quality payload', payload);
   newState.searchQuality.period = dateDiffList(range.startDate, range.endDate);
   forEach(newState.searchQuality.period, (item, index) => {
     newState.searchQuality.byIndex[index] = item;
@@ -148,6 +150,8 @@ const getVolumeData = (state, { payload }) => {
   const start = moment(range.startDate, 'MM/YYYY').startOf('month');
   const end = moment(range.endDate, 'MM/YYYY').endOf('month');
   const ra = moment.range(start, end);
+  console.log('volume newState', newState);
+  console.log('volume payload', payload);
   const filterVolumes = filter(volumes, item =>
     ra.contains(moment(item.searchDate))
   );

@@ -90,7 +90,7 @@ export const Home = enhance(({ openMenu, user }) => {
   return (
     <Wrapper secondary>
       <TopBar
-        title="Home"
+        title="Home 0.9h"
         rightComponent={<Icon inverted name="bell" />}
         leftComponent={<DrawerButton />}
       />

@@ -10,6 +10,7 @@ const INITIAL_STATE = {
 const getQuality = (state, {payload}) => {
   const newState = cloneDeep(state);
   const {milkQuality} = payload.data[0];
+  console.log("milkQuality payload.data[0]", payload.data[0]);
   forEach(milkQuality, item => {
     if (newState.allIds.indexOf(item._id) === -1) {
       const ranger = moment(item.period, 'DD/MM/YY').format('MM/YYYY');
