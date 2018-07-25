@@ -117,11 +117,12 @@ const enhancer = compose(
     })(),
     yAxis: (() => {
       valuesEmReais = values.map(function (x) { return 'R$ ' + new Intl.NumberFormat('pt-BR', { style: 'decimal', maximumFractionDigits: 2 }).format(x.y) });
+      console.log('valuesEmReais', valuesEmReais);
       if (media) {
         return {
           left: {
             drawLabels: false,
-            drawAxisLine: true,
+            drawAxisLine: false,
             drawGridLines: true,
             axisMinimum: 0,
             labelCount: 4,

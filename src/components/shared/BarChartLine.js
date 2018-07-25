@@ -422,6 +422,7 @@ const enhance = compose(
             if (media) {
                 return {
                     left: {
+                        valueFormatter: [ 'F|' + (decimalPlaces ? decimalPlaces : 0), '||' ],
                         drawLabels: true,
                         drawAxisLine: false,
                         drawGridLines: true,
