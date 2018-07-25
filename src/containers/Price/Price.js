@@ -106,16 +106,16 @@ const enhance = compose(
       range,
       setRangeAnoAnterior,
       setAnoAnterior,
-      prices,
       getPriceCompareData,
       getPrices,
       allPrices,
       setComparacao,
       setIsLegenda,
       setAnoAtualLegenda,
-      setAnoAnteriorLegenda
+      setAnoAnteriorLegenda,
+      price
     }) => e => {
-      if (changed.rangeAtual != null && changed.rangeAnoAnterior != null) {
+      if ((changed.rangeAtual != null && changed.rangeAnoAnterior != null) && e) {
         setIsLegenda(true);
         setAnoAtualLegenda(moment(changed.rangeAtual.startDate, "MM/YYYY").format('YYYY'));
         setAnoAnteriorLegenda(moment(changed.rangeAnoAnterior.startDate, "MM/YYYY").format('YYYY'));
@@ -132,12 +132,11 @@ const enhance = compose(
         setComparacao(true);
       }
       else {
-        setRange(range);
-        setRangeAnoAnterior(rangeAnoAnterior);
+        setComparacao(false);
         setAnoAnterior(e);
         getPrices(
-          researched.searchPrice.filter,
-          range,
+          price.items,
+          changed.rangeAtual,
           moment(range.startDate, 'MM/YYYY').format('YYYY')
         );
       }
@@ -177,7 +176,7 @@ const enhance = compose(
           allPrices
         );
         setSearchMonth(
-          `(${moment(range.startDate, 'MM/YYYY').format('MMM/YYYY')} - ${moment(range.endDate, 'MM/YYYY').format('MMM/YYYY')})  (${moment(range.startDate, 'MM/YYYY').subtract(1, 'year').format('MMM/YYYY')} - ${moment(range.endDate, 'MM/YYYY').subtract(1, 'year').format('MMM/YYYY')})`          
+          `(${moment(range.startDate, 'MM/YYYY').format('MMM/YY')} - ${moment(range.endDate, 'MM/YYYY').format('MMM/YY')})  (${moment(range.startDate, 'MM/YY').subtract(1, 'year').format('MMM/YYYY')} - ${moment(range.endDate, 'MM/YYYY').subtract(1, 'year').format('MMM/YY')})`
         );
       }
 
