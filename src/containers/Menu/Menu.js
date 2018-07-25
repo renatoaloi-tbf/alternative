@@ -18,6 +18,7 @@ import {
   Text,
   StatusBarBackgroundColor
 } from '~/components/shared';
+import {version} from '~/config';
 
 const enhance = compose(
   connect(
@@ -69,10 +70,16 @@ export const Menu = enhance(({user}) => {
             logout={true}
           />
         </WrapperExit>
+        <TextStyled>{version}</TextStyled>
       </ScrollWrapperDefault>
     </Wrapper>
   );
 });
+
+const TextStyled = styled.Text`
+  color: grey;
+  font-size: 12px;
+`;
 
 const Wrapper = styled.View`
   flex: 1;
