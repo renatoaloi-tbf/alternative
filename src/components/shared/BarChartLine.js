@@ -244,6 +244,7 @@ const enhance = compose(
                 }
             }
             if (anoAnterior) {
+                console.log('TÁ ENTRANDO NO ANO ANTERIOR', anoAnterior);
                 if (moment(valueFormatter[0], 'MM/YYYY', true).isValid() || tipo == 'volume') {
                     return {
                         dataSets: [
@@ -523,7 +524,7 @@ const BarChartLinePure = enhance(({ data, xAxis, yAxis, onSelect, zoom, media, d
     );
 });
 
-export const BarChartLine = onlyUpdateForKeys(['values'])(BarChartLinePure);
+export const BarChartLine = onlyUpdateForKeys(['values', 'anoAnterior'])(BarChartLinePure);
 
 
 const BarStyle = styled(BarChartNative)`

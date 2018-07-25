@@ -51,9 +51,13 @@ const enhance = compose(
       if (typeof close === "function") {
         console.log('passei no close do FilterCore');
         setVisible(false);
+        console.log('passei no close do FilterCore 2');
         setValueComparacao("");
-        setCompare(false);
+        console.log('passei no close do FilterCore 3');
+        setCompare(false); 
+        console.log('passei no close do FilterCore 4');
         close();
+        console.log('passei no close do FilterCore 5');
       }
     },
     apply: e => {

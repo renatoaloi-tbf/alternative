@@ -11,7 +11,7 @@ import {
 import { func, object } from 'prop-types';
 import { connect } from 'react-redux';
 import { ScrollView } from 'react-native';
-import { processColor, TouchableOpacity, Image} from 'react-native';
+import { processColor, TouchableOpacity, Image } from 'react-native';
 import { size, map, forEach, find, isEmpty } from 'lodash';
 
 import Moment from 'moment';
@@ -127,6 +127,7 @@ const enhance = compose(
 	withState('isIN62', 'setIsIN62', false),
 	withState('modalVisible', 'setModalVisible', false),
 	withState('decimalPlaces', 'setDecimalPlaces', 0),
+	withState('primeiraExecucao', 'setPrimeiraExecucao', false),
 	withHandlers({
 		handlerComparacao: ({
 			setAnoAnterior,
@@ -143,8 +144,10 @@ const enhance = compose(
 			anoAnterior,
 			setIsLegenda,
 			setAnoAtualLegenda,
-			setAnoAnteriorLegenda
+			setAnoAnteriorLegenda,
+			setPrimeiraExecucao
 		}) => (e) => {
+			setPrimeiraExecucao(false);
 			if (changed.rangeAtual != null && changed.rangeAnoAnterior != null && e) {
 				setRange(changed.rangeAtual);
 				setRangeAnoAnterior(changed.rangeAnoAnterior);
@@ -274,31 +277,39 @@ const enhance = compose(
 				//console.groupEnd('COMPARAÇÃO');
 			}
 			else {
-				types[0].percentual = null;
-				types[0].valor = 0;
-				types[1].percentual = null;
-				types[1].valor = 0;
-				types[2].percentual = null;
-				types[2].valor = 0;
-				types[3].percentual = null;
-				types[3].valor = 0;
-				types[4].percentual = null;
-				types[4].valor = 0;
-				types[5].percentual = null;
-				types[5].valor = 0;
+				console.log('TESTE daniel', e);
+
 				setRange(range);
 				setRangeAnoAnterior(rangeAnoAnterior);
 				setAnoAnterior(e);
-				setComparacao(false)
+				setComparacao(e);
+				setIsLegenda(e);
+				//const type = find(types, item => item.selected);
+				//getSearchQuality(changed.rangeAtual, quality.groupByYear, type.value);
+
+				console.log('researched.searchQuality.mediaPeriodo[]', researched.searchQuality);
+				types[0].percentual = null;
+				types[1].percentual = null;
+				types[2].percentual = null;
+				types[3].percentual = null;
+				types[4].percentual = null;
+				types[5].percentual = null;
+				types[0].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 4 }).format(researched.searchQuality.mediaPeriodo['fat']);
+				types[1].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 4 }).format(researched.searchQuality.mediaPeriodo['prot']);
+				types[2].valor = parseInt(researched.searchQuality.mediaPeriodo['cbt']);
+				types[3].valor = parseInt(researched.searchQuality.mediaPeriodo['ccs']);
+				types[4].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 4 }).format(researched.searchQuality.mediaPeriodo['est']);
+				types[5].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 4 }).format(researched.searchQuality.mediaPeriodo['esd']);
+				getSearchQuality(range, quality.groupByYear, 'fat');
 			}
 		},
 		open: ({ setVisible }) => () => {
 			setVisible(true);
 		},
-		openModal: ({setModalVisible}) => () => {
+		openModal: ({ setModalVisible }) => () => {
 			setModalVisible(true);
 		},
-		closeModal: ({setModalVisible}) => () => {
+		closeModal: ({ setModalVisible }) => () => {
 			setModalVisible(false);
 		},
 		close: ({
@@ -315,13 +326,16 @@ const enhance = compose(
 			anoAnterior,
 			setAnoAnterior,
 			setIsLegenda,
-			setComparacao
+			setComparacao,
+			setPrimeiraExecucao
 		}) => () => {
 			setRange({});
 			setFilter(true);
 			setClose(false);
 			setComparacao(false);
+
 			setSearchMonth('Mais recentes');
+			console.log('passei no close do FilterCore 6');
 			const range = {
 				startDate: moment().startOf('month').subtract(12, 'month'),
 				endDate: moment().startOf('month')
@@ -332,7 +346,7 @@ const enhance = compose(
 			});
 			setDetalheDia(false);
 			setDadosDia(null);
-
+			console.log('passei no close do FilterCore 7');
 			if (anoAnterior) {
 				setAnoAnterior(false);
 				types[0].percentual = null;
@@ -348,9 +362,12 @@ const enhance = compose(
 				types[5].percentual = null;
 				types[5].valor = 0;
 			}
+			console.log('passei no close do FilterCore 8');
 			const type = find(types, item => item.selected);
 			setType(type);
 			getSearchQuality(range, quality.groupByYear, 'fat');
+			setPrimeiraExecucao(true);
+			console.log('passei no close do FilterCore 8');
 			setIsLegenda(false);
 
 		},
@@ -366,8 +383,10 @@ const enhance = compose(
 			searchMonth,
 			anoAnterior,
 			changed,
-			getSearchQualityComparacao
+			getSearchQualityComparacao,
+			setPrimeiraExecucao
 		}) => e => {
+			setPrimeiraExecucao(false);
 			if (types[0].valor != null) {
 				if (!anoAnterior) {
 					forEach(types, item => {
@@ -427,9 +446,11 @@ const enhance = compose(
 			setRangeAnoAnterior,
 			setType,
 			setTpes,
-			getSearchQualityComparacao
+			getSearchQualityComparacao,
+			setPrimeiraExecucao
 		}) => e => {
 			if (size(e) === 2) {
+				setPrimeiraExecucao(false);
 				rangeAnterior = {
 					startDate: moment(e.startDate, 'MM/YYYY').subtract(1, 'year').format('MM/YYYY'),
 					endDate: moment(e.endDate, 'MM/YYYY').subtract(1, 'year').format('MM/YYYY')
@@ -463,9 +484,11 @@ const enhance = compose(
 			setDadosDia,
 			anoAnterior,
 			setIsIN62,
-			setDecimalPlaces
+			setDecimalPlaces,
+			setPrimeiraExecucao
 		}) => e => {
 			//console.log('ESSE É O E CLICAVEL', e);
+			setPrimeiraExecucao(false);
 			console.log('ESSA É A MEDIA', researched.searchQuality.average);
 			if (!anoAnterior) {
 				const ex = Math.round(Math.abs(e.x));
@@ -572,8 +595,10 @@ const enhance = compose(
 			setAnoAnterior,
 			types,
 			getSearchQualityComparacao,
-			setComparacao
+			setComparacao,
+			setPrimeiraExecucao
 		}) => e => {
+			setPrimeiraExecucao(false);
 			setFilter(false);
 			setClose(true);
 			//console.log('Changed', changed);
@@ -644,6 +669,7 @@ const enhance = compose(
 				this.props.quality.groupByYear,
 				type.value
 			);
+			this.props.setPrimeiraExecucao(true);
 		}
 	})
 );
@@ -675,9 +701,19 @@ export const Quality = enhance(
 		modalVisible,
 		closeModal,
 		openModal,
-		decimalPlaces
+		decimalPlaces,
+		primeiraExecucao
 	}) => {
-		//console.log('VALUES TESTE', researched);
+		console.log('ANO ANTERIOR TESTE', anoAnterior);
+		
+		if (primeiraExecucao) {
+			types[0].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 4 }).format(researched.searchQuality.mediaPeriodo['fat']);
+			types[1].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 4 }).format(researched.searchQuality.mediaPeriodo['prot']);
+			types[2].valor = parseInt(researched.searchQuality.mediaPeriodo['cbt']);
+			types[3].valor = parseInt(researched.searchQuality.mediaPeriodo['ccs']);
+			types[4].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 4 }).format(researched.searchQuality.mediaPeriodo['est']);
+			types[5].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 4 }).format(researched.searchQuality.mediaPeriodo['esd']);
+		}
 		return (
 			<Wrapper secondary>
 				<TopBar
@@ -708,7 +744,7 @@ export const Quality = enhance(
 							ListEmptyComponent={<EmptyText>Nenhum pedido realizado.</EmptyText>}
 							data={types}
 							renderItem={({ item }) => {
-								
+
 								return <ItemQuality onPress={handlersFilter} type={item} anoAnterior={anoAnterior} />;
 							}}
 						/>
@@ -736,25 +772,25 @@ export const Quality = enhance(
 						)}
 						{isIN62 && (
 							<ViewAlertIN62 onPress={openModal}>
-								<Image source={require('../../images/ic_warning_white.png')} style={{ height: 70, width: 70, marginTop: 10 , marginRight: 10}} />
+								<Image source={require('../../images/ic_warning_white.png')} style={{ height: 70, width: 70, marginTop: 10, marginRight: 10 }} />
 								<ViewAlertIN62Inside>
-									<Text style={{color: '#ffffff', marginTop: 23, fontSize: 16}} >
+									<Text style={{ color: '#ffffff', marginTop: 23, fontSize: 16 }} >
 										Análise de leite fora dos padrões
 									</Text>
-									<Text style={{color: '#ffffff', fontSize: 13}}>
+									<Text style={{ color: '#ffffff', fontSize: 13 }}>
 										Preencher checklist de qualidade
 									</Text>
-								</ViewAlertIN62Inside>								
+								</ViewAlertIN62Inside>
 							</ViewAlertIN62>
-							
+
 						)}
 					</WrapperBar>
 					<DocumentationModal
-								close={closeModal}
-								title="IN62"
-								buttonText="Estou Ciente"
-								visible={modalVisible}
-						  	/>
+						close={closeModal}
+						title="IN62"
+						buttonText="Estou Ciente"
+						visible={modalVisible}
+					/>
 				</ScrollWrapperStyle>
 			</Wrapper>
 		);
@@ -764,7 +800,7 @@ export const Quality = enhance(
 const ViewAlertIN62Inside = styled.View`
 	flex-direction: column;
 `;
-const ViewAlertIN62 = styled.TouchableOpacity `
+const ViewAlertIN62 = styled.TouchableOpacity`
   /* border: 1px solid red; */
   display: flex;
   justify-content: center;
