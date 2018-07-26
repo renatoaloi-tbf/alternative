@@ -70,15 +70,22 @@ export const Menu = enhance(({user}) => {
             logout={true}
           />
         </WrapperExit>
-        <TextStyled>{version}</TextStyled>
+        <ViewStyled><TextStyled>{version}</TextStyled></ViewStyled>
       </ScrollWrapperDefault>
     </Wrapper>
   );
 });
 
+const ViewStyled = styled.View`
+  display: flex;
+  justify-content: flex-end;
+  flex-direction: row;
+`;
+
 const TextStyled = styled.Text`
   color: grey;
   font-size: 12px;
+  padding-right: 8;
 `;
 
 const Wrapper = styled.View`

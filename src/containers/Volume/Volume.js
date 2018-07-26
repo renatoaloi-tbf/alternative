@@ -195,7 +195,7 @@ const enhance = compose(
       setCollected,
       update,
       setUpdate
-    }) => async e => {
+    }) => e => {
       if (size(e) === 2) {
         var rangeAnterior = {
           startDate: moment(e.startDate, 'MM/YYYY').subtract(1, 'year').format('MM/YYYY'),
@@ -211,7 +211,7 @@ const enhance = compose(
           setIsCollected(false);
           setRange(e);
         }
-        await getSearchVolumeAnoAnterior(e, volume.all, rangeAnterior, volume.all);
+        getSearchVolumeAnoAnterior(e, volume.all, rangeAnterior, volume.all);
         setCollected(researched.searchVolume.totalAnoAtual);
         setUpdate(!update);
       }
