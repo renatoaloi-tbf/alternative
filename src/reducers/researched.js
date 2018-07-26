@@ -106,14 +106,13 @@ const getData = (state, { payload }) => {
   newState.searchQuality.mediaPeriodo = mediaPeriodo;
   newState.searchQuality.items = map(list, item => ({ y: item[type] ? item[type] : 0 }));
 
-  if (type != 'ccs')
-  {
-    newState.searchQuality.total = reduce(
-      map(newState.searchQuality.items, item => item.y),
-      (prev, next) => prev + next
-    );
-    newState.searchQuality.average = newState.searchQuality.total / newState.searchQuality.items.length;
-  }
+  
+  newState.searchQuality.total = reduce(
+    map(newState.searchQuality.items, item => item.y),
+    (prev, next) => prev + next
+  );
+  newState.searchQuality.average = newState.searchQuality.total / newState.searchQuality.items.length;
+  
   //console.log('LIST GETDATA', list);
   //console.log('QUALITIES GETDATA', qualities);
   //console.log('TYPE GETDATA', type);
@@ -236,15 +235,14 @@ const getDetailsDayQuality = (state, { payload }) => {
     }
 
     console.log('entrou ou não entrou, eis a questão', type);
-    if (type != 'ccs')
-    {
-      newState.searchQuality.total = reduce(
-        map(newState.searchQuality.items, item => item.y),
-        (prev, next) => prev + next
-      );
-      newState.searchQuality.average =
-        newState.searchQuality.total / newState.searchQuality.items.length;
-    }
+    
+    newState.searchQuality.total = reduce(
+      map(newState.searchQuality.items, item => item.y),
+      (prev, next) => prev + next
+    );
+    newState.searchQuality.average =
+      newState.searchQuality.total / newState.searchQuality.items.length;
+    
     //console.log('newState.searchQuality.total', newState.searchQuality.total);
     //console.log('newState.searchQuality.items.length', newState.searchQuality.items.length);
     //console.log('newState.searchQuality.average', newState.searchQuality.average);
