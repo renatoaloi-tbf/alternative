@@ -310,7 +310,8 @@ const enhance = compose(
 		openModal: ({ setModalVisible }) => () => {
 			setModalVisible(true);
 		},
-		closeModal: ({ setModalVisible }) => () => {
+		closeModal: ({ setModalVisible, setIsIN62 }) => () => {
+			setIsIN62(false);
 			setModalVisible(false);
 		},
 		close: ({
