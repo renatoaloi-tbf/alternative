@@ -18,13 +18,14 @@ import {TouchableOpacity} from 'react-native';
 import {Text, IconUri, DatePicker, Icon} from '~/components/shared';
 import {getNavigatorContext} from '~/enhancers';
 import {DatePickerModal} from '~/components/DatePickerModal';
+import moment from "moment";
 
 const enhance = compose(
   getNavigatorContext,
   setPropTypes({
     onChange: func,
     title: string,
-    date: string,
+    data: string,
     buttonText: string
   }),
   withState('isVisible', 'setVisible', false),
@@ -47,16 +48,17 @@ const enhance = compose(
 );
 
 export const Select = enhance(
-  ({disabled, handlerOpen, onPress, date, title, buttonText, isVisible}) => {
+  ({disabled, handlerOpen, onPress, data, date, title, buttonText, isVisible}) => {
+    console.log('RANGE SELECT', data);
     return (
       <Wrapper>
         <WrapperSelect onPress={handlerOpen} disabled={disabled}>
           {!disabled && (
             <TextView>
-              {!date ? (
+              {!data ? (
                 <Text size={14}>Selecionar</Text>
               ) : (
-                <Text size={14}>{date}</Text>
+                <Text size={14}>{moment(data, 'MM/YYYY').format('MMM/YYYY')}</Text>
               )}
             </TextView>
           )}
