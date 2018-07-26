@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components/native';
-import {bool, string, func} from 'prop-types';
+import {bool, string, func, array} from 'prop-types';
 import {compose, withProps, setPropTypes, defaultProps} from 'recompose';
 import {isArray} from 'lodash';
 import {Text, Button, DatePicker, Modal} from '~/components/shared';
@@ -19,7 +19,8 @@ const enhance = compose(
     title: string,
     buttonText: string,
     open: func,
-    close: func
+    close: func,
+    valores: array
   }),
   defaultProps({
     visible: false
@@ -34,16 +35,16 @@ const enhance = compose(
 );
 
 export const DocumentationModal = enhance(
-  ({title, onPress, buttonText, open, close, visible}) => {
+  ({title, onPress, buttonText, open, close, visible, valores}) => {
       const tableData = {
           tableHead: [ 'Análise', 'Resultado', 'Padrão' ],
           tableRows: [
-            [ 'Gordura', '3.94', '4.0' ],
-              [ 'Proteína', '8.52', '5.0' ],
-              [ 'ESD', '8.92', '-3.0' ],
-              [ 'CBT', '392', '-2.9' ],
-              [ 'EST', '12.86', '-8.4' ],
-              [ 'CCS', '278', '-8.4' ]
+            [ 'Gordura', valores[0], '4.0' ],
+              [ 'Proteína', valores[1], '5.0' ],
+              [ 'ESD', valores[2], '-3.0' ],
+              [ 'CBT', valores[3], '-2.9' ],
+              [ 'EST', valores[4], '-8.4' ],
+              [ 'CCS', valores[5], '-8.4' ]
           ]
       }
       const checkNormal = <Icon style={{ color: '#6d6d6d', marginRight: 20 }} size={15} opacity={0.00} name="check" />;
@@ -97,7 +98,7 @@ export const DocumentationModal = enhance(
                                       break;
                                     case 1:
                                       rowLeite = cellData;
-                                      cellval = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 2 }).format(cellData);
+                                      cellval = new Intl.NumberFormat('pt-BR', { style: 'decimal', maximumFractionDigits: 2 }).format(cellData);
                                       cell = <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}><Text color={isOffSpecs ? '#ffbd00' : '#6d6d6d'}>{cellval}</Text>{isOffSpecs ? xisAlert : checkNormal}</View>;
                                       break;
                                     case 2:

@@ -128,6 +128,7 @@ const enhance = compose(
 	withState('modalVisible', 'setModalVisible', false),
 	withState('decimalPlaces', 'setDecimalPlaces', 0),
 	withState('primeiraExecucao', 'setPrimeiraExecucao', false),
+	withState('valoresIN62', 'setValoresIN62', []),
 	withHandlers({
 		handlerComparacao: ({
 			setAnoAnterior,
@@ -485,96 +486,91 @@ const enhance = compose(
 			anoAnterior,
 			setIsIN62,
 			setDecimalPlaces,
-			setPrimeiraExecucao
+			setPrimeiraExecucao,
+			setValoresIN62
 		}) => e => {
-			//console.log('ESSE É O E CLICAVEL', e);
 			setPrimeiraExecucao(false);
-			console.log('ESSA É A MEDIA', researched.searchQuality.average);
 			if (!anoAnterior) {
 				const ex = Math.round(Math.abs(e.x));
+				let month;
+				month = researched.searchQuality.byIndex[ex];
+				const type = find(types, item => item.selected);
+				let fat, prot, cbt, ccs, est, esd;
+				if (quality.groupByMonth[researched.searchQuality.byIndex[ex]]) {
 
-				if (e && !isEmpty(e)) {
-					if (researched.searchQuality.average > e.y && quality.groupByMonth[researched.searchQuality.byIndex[ex]]) {
-						setIsIN62(true);
+					var totalFat = quality.groupByMonth[month].reduce(function (tot, elemento) {
+						return tot + elemento.fat;
+					}, 0);
+
+					var totalProt = quality.groupByMonth[month].reduce(function (tot, elemento) {
+						return tot + elemento.prot;
+					}, 0);
+
+					var totalCbt = quality.groupByMonth[month].reduce(function (tot, elemento) {
+						return tot + elemento.cbt;
+					}, 0);
+
+					var totalCcs = quality.groupByMonth[month].reduce(function (tot, elemento) {
+						return tot + elemento.ccs;
+					}, 0);
+
+					var totalEst = quality.groupByMonth[month].reduce(function (tot, elemento) {
+						return tot + elemento.est;
+					}, 0);
+
+					var totalEsd = quality.groupByMonth[month].reduce(function (tot, elemento) {
+						return tot + elemento.esd;
+					}, 0);
+
+					if (isNaN(totalCbt) || !totalCbt || totalCbt == 0) {
+						//console.log('não existe cbt', totalCbt)
+						cbt = '00000';
+						types[2].valor = cbt;
 					}
 					else {
-						setIsIN62(false);
-						let month;
-						/* if (comparacao)
-							month = researched.searchQuality.byIndex[ex];
-						else */
-						month = researched.searchQuality.byIndex[ex];
-						const type = find(types, item => item.selected);
-						if (quality.groupByMonth[month]) {
-							setClose(true);
-							setFilter(false);
-							const dateFormat = moment(month, 'MM/YYYY').format('MMMM/YYYY');
-							setSearchMonth(dateFormat);
-							setSearchToMonth(true);
-							setDecimalPlaces(1);
-							//console.log('TESTE DOS VALORES DO MES', quality.groupByMonth[month]);
-							let valoresMes = getDetailsDayQuality(quality.groupByMonth[month], type.value);
-							//console.log('VALORES MES', valoresMes);
-							//console.log('TYPE ATUAL', type.value);
+						cbt = totalCbt / quality.groupByMonth[month].length;
+						types[2].valor = parseInt(cbt);
+					}
 
+					fat = totalFat / quality.groupByMonth[month].length;
+					prot = totalProt / quality.groupByMonth[month].length;
 
-							//console.log('VALORES MES 2', researched.searchQuality.items);
+					ccs = totalCcs / quality.groupByMonth[month].length;
+					est = totalEst / quality.groupByMonth[month].length;
+					esd = totalEsd / quality.groupByMonth[month].length;
 
+					if (e && !isEmpty(e)) {
+						if (researched.searchQuality.average > e.y) {
+							console.log('ENTRA NO IF');
+							setValoresIN62([fat, prot, esd, cbt, est, ccs]);
+							setIsIN62(true);
+						}
+						else {
+							console.log('ENTRA NO ELSE');
+							setIsIN62(false);
 
-							let fat, prot, cbt, ccs, est, esd;
+							if (quality.groupByMonth[month]) {
+								getDetailsDayQuality(quality.groupByMonth[month], type.value);
+								const dateFormat = moment(month, 'MM/YYYY').format('MMMM/YYYY');
+								setSearchMonth(dateFormat);
+								setClose(true);
+								setFilter(false);
+								setSearchToMonth(true);
+								setDecimalPlaces(1);
 
-							var totalFat = valoresMes.payload.qualities.reduce(function (tot, elemento) {
-								return tot + elemento.fat;
-							}, 0);
+								types[0].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 4 }).format(fat);
+								types[1].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 4 }).format(prot);
 
-							var totalProt = valoresMes.payload.qualities.reduce(function (tot, elemento) {
-								return tot + elemento.prot;
-							}, 0);
-
-							var totalCbt = valoresMes.payload.qualities.reduce(function (tot, elemento) {
-								return tot + elemento.cbt;
-							}, 0);
-
-							var totalCcs = valoresMes.payload.qualities.reduce(function (tot, elemento) {
-								return tot + elemento.ccs;
-							}, 0);
-
-							var totalEst = valoresMes.payload.qualities.reduce(function (tot, elemento) {
-								return tot + elemento.est;
-							}, 0);
-
-							var totalEsd = valoresMes.payload.qualities.reduce(function (tot, elemento) {
-								return tot + elemento.esd;
-							}, 0);
-
-							//console.log('TOTAL CBT', totalCbt);
-							//console.log('TOTAL CBT QUANTIDADE MES', valoresMes.payload.qualities.length);
-							if (isNaN(totalCbt) || !totalCbt || totalCbt == 0) {
-								//console.log('não existe cbt', totalCbt)
-								cbt = '00000';
-								types[2].valor = cbt;
+								types[3].valor = parseInt(ccs);
+								types[4].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 4 }).format(est);
+								types[5].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 4 }).format(esd);
 							}
-							else {
-								cbt = totalCbt / valoresMes.payload.qualities.length;
-								types[2].valor = parseInt(cbt);
-							}
-
-							fat = totalFat / valoresMes.payload.qualities.length;
-							prot = totalProt / valoresMes.payload.qualities.length;
-
-							ccs = totalCcs / valoresMes.payload.qualities.length;
-							est = totalEst / valoresMes.payload.qualities.length;
-							esd = totalEsd / valoresMes.payload.qualities.length;
-
-							types[0].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 4 }).format(fat);
-							types[1].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 4 }).format(prot);
-
-							types[3].valor = parseInt(ccs);
-							types[4].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 4 }).format(est);
-							types[5].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 4 }).format(esd);
 						}
 					}
 				}
+
+
+
 			}
 
 		},
@@ -702,10 +698,11 @@ export const Quality = enhance(
 		closeModal,
 		openModal,
 		decimalPlaces,
-		primeiraExecucao
+		primeiraExecucao,
+		valoresIN62
 	}) => {
 		console.log('ANO ANTERIOR TESTE', anoAnterior);
-		
+
 		if (primeiraExecucao) {
 			types[0].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 4 }).format(researched.searchQuality.mediaPeriodo['fat']);
 			types[1].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 4 }).format(researched.searchQuality.mediaPeriodo['prot']);
@@ -790,6 +787,7 @@ export const Quality = enhance(
 						title="IN62"
 						buttonText="Estou Ciente"
 						visible={modalVisible}
+						valores={valoresIN62}
 					/>
 				</ScrollWrapperStyle>
 			</Wrapper>
