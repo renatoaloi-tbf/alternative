@@ -51,7 +51,6 @@ const enhance = compose(
 		({ quality, researched }) => ({ quality, researched, getDetailsDayQuality }),
 		{ getSearchQuality, closeSearchQuality, getDetailsDayQuality, getSearchQualityComparacao }
 	),
-	withState('isVisible', 'setVisible', false),
 	withState('types', 'setTpes', [
 		{
 			name: 'Gordura',
@@ -304,8 +303,8 @@ const enhance = compose(
 				getSearchQuality(range, quality.groupByYear, 'fat');
 			}
 		},
-		open: ({ setVisible }) => () => {
-			setVisible(true);
+		open: ({ setClose }) => () => {
+			setClose(false);
 		},
 		openModal: ({ setModalVisible }) => () => {
 			setModalVisible(true);
@@ -599,59 +598,59 @@ const enhance = compose(
 			setComparacao,
 			setPrimeiraExecucao
 		}) => e => {
-			setPrimeiraExecucao(false);
-			setFilter(false);
-			setClose(true);
 			//console.log('Changed', changed);
+			if (changed.rangeAtual)
+      		{
+				setFilter(false);
+				setClose(true);
+				setPrimeiraExecucao(false);
 
-			let initDateFormat = moment(changed.rangeAtual.startDate, 'MM/YYYY').format('MMMM/YYYY');
-			let endDateFormat = moment(changed.rangeAtual.endDate, 'MM/YYYY').format('MMMM/YYYY');
+				let initDateFormat = moment(changed.rangeAtual.startDate, 'MM/YYYY').format('MMMM/YYYY');
+				let endDateFormat = moment(changed.rangeAtual.endDate, 'MM/YYYY').format('MMMM/YYYY');
 
-			const type = find(types, item => item.selected);
-			if (comparacao) {
-				setRange(changed.rangeAtual);
-				setRangeAnoAnterior(changed.rangeAnoAnterior);
-				setAnoAnterior(true);
-				//console.log('OPA 1');
-				//console.log('TYPES', types);
-				getSearchQualityComparacao(changed.rangeAtual, quality.groupByYear, type.value, changed.rangeAnoAnterior);
-				//console.log('RESEARCHED NA COMPARAÇÃO', researched.newState);
-				setComparacao(true);
+				const type = find(types, item => item.selected);
+				if (comparacao) {
+					setRange(changed.rangeAtual);
+					setRangeAnoAnterior(changed.rangeAnoAnterior);
+					setAnoAnterior(true);
+					//console.log('OPA 1');
+					//console.log('TYPES', types);
+					getSearchQualityComparacao(changed.rangeAtual, quality.groupByYear, type.value, changed.rangeAnoAnterior);
+					//console.log('RESEARCHED NA COMPARAÇÃO', researched.newState);
+					setComparacao(true);
 
-				//console.log('ENTROU NA COMPARAÇÃO', comparacao);
-				let initDateFormat = moment(changed.rangeAtual.startDate, 'MM/YYYY').format('MMM/YY');
-				let endDateFormat = moment(changed.rangeAtual.endDate, 'MM/YYYY').format('MMM/YY');
+					//console.log('ENTROU NA COMPARAÇÃO', comparacao);
+					let initDateFormat = moment(changed.rangeAtual.startDate, 'MM/YYYY').format('MMM/YY');
+					let endDateFormat = moment(changed.rangeAtual.endDate, 'MM/YYYY').format('MMM/YY');
 
 
-				let initDateFormatAnterior = moment(changed.rangeAnoAnterior.startDate, 'MM/YYYY').format('MMM/YY');
-				let endDateFormatAnterior = moment(changed.rangeAnoAnterior.endDate, 'MM/YYYY').format('MMM/YY');
-				let stringData = `${initDateFormat.charAt(0).toUpperCase() + initDateFormat.slice(1)} - ${endDateFormat.charAt(0).toUpperCase() + endDateFormat.slice(1)} (${initDateFormatAnterior.charAt(0).toUpperCase() + initDateFormatAnterior.slice(1)} - ${endDateFormatAnterior.charAt(0).toUpperCase() + endDateFormatAnterior.slice(1)})`;
-				setSearchMonth(stringData);
-			}
-			else {
-				if (changed.rangeAtual) {
-					if (!searchToMonth) {
-						getSearchQuality(changed.rangeAtual, quality.groupByYear, type.value);
-					} else {
-						if (quality.groupByMonth[searchMonth])
-							getDetailsDayQuality(quality.groupByMonth[searchMonth], type.value);
-					}
+					let initDateFormatAnterior = moment(changed.rangeAnoAnterior.startDate, 'MM/YYYY').format('MMM/YY');
+					let endDateFormatAnterior = moment(changed.rangeAnoAnterior.endDate, 'MM/YYYY').format('MMM/YY');
+					let stringData = `${initDateFormat.charAt(0).toUpperCase() + initDateFormat.slice(1)} - ${endDateFormat.charAt(0).toUpperCase() + endDateFormat.slice(1)} (${initDateFormatAnterior.charAt(0).toUpperCase() + initDateFormatAnterior.slice(1)} - ${endDateFormatAnterior.charAt(0).toUpperCase() + endDateFormatAnterior.slice(1)})`;
+					setSearchMonth(stringData);
 				}
 				else {
-					if (!searchToMonth) {
-						getSearchQuality(range, quality.groupByYear, type.value);
-					} else {
-						if (quality.groupByMonth[searchMonth])
-							getDetailsDayQuality(quality.groupByMonth[searchMonth], type.value);
+					if (changed.rangeAtual) {
+						if (!searchToMonth) {
+							getSearchQuality(changed.rangeAtual, quality.groupByYear, type.value);
+						} else {
+							if (quality.groupByMonth[searchMonth])
+								getDetailsDayQuality(quality.groupByMonth[searchMonth], type.value);
+						}
 					}
+					else {
+						if (!searchToMonth) {
+							getSearchQuality(range, quality.groupByYear, type.value);
+						} else {
+							if (quality.groupByMonth[searchMonth])
+								getDetailsDayQuality(quality.groupByMonth[searchMonth], type.value);
+						}
+					}
+					let stringData = `${initDateFormat.charAt(0).toUpperCase() + initDateFormat.slice(1)} - ${endDateFormat.charAt(0).toUpperCase() + endDateFormat.slice(1)}`;
+					setSearchMonth(stringData);
 				}
-				let stringData = `${initDateFormat.charAt(0).toUpperCase() + initDateFormat.slice(1)} - ${endDateFormat.charAt(0).toUpperCase() + endDateFormat.slice(1)}`;
-				setSearchMonth(stringData);
 			}
 
-		},
-		open: ({ setClose }) => () => {
-			setClose(true);
 		}
 	}),
 	lifecycle({
@@ -677,7 +676,6 @@ const enhance = compose(
 
 export const Quality = enhance(
 	({
-		isVisible,
 		onChange,
 		data,
 		xAxis,

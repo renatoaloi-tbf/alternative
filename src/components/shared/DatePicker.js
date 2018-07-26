@@ -22,35 +22,42 @@ moment().locale('pt-br');
 const enhance = compose(
   setPropTypes({
     buttonText: string,
-    title: string
+    title: string,
+    data: string
   }),
-  withProps(({onPress, month, year}) => ({
+  withProps(({onPress, month, year, data}) => ({
     months: moment.monthsShort(),
     years: (() => {
-      let startYear = 2017;
+      let datafmt = moment(data ? moment(data, 'MM/YYYY').format('MMM/YYYY')  : moment().format('MMM/YYYY'), 'MMM/YYYY');
+      let startYear = datafmt.year() - 5;
       let years = [];
-      const currentYear = moment().year() + 5;
+      const currentYear = datafmt.year() + 5;
       while (startYear <= currentYear) {
         const year = startYear++;
-        years.push(year.toString());
+        //years.push({ i: year, v: year.toString()});
+        //years[year] = year.toString();
+        years.push(year); //.toString());
       }
       return years;
     })()
   })),
-  withState('month', 'setMonth', moment().month()),
-  withState('year', 'setYear', moment().year()),
+  withState('month', 'setMonth', ({data}) => { 
+    console.log(data);
+    return data ? moment(data, 'MM/YYYY').month() : moment().month(); 
+  } ),
+  withState('year', 'setYear', ({data}) => { return data ? moment(data, 'MM/YYYY').year() : moment().year(); } ),
   withProps(({month, year, onPress, months, years}) => ({
     onPress: e => {
       if (typeof onPress === 'function') {
-        const label = `${months[month]}/${years[year]}`;
-        const value = `${padZero(2, month + 1)}/${years[year]}`;
+        const label = `${months[month]}/${year}`;
+        const value = `${padZero(2, month + 1)}/${year}`;
         onPress({label, value});
       }
     }
   })),
   withHandlers({
     handlerPress: ({onChange, month, year, months, years}) => () => {
-      onChange(`${months[month]}/${years[year]}`);
+      onChange(`${months[month]}/${year}`);
     }
   })
 );
@@ -94,7 +101,7 @@ export const DatePicker = enhance(
               onValueChange={(itemValue, itemIndex) => setYear(itemValue)}
             >
               {map(years, (item, index) => (
-                <PickerCustom.Item key={item} label={item} value={index} />
+                <PickerCustom.Item key={item} label={item.toString()} value={item} />
               ))}
             </PickerCustom>
           </WrapperPickerYear>

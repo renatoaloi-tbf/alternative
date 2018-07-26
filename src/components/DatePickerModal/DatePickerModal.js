@@ -10,7 +10,8 @@ const enhance = compose(
     title: string,
     buttonText: string,
     open: func,
-    close: func
+    close: func,
+    data: string
   }),
   defaultProps({
     visible: false
@@ -25,7 +26,7 @@ const enhance = compose(
 );
 
 export const DatePickerModal = enhance(
-  ({title, onPress, buttonText, open, close, visible}) => {
+  ({title, onPress, buttonText, open, close, visible, data}) => {
     return (
       <Modal visible={visible} close={close}>
         <WrapperModal>
@@ -34,6 +35,7 @@ export const DatePickerModal = enhance(
               onPress={onPress}
               title={title}
               buttonText={buttonText}
+              data={data}
             />
           </Content>
         </WrapperModal>

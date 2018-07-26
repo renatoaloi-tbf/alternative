@@ -145,6 +145,9 @@ const enhance = compose(
         console.log('PASSA AQUI 4');
       }
     },
+		open: ({ setClose }) => () => {
+			setClose(false);
+		},
     handlersPress: ({
       setYear,
       getPrices,
@@ -406,7 +409,8 @@ export const Price = enhance(
     inverted,
     isLegenda,
 		anoAtualLegenda,
-		anoAnteriorLegenda
+    anoAnteriorLegenda,
+    open
   }) => {
     console.log('RESEARCH', researched);
     return (
@@ -428,6 +432,7 @@ export const Price = enhance(
               value={searchMonth}
               inverted={inverted}
               comparacao={handlerComparacao}
+              open={open}
             />
             {/* <FilterPrice value={year} onPress={handlersPress} /> */}
           </WrapperHeader>

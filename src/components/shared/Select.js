@@ -74,6 +74,7 @@ export const Select = enhance(
           title={title}
           buttonText={buttonText}
           visible={isVisible}
+          data={data}
         />
       </Wrapper>
     );

@@ -138,6 +138,9 @@ const enhance = compose(
       setDetails({});
       setFilter(true);
 		},
+		open: ({ setClose }) => () => {
+			setClose(false);
+		},
     apply: ({
       setRange,
       setSearchMonth,
@@ -441,7 +444,8 @@ export const Volume = enhance(
     anoAtualLegenda,
     anoAnteriorLegenda,
     inverted,
-    update
+    update,
+    open
   }) => {
     return (
       <Wrapper secondary>
@@ -462,6 +466,7 @@ export const Volume = enhance(
               value={searchMonth}
               inverted={inverted}
               comparacao={handlerComparacao}
+              open={open}
             />
           </WrapperHeader>
           <WrapperVolumeAverage>
