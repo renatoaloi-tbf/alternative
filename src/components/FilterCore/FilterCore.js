@@ -16,6 +16,7 @@ import CheckBox from "react-native-check-box";
 import moment from "moment";
 import { Text, Button, Modal, Icon, Select } from "~/components/shared";
 
+
 const enhance = compose(
   setPropTypes({
     isFilter: bool.isRequired,
@@ -34,7 +35,7 @@ const enhance = compose(
   withState("compare", "setCompare", false),
   withState("range", "setRange", {}),
   withState("valueComparacao", "setValueComparacao", ""),
-  withProps(({ setVisible, onChange, apply, close, open, comparacao, setValueComparacao, setCompare }) => ({
+  withProps(({ setVisible, onChange, apply, close, open, comparacao, setValueComparacao, setCompare, range, setRange }) => ({
     open: e => {
       setVisible(true);
       if (typeof open === "function") {
@@ -51,12 +52,14 @@ const enhance = compose(
       if (typeof close === "function") {        
         setVisible(false);
         setValueComparacao("");
-        setCompare(false); 
+        setCompare(false);
+        setRange({}); 
         close();
       }
     },
     apply: e => {
       setVisible(false);
+      setRange(range);
       if (typeof apply === "function") {
         apply(e);
       }
@@ -83,7 +86,6 @@ const enhance = compose(
       range,
       setValueComparacao
     }) => e => {
-      console.log('QUAL O RANGE? E', e);
       if (!range.startDate || !range.endDate) {
         Alert.alert(
           "Atenção",
@@ -129,6 +131,7 @@ export const FilterCore = enhance(
     inverted,
     valueComparacao
   }) => {
+    console.log('RANGE', range);
     return (
       <Wrapper>
         {!isVisible && (
@@ -141,7 +144,7 @@ export const FilterCore = enhance(
                     {value} {valueComparacao}
                   </Text>
                 )}
-                {!isFilter && <TextSelect inverted>{value}</TextSelect>}
+                {!isFilter && <TextSelect inverted onPress={open}>{value}</TextSelect>}
               </WrapperLeft>
             </TextStyle>
             <IconStyleLeft>
@@ -191,12 +194,14 @@ export const FilterCore = enhance(
               <Select
                 onPress={onChangeInit}
                 title="Data início"
-                buttonText="Selecionar"
+                buttonText='Selecionar'
+                data={range.startDate}
               />
               <Select
                 onPress={onChangeEnd}
                 title="Data de término"
                 buttonText="Pronto"
+                data={range.endDate}
               />
             </SelectRanger>
             <WrapperCompareText>
