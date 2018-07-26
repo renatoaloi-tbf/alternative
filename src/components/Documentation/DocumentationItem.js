@@ -83,6 +83,7 @@ const DocumentationItemEnhance = enhance(
             title="IN62"
             buttonText="Estou Ciente"
             visible={props.isVisible}
+            valores={[0,0,0,0,0,0]}
           />
 
       </TouchableOpacityDefault>
