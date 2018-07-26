@@ -196,11 +196,11 @@ const enhance = compose(
       update,
       setUpdate
     }) => e => {
+      var rangeAnterior = {
+        startDate: moment(e.startDate, 'MM/YYYY').subtract(1, 'year').format('MM/YYYY'),
+        endDate: moment(e.endDate, 'MM/YYYY').subtract(1, 'year').format('MM/YYYY')
+      }
       if (size(e) === 2) {
-        var rangeAnterior = {
-          startDate: moment(e.startDate, 'MM/YYYY').subtract(1, 'year').format('MM/YYYY'),
-          endDate: moment(e.endDate, 'MM/YYYY').subtract(1, 'year').format('MM/YYYY')
-        }
         setChanged({ rangeAtual: e, rangeAnoAnterior: rangeAnterior });
         if (anoAnterior) {
           console.log('estou passando aqui mesmo?');
@@ -214,7 +214,10 @@ const enhance = compose(
         getSearchVolumeAnoAnterior(e, volume.all, rangeAnterior, volume.all);
         setCollected(researched.searchVolume.totalAnoAtual);
         setUpdate(!update);
+      }else {
+        setChanged({ rangeAtual: e, rangeAnoAnterior: rangeAnterior });
       }
+      
     },
     onSelect: ({
       researched,

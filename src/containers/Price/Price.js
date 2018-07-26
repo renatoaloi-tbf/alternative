@@ -132,13 +132,17 @@ const enhance = compose(
         setComparacao(true);
       }
       else {
+        console.log('PASSA AQUI 1');
         setComparacao(false);
+        console.log('PASSA AQUI 2');
         setAnoAnterior(e);
+        console.log('PASSA AQUI 3');
         getPrices(
           price.items,
           changed.rangeAtual,
           moment(range.startDate, 'MM/YYYY').format('YYYY')
         );
+        console.log('PASSA AQUI 4');
       }
     },
     handlersPress: ({
@@ -350,6 +354,11 @@ const enhance = compose(
           pricePeriod,
           pricePeriodAfter
         }); */
+      }
+      else {
+        console.log('Passa aqui ou não?')
+        setRange(e);
+        setChanged({ rangeAtual: e, rangeAnoAnterior: rangeAnterior });
       }
     },
     onSelect: ({

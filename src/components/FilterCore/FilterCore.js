@@ -48,22 +48,16 @@ const enhance = compose(
     },
     onPress: e => {},
     close: e => {
-      if (typeof close === "function") {
-        console.log('passei no close do FilterCore');
+      if (typeof close === "function") {        
         setVisible(false);
-        console.log('passei no close do FilterCore 2');
         setValueComparacao("");
-        console.log('passei no close do FilterCore 3');
         setCompare(false); 
-        console.log('passei no close do FilterCore 4');
         close();
-        console.log('passei no close do FilterCore 5');
       }
     },
     apply: e => {
       setVisible(false);
       if (typeof apply === "function") {
-        console.log('passei no apply do FilterCore');
         apply(e);
       }
     },
@@ -89,8 +83,8 @@ const enhance = compose(
       range,
       setValueComparacao
     }) => e => {
-      console.log("acao comparar", e);
-      if (!range.startDate) {
+      console.log('QUAL O RANGE? E', e);
+      if (!range.startDate || !range.endDate) {
         Alert.alert(
           "Atenção",
           "Por favor, selecione uma data antes de comparar",
@@ -98,7 +92,7 @@ const enhance = compose(
             {
               text: "Ok",
               onPress: () => {
-                setCompare(!e);
+                setCompare(false);
               }
             }
           ]

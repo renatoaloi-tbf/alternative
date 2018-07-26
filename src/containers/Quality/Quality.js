@@ -450,12 +450,13 @@ const enhance = compose(
 			getSearchQualityComparacao,
 			setPrimeiraExecucao
 		}) => e => {
+			let rangeAnterior = {
+				startDate: moment(e.startDate, 'MM/YYYY').subtract(1, 'year').format('MM/YYYY'),
+				endDate: moment(e.endDate, 'MM/YYYY').subtract(1, 'year').format('MM/YYYY')
+			}
 			if (size(e) === 2) {
 				setPrimeiraExecucao(false);
-				rangeAnterior = {
-					startDate: moment(e.startDate, 'MM/YYYY').subtract(1, 'year').format('MM/YYYY'),
-					endDate: moment(e.endDate, 'MM/YYYY').subtract(1, 'year').format('MM/YYYY')
-				}
+				
 				setChanged({ rangeAtual: e, rangeAnoAnterior: rangeAnterior });
 				if (anoAnterior) {
 					setRangeAnoAnterior(rangeAnterior);
@@ -468,6 +469,9 @@ const enhance = compose(
 				}
 
 				setClose(false);
+			}
+			else {
+				setChanged({ rangeAtual: e, rangeAnoAnterior: rangeAnterior });
 			}
 
 		},
