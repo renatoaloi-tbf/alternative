@@ -295,12 +295,12 @@ const enhance = compose(
 				types[3].percentual = null;
 				types[4].percentual = null;
 				types[5].percentual = null;
-				types[0].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 4 }).format(researched.searchQuality.mediaPeriodo['fat']);
-				types[1].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 4 }).format(researched.searchQuality.mediaPeriodo['prot']);
+				types[0].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(researched.searchQuality.mediaPeriodo['fat']);
+				types[1].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(researched.searchQuality.mediaPeriodo['prot']);
 				types[2].valor = parseInt(researched.searchQuality.mediaPeriodo['cbt']);
 				types[3].valor = parseInt(researched.searchQuality.mediaPeriodo['ccs']);
-				types[4].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 4 }).format(researched.searchQuality.mediaPeriodo['est']);
-				types[5].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 4 }).format(researched.searchQuality.mediaPeriodo['esd']);
+				types[4].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(researched.searchQuality.mediaPeriodo['est']);
+				types[5].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(researched.searchQuality.mediaPeriodo['esd']);
 				getSearchQuality(range, quality.groupByYear, 'fat');
 			}
 		},
@@ -563,12 +563,12 @@ const enhance = compose(
 								setSearchToMonth(true);
 								setDecimalPlaces(1);
 
-								types[0].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 4 }).format(fat);
-								types[1].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 4 }).format(prot);
+								types[0].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(fat);
+								types[1].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(prot);
 
 								types[3].valor = parseInt(ccs);
-								types[4].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 4 }).format(est);
-								types[5].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 4 }).format(esd);
+								types[4].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(est);
+								types[5].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(esd);
 							}
 						}
 					}
@@ -616,7 +616,7 @@ const enhance = compose(
 				//console.log('TYPES', types);
 				getSearchQualityComparacao(changed.rangeAtual, quality.groupByYear, type.value, changed.rangeAnoAnterior);
 				//console.log('RESEARCHED NA COMPARAÇÃO', researched.newState);
-				setComparacao(true)
+				setComparacao(true);
 
 				//console.log('ENTROU NA COMPARAÇÃO', comparacao);
 				let initDateFormat = moment(changed.rangeAtual.startDate, 'MM/YYYY').format('MMM/YY');
@@ -709,12 +709,12 @@ export const Quality = enhance(
 		console.log('ANO ANTERIOR TESTE', anoAnterior);
 
 		if (primeiraExecucao) {
-			types[0].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 4 }).format(researched.searchQuality.mediaPeriodo['fat']);
-			types[1].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 4 }).format(researched.searchQuality.mediaPeriodo['prot']);
+			types[0].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(researched.searchQuality.mediaPeriodo['fat']);
+			types[1].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(researched.searchQuality.mediaPeriodo['prot']);
 			types[2].valor = parseInt(researched.searchQuality.mediaPeriodo['cbt']);
 			types[3].valor = parseInt(researched.searchQuality.mediaPeriodo['ccs']);
-			types[4].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 4 }).format(researched.searchQuality.mediaPeriodo['est']);
-			types[5].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 4 }).format(researched.searchQuality.mediaPeriodo['esd']);
+			types[4].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(researched.searchQuality.mediaPeriodo['est']);
+			types[5].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(researched.searchQuality.mediaPeriodo['esd']);
 		}
 		return (
 			<Wrapper secondary>
