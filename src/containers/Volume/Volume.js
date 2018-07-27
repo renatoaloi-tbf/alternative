@@ -395,9 +395,11 @@ const enhance = compose(
           }
           else
           {
+            console.log('COLETAS ERRADAS?', e.x);
             setFilter(true);
             setInverted(false); // inverte a cor do X
             let volumelocal = researched.searchVolume.byIndex[e.x];
+            console.log('VOLUME LOCAL ERRADO?', volumelocal);
             setIsCollected(false);
             setCollected(0);
             if (volumelocal) {

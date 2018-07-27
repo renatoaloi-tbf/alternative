@@ -39,7 +39,7 @@ export const VolumeDetails = enhance(({details}) => {
           Inicio da Coleta
         </TextLeft>
         <TextRight size={12} secondary>
-          {moment(details.searchDate)
+          {moment(details.start_date.substr(0, 10))
             .locale('pt-br')
             .format('DD/MM/YY')}{' '}
           - {details.start_time}

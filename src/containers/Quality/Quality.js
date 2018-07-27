@@ -787,7 +787,7 @@ export const Quality = enhance(
 		valoresIN62
 	}) => {
 		console.log('ANO ANTERIOR TESTE', anoAnterior);
-
+		console.log('MEDIA DO PERIODO', researched.searchQuality);
 		if (primeiraExecucao) {
 			types[0].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(researched.searchQuality.mediaPeriodo['fat']);
 			types[1].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(researched.searchQuality.mediaPeriodo['prot']);

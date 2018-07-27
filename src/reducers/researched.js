@@ -24,7 +24,8 @@ const INITIAL_STATE = {
     averageLastMonth: 0,
     total: 0,
     currentMonth: moment().format('MMMM'),
-    lastMonth: moment().subtract(1, 'month').format('MMMM')
+    lastMonth: moment().subtract(1, 'month').format('MMMM'),
+    mediaPeriodo: []
   },
   searchQualityAnoAnterior: {
     items: [],
@@ -78,14 +79,14 @@ const getData = (state, { payload }) => {
     if (qualities[item]) {
       if (qualities[item].code == user)
       {
-        mediaPeriodo['fat'] = mediaPeriodo['fat'] + qualities[item].fat;
-        mediaPeriodo['ccs'] = mediaPeriodo['ccs'] + qualities[item].ccs;
-        mediaPeriodo['cbt'] = mediaPeriodo['cbt'] + qualities[item].cbt;
-        mediaPeriodo['esd'] = mediaPeriodo['esd'] + qualities[item].esd;
-        mediaPeriodo['est'] = mediaPeriodo['est'] + qualities[item].est;
-        mediaPeriodo['lact'] = mediaPeriodo['lact'] + qualities[item].lact;
-        mediaPeriodo['prot'] = mediaPeriodo['prot'] + qualities[item].prot;
-        //console.log('QUALITIES[ITEM] GETDATA', qualities[item]);
+        mediaPeriodo['fat'] = mediaPeriodo['fat'] + (qualities[item].fat ? qualities[item].fat : 0);
+        mediaPeriodo['ccs'] = mediaPeriodo['ccs'] + (qualities[item].ccs ? qualities[item].ccs : 0);
+        mediaPeriodo['cbt'] = mediaPeriodo['cbt'] + (qualities[item].cbt ? qualities[item].cbt : 0);
+        mediaPeriodo['esd'] = mediaPeriodo['esd'] + (qualities[item].esd ? qualities[item].esd : 0);
+        mediaPeriodo['est'] = mediaPeriodo['est'] + (qualities[item].est ? qualities[item].est : 0);
+        mediaPeriodo['lact'] = mediaPeriodo['lact'] + (qualities[item].lact ? qualities[item].lact : 0);
+        mediaPeriodo['prot'] = mediaPeriodo['prot'] + (qualities[item].prot ? qualities[item].prot : 0);
+  
         list.push(qualities[item]);
       }
     } else {
@@ -93,6 +94,7 @@ const getData = (state, { payload }) => {
     }
   });
 
+  
   mediaPeriodo['fat'] = mediaPeriodo['fat'] / newState.searchQuality.period.length;
   mediaPeriodo['ccs'] = parseInt(mediaPeriodo['ccs'] / newState.searchQuality.period.length);
   mediaPeriodo['cbt'] = parseInt(mediaPeriodo['cbt'] / newState.searchQuality.period.length);
@@ -301,8 +303,8 @@ const getVolumeData = (state, { payload }) => {
   const ra = moment.range(start, end);
   //console.log('ra', ra);
   console.log('volumes', volumes);
-  const filterVolumes = filter(volumes, item =>
-    ra.contains(moment(item.searchDate, 'YYYY-MM-DD')) && item.code == user
+  const filterVolumes = filter(volumes, item => 
+    ra.contains(moment(item.start_date.substr(0, 10), 'YYYY-MM-DD')) && item.code == user
   );
   //console.log('filterVolumes', filterVolumes);
   forEach(filterVolumes, (item, index) => {
