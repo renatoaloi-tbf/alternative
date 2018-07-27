@@ -264,13 +264,16 @@ const setArray = number => {
 const getVolumeData = (state, { payload }) => {
   console.log('nao passei aqui, talquei?');
   const newState = cloneDeep(INITIAL_STATE);
-  const { range, volumes, primeiraVisao } = payload;
+  const { range, volumes, primeiraVisao, user } = payload;
   const start = moment(range.startDate, 'MM/YYYY').startOf('month');
   const end = moment(range.endDate, 'MM/YYYY').endOf('month');
   const ra = moment.range(start, end);
+  //console.log('ra', ra);
+  console.log('volumes', volumes);
   const filterVolumes = filter(volumes, item =>
-    ra.contains(moment(item.searchDate))
+    ra.contains(moment(item.searchDate, 'YYYY-MM-DD')) && item.code == user
   );
+  //console.log('filterVolumes', filterVolumes);
   forEach(filterVolumes, (item, index) => {
     newState.searchVolume.byIndex[index] = item;
   });
@@ -279,7 +282,7 @@ const getVolumeData = (state, { payload }) => {
 
   newState.searchVolume.currentMonth = moment().format('MMMM/YYYY');
   const filterVolumesCurrentMonth = filterVolumes.filter(item => {
-    return moment(item.searchDate).format('MMMM/YYYY') == newState.searchVolume.currentMonth
+    return moment(item.searchDate, 'YYYY-MM-DD').format('MMMM/YYYY') == newState.searchVolume.currentMonth
   });
   newState.searchVolume.total = reduce(
     map(filterVolumesCurrentMonth, item => item.volume),
@@ -290,7 +293,8 @@ const getVolumeData = (state, { payload }) => {
   newState.searchVolume.average =
     newState.searchVolume.total / newState.searchVolume.items.length;
   const filterMesAnterior = volumes.filter(item => {
-    return moment(item.searchDate).format('MMMM/YYYY') == newState.searchVolume.lastMonth
+    return moment(item.searchDate, 'YYYY-MM-DD').format('MMMM/YYYY') == newState.searchVolume.lastMonth
+            && item.code == user;
   });
   const totalLastMonth = reduce(
     map(filterMesAnterior, item => item.volume),
@@ -304,7 +308,7 @@ const getVolumeData = (state, { payload }) => {
 const getVolumeDataAnoAnterior = (state, { payload }) => {
   console.log('aqui eu passei');
   const newState = cloneDeep(INITIAL_STATE);
-  const { range, volumes, rangeAnterior, volumesAnteriores } = payload;
+  const { range, volumes, rangeAnterior, volumesAnteriores, user } = payload;
 
   /**
    * VOLUME DO ANO ATUAL
@@ -315,7 +319,7 @@ const getVolumeDataAnoAnterior = (state, { payload }) => {
 
   // Filtro Atual
   const filterVolumes = filter(volumes, item =>
-    ra.contains(moment(item.searchDate))
+    ra.contains(moment(item.searchDate, 'YYYY-MM-DD')) && item.code == user
   );
   forEach(filterVolumes, (item, index) => {
     newState.searchVolume.byIndex[index] = item;
@@ -334,7 +338,7 @@ const getVolumeDataAnoAnterior = (state, { payload }) => {
   var somaMes = 0;
   console.log('newState.searchVolume.items', newState.searchVolume.items);
   newState.searchVolume.items.forEach((item, i) => {
-    var mesValue = moment(item.searchDate).format('MMM');
+    var mesValue = moment(item.searchDate, 'YYYY-MM-DD').format('MMM');
     if (meses.indexOf(mesValue) == -1) {
       countMes++;
       meses.push(mesValue);
@@ -355,7 +359,7 @@ const getVolumeDataAnoAnterior = (state, { payload }) => {
   // Conta do Total do Mês Corrente
   /* newState.searchVolume.currentMonth = moment().format('MMMM/YYYY');
   const filterVolumesCurrentMonth = filterVolumes.filter(item => {
-    return moment(item.searchDate).format('MMMM/YYYY') == newState.searchVolume.currentMonth
+    return moment(item.searchDate, 'YYYY-MM-DD').format('MMMM/YYYY') == newState.searchVolume.currentMonth
   });
   newState.searchVolume.total = reduce(
     map(filterVolumesCurrentMonth, item => item.volume),
@@ -367,7 +371,7 @@ const getVolumeDataAnoAnterior = (state, { payload }) => {
   // Conta da Média do Mês Anterior
   /* newState.searchVolume.lastMonth = moment().subtract(1, 'month').format('MMMM/YYYY');
   const filterMesAnterior = volumes.filter(item => {
-    return moment(item.searchDate).format('MMMM/YYYY') == newState.searchVolume.lastMonth
+    return moment(item.searchDate, 'YYYY-MM-DD').format('MMMM/YYYY') == newState.searchVolume.lastMonth
   });
   const totalLastMonth = reduce(
     map(filterMesAnterior, item => item.volume),
@@ -389,7 +393,7 @@ const getVolumeDataAnoAnterior = (state, { payload }) => {
   const endAnterior = moment(rangeAnterior.endDate, 'MM/YYYY').endOf('month');
   const raAnterior = moment.range(startAnterior, endAnterior);
   const filterVolumesAnteriores = filter(volumesAnteriores, item =>
-    raAnterior.contains(moment(item.searchDate))
+    raAnterior.contains(moment(item.searchDate, 'YYYY-MM-DD')) && item.code == user
   );
 
   //console.log('FILTER VOLUMES ANO ANTERIOR', filterVolumesAnteriores);

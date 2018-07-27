@@ -28,25 +28,27 @@ export const closeSearchQuality = () => {
   };
 };
 
-export const getSearchVolume = (range, volumes, primeiraVisao) => {
+export const getSearchVolume = (range, volumes, primeiraVisao, user) => {
   return {
     type: 'SEARCH_VOLUME',
     payload: {
       range,
       volumes,
-      primeiraVisao
+      primeiraVisao,
+      user
     }
   };
 };
 
-export const getSearchVolumeAnoAnterior = (range, volumes, rangeAnterior, volumesAnteriores) => {
+export const getSearchVolumeAnoAnterior = (range, volumes, rangeAnterior, volumesAnteriores, user) => {
   return {
     type: 'SEARCH_VOLUME_ANO_ANTERIOR',
     payload: {
       range,
       volumes,
       rangeAnterior,
-      volumesAnteriores
+      volumesAnteriores,
+      user
     }
   };
 };

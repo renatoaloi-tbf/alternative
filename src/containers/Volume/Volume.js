@@ -35,7 +35,7 @@ import { FilterCore } from '~/components/FilterCore';
 
 const enhance = compose(
   connect(
-    ({ volume, researched }) => ({ volume, researched }),
+    ({ volume, researched, backend }) => ({ volume, researched, backend }),
     { getSearchVolume, getSearchVolumeAnoAnterior, closeSearchQuality }
   ),
   withState('range', 'setRange', {
@@ -76,7 +76,8 @@ const enhance = compose(
       setIsCompare,
       setIsLegenda,
       setAnoAtualLegenda,
-      setAnoAnteriorLegenda
+      setAnoAnteriorLegenda,
+      backend
     }) => (e) => {
       console.log('changed', changed);
       console.log('range', range);
@@ -90,7 +91,7 @@ const enhance = compose(
         setRangeAnoAnterior(changed.rangeAnoAnterior);
         setAnoAnteriorLegenda(moment(changed.rangeAnoAnterior.startDate, "MM/YYYY").format('YYYY'));
         setAnoAnterior(e);
-        getSearchVolumeAnoAnterior(changed.rangeAtual, volume.all, changed.rangeAnoAnterior, volume.all);
+        getSearchVolumeAnoAnterior(changed.rangeAtual, volume.all, changed.rangeAnoAnterior, volume.all, backend.user);
       }
       else {
         setRange(range);
@@ -98,7 +99,7 @@ const enhance = compose(
         setRangeAnoAnterior(rangeAnoAnterior);
         setAnoAnteriorLegenda(moment(rangeAnoAnterior.startDate, "MM/YYYY").format('YYYY'));
         setAnoAnterior(e);
-        getSearchVolumeAnoAnterior(range, volume.all, rangeAnoAnterior, volume.all);
+        getSearchVolumeAnoAnterior(range, volume.all, rangeAnoAnterior, volume.all, backend.user);
       }
       setCollected(researched.searchVolume.totalAnoAtual);
     },
@@ -114,7 +115,8 @@ const enhance = compose(
       setAnoAnterior,
       setRangeAnoAnterior,
       setIsCompare,
-      setIsLegenda
+      setIsLegenda,
+      backend
 		}) => () => {
       console.log('passei no close do Volume');
 			setRange({});
@@ -130,7 +132,7 @@ const enhance = compose(
       let initDateFormat = moment(startDate, 'MM/YYYY').format('MMMM/YYYY');
       let stringData = `${initDateFormat.charAt(0).toUpperCase() + initDateFormat.slice(1)}`;
       setSearchMonth(stringData);
-      getSearchVolume(range, volume.all, true);
+      getSearchVolume(range, volume.all, true, backend.user);
       setRange({ ...range });
       setIsCollected(false);
       setIsCompare(false);
@@ -197,7 +199,8 @@ const enhance = compose(
       setIsCollected,
       setCollected,
       update,
-      setUpdate
+      setUpdate,
+      backend
     }) => e => {
       var rangeAnterior = {
         startDate: moment(e.startDate, 'MM/YYYY').subtract(1, 'year').format('MM/YYYY'),
@@ -214,7 +217,7 @@ const enhance = compose(
           setIsCollected(false);
           setRange(e);
         }
-        getSearchVolumeAnoAnterior(e, volume.all, rangeAnterior, volume.all);
+        getSearchVolumeAnoAnterior(e, volume.all, rangeAnterior, volume.all, backend.user);
         setCollected(researched.searchVolume.totalAnoAtual);
         setUpdate(!update);
       }else {
@@ -235,7 +238,8 @@ const enhance = compose(
       getSearchVolumeAnoAnterior,
       setIsCompare,
       setInverted,
-      setFilter
+      setFilter,
+      backend
     }) => e => {
       console.log('passei no onSelect do Volume', e);
       if (!isEmpty(e)) 
@@ -387,7 +391,7 @@ const enhance = compose(
               `${moment(mes, 'MM/YYYY').format('MMMM/YYYY').charAt(0).toUpperCase() 
                   + moment(mes, 'MM/YYYY').format('MMMM/YYYY').slice(1)}`
             );
-            getSearchVolumeAnoAnterior(range, volume.all, range, volume.all);
+            getSearchVolumeAnoAnterior(range, volume.all, range, volume.all, backend.user);
           }
           else
           {
@@ -412,12 +416,13 @@ const enhance = compose(
   }),
   lifecycle({
     componentWillMount() {
+      console.log('backend token', this.props.backend);
       const { startDate, endDate } = this.props.range;
       this.props.setSearchMonth(
         `${moment(startDate, 'MM/YYYY').format('MMMM/YYYY').charAt(0).toUpperCase() 
             + moment(startDate, 'MM/YYYY').format('MMMM/YYYY').slice(1)}`
       );
-      this.props.getSearchVolume(this.props.range, this.props.volume.all, true);
+      this.props.getSearchVolume(this.props.range, this.props.volume.all, true, this.props.backend.user);
       //this.props.setUpdate(!this.props.update);
     }
   })

@@ -2,12 +2,16 @@ import {cloneDeep} from 'lodash';
 // Backend
 
 const INITIAL_STATE = {
-  valor: ''
+  valor: '',
+  token: '',
+  user: ''
 };
 
 const getBackend = (state, {payload}) => {
   const newState = cloneDeep(state);
   
+  newState.token = payload.token;
+  if (payload.data.length > 0) newState.user = payload.data[0].user;
   newState.valor = JSON.stringify(payload);
   
   if (__DEV__) console.log("backend.js - payload", payload);

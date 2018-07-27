@@ -35,13 +35,14 @@ const enhance = compose(
     }) => ({
         data: (() => {
             let arrayTeste = [{ y: 0, searchDate: '' }];
+            console.log('passei aqui 1, viu?', values);
             if (anoAnterior) {
                 if (tipo == "volume") {
                     let arrayMesesAtual = [], arrayMesesAnoAnterior = [];
 
                     values.forEach(function(item, i)  {
-                        if ((arrayMesesAtual.indexOf(moment(item.searchDate).locale('pt-br').format('MMM').toUpperCase()) == -1) && item.searchDate != "") 
-                            arrayMesesAtual[moment(item.searchDate).locale('pt-br').format('MMM').toUpperCase()] = { y : 0 };
+                        if ((arrayMesesAtual.indexOf(moment(item.searchDate, 'YYYY-MM-DD').locale('pt-br').format('MMM').toUpperCase()) == -1) && item.searchDate != "") 
+                            arrayMesesAtual[moment(item.searchDate, 'YYYY-MM-DD').locale('pt-br').format('MMM').toUpperCase()] = { y : 0 };
                     });
                     for (var key in arrayMesesAtual) {
                         values.forEach(itemFI => {
@@ -54,8 +55,8 @@ const enhance = compose(
                     }
                     
                     valuesAnoAnterior.forEach(function(item, i)  {
-                        if ((arrayMesesAnoAnterior.indexOf(moment(item.searchDate).locale('pt-br').format('MMM').toUpperCase()) == -1) && item.searchDate != "") 
-                        arrayMesesAnoAnterior[moment(item.searchDate).locale('pt-br').format('MMM').toUpperCase()] = { y : 0 };
+                        if ((arrayMesesAnoAnterior.indexOf(moment(item.searchDate, 'YYYY-MM-DD').locale('pt-br').format('MMM').toUpperCase()) == -1) && item.searchDate != "") 
+                        arrayMesesAnoAnterior[moment(item.searchDate, 'YYYY-MM-DD').locale('pt-br').format('MMM').toUpperCase()] = { y : 0 };
                     });
 
                     for (var key in arrayMesesAnoAnterior) {
@@ -99,7 +100,7 @@ const enhance = compose(
                     var arrayCount = [];
                     var countMes = 0;
                     values.forEach((item, i) => { 
-                        var mesValues = moment(item.searchDate).locale('pt-br').format('MMM').toUpperCase();
+                        var mesValues = moment(item.searchDate, 'YYYY-MM-DD').locale('pt-br').format('MMM').toUpperCase();
                         if (arrayCount.indexOf(mesValues) == -1)
                         {
                             countMes++;
@@ -108,12 +109,13 @@ const enhance = compose(
                     });
                     if (countMes > 1)
                     {
+                        console.log('passei aqui 2, viu?');
                         let arrayMesesAtual = [];
 
                         values.forEach(function(item, i)  {
-                            if ((arrayMesesAtual.indexOf(moment(item.searchDate).locale('pt-br').format('MMM').toUpperCase()) == -1) && item.searchDate != "") 
+                            if ((arrayMesesAtual.indexOf(moment(item.searchDate, 'YYYY-MM-DD').locale('pt-br').format('MMM').toUpperCase()) == -1) && item.searchDate != "") 
                             {
-                                arrayMesesAtual[moment(item.searchDate).locale('pt-br').format('MMM').toUpperCase()] = { y : 0 };
+                                arrayMesesAtual[moment(item.searchDate, 'YYYY-MM-DD').locale('pt-br').format('MMM').toUpperCase()] = { y : 0 };
                             }
                         });
                         for (var key in arrayMesesAtual) {
@@ -194,10 +196,12 @@ const enhance = compose(
                     }
                 }
                 else {
+                    console.log('passei aqui 3, viu?', values);
                     values.forEach(valor => {
                         arrayMedia.push(media);
                         if (valor.y < media && moment(valueFormatter[0], 'MM/YYYY', true).isValid())
-                            trataCores.push(processColor('#ffbd00'));
+                            //trataCores.push(processColor('#ffbd00'));
+                            trataCores.push(processColor('#ff0000'));
                         else
                             trataCores.push(processColor('#0096FF'));
                     });
@@ -234,6 +238,7 @@ const enhance = compose(
                     }
                 }
                 else {
+                    console.log('passei aqui 4, viu?');
                     values = [];
                     for (let index = 0; index < 15; index++) {
                         arrayMedia.push(media);
@@ -312,6 +317,7 @@ const enhance = compose(
             }
             else {
                 if (moment(valueFormatter[0], 'MM/YYYY', true).isValid() || tipo == 'volume') {
+                    console.log('passei aqui 5, viu?', values);
                     return {
                         dataSets: [{
                             values: [...values],
@@ -384,8 +390,9 @@ const enhance = compose(
                 else {
                     var arrayCount = [];
                     var countMes = 0;
+                    console.log('passei aqui 6, viu?');
                     Object.values(valueFormatterIndex).forEach((item, i) => { 
-                        var mesValues = moment(item.searchDate).locale('pt-br').format('MMM').toUpperCase();
+                        var mesValues = moment(item.searchDate, 'YYYY-MM-DD').locale('pt-br').format('MMM').toUpperCase();
                         if (arrayCount.indexOf(mesValues) == -1)
                         {
                             countMes++;
@@ -395,18 +402,21 @@ const enhance = compose(
                     Object.values(valueFormatterIndex).forEach(element => {
                         if (countMes > 1)
                         {
-                            if (novoFormato.indexOf(moment(element.searchDate).locale('pt-br').format('MMM').toUpperCase()) == -1) {
-                                novoFormato.push(moment(element.searchDate).locale('pt-br').format('MMM').toUpperCase());
+                            if (novoFormato.indexOf(moment(element.searchDate, 'YYYY-MM-DD').locale('pt-br').format('MMM').toUpperCase()) == -1) {
+                                novoFormato.push(moment(element.searchDate, 'YYYY-MM-DD').locale('pt-br').format('MMM').toUpperCase());
                             }
                         }
                         else 
                         {
-                            novoFormato.push(moment(element.searchDate).locale('pt-br').format('DD').toUpperCase());
+                            console.log('element.searchDate', element.searchDate);
+                            novoFormato.push(moment(element.searchDate, 'YYYY-MM-DD').format('DD'));
                         }
                     });
                 }
             }
             let arrayTesteAxis = [""];
+            console.log('passei aqui 7, viu?', testeUnique);
+            console.log('passei aqui 8, viu?', novoFormato);
             return {
                 axisMinimum: -0.5,
                 centerAxisLabels: testeUnique ? false : false,
