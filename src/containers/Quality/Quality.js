@@ -48,7 +48,7 @@ import { DocumentationModal } from '~/components/Documentation/'
 
 const enhance = compose(
 	connect(
-		({ quality, researched }) => ({ quality, researched, getDetailsDayQuality }),
+		({ quality, researched, backend }) => ({ quality, researched, getDetailsDayQuality, backend }),
 		{ getSearchQuality, closeSearchQuality, getDetailsDayQuality, getSearchQualityComparacao }
 	),
 	withState('types', 'setTpes', [
@@ -125,7 +125,7 @@ const enhance = compose(
 	withState('anoAnteriorLegenda', 'setAnoAnteriorLegenda', 2001),
 	withState('isIN62', 'setIsIN62', false),
 	withState('modalVisible', 'setModalVisible', false),
-	withState('decimalPlaces', 'setDecimalPlaces', 0),
+	withState('decimalPlaces', 'setDecimalPlaces', 2),
 	withState('primeiraExecucao', 'setPrimeiraExecucao', false),
 	withState('valoresIN62', 'setValoresIN62', []),
 	withHandlers({
@@ -145,7 +145,8 @@ const enhance = compose(
 			setIsLegenda,
 			setAnoAtualLegenda,
 			setAnoAnteriorLegenda,
-			setPrimeiraExecucao
+			setPrimeiraExecucao,
+			backend
 		}) => (e) => {
 			setPrimeiraExecucao(false);
 			if (changed.rangeAtual != null && changed.rangeAnoAnterior != null && e) {
@@ -157,7 +158,15 @@ const enhance = compose(
 				//console.group('COMPARAÇÃO');
 
 				const type = find(types, item => item.selected);
-				let valoresMes = getSearchQualityComparacao(changed.rangeAtual, quality.groupByYear, type.value, changed.rangeAnoAnterior);
+				
+				var groupbyUser = {};
+				const keys = Object.keys(quality.groupByYear);
+				forEach(keys, item => {
+					if (quality.groupByYear[item].code == backend.user)
+						groupbyUser[item] = quality.groupByYear[item];
+				});
+
+				let valoresMes = getSearchQualityComparacao(changed.rangeAtual, groupbyUser, type.value, changed.rangeAnoAnterior, backend.user);
 
 				const startAnoAtual = moment(changed.rangeAtual.startDate, 'MM/YYYY').startOf('month');
 				setAnoAtualLegenda(moment(startAnoAtual, "MM/YYYY").format('YYYY'));
@@ -172,23 +181,23 @@ const enhance = compose(
 
 				let valoresAnoAtual = [], valoresAnoAnterior = [];
 				for (const key in valoresMes.payload.qualities) {
-					if (raAnoAtual.contains(moment(key, 'MM/YYYY'))) {
+					if (raAnoAtual.contains(moment(key, 'MM/YYYY')) && valoresMes.payload.qualities[key].code == backend.user) {
 						valoresAnoAtual.push(valoresMes.payload.qualities[key]);
 					}
 				}
 
 				for (const key in valoresMes.payload.qualities) {
-					if (raAnoAnterior.contains(moment(key, 'MM/YYYY'))) {
+					if (raAnoAnterior.contains(moment(key, 'MM/YYYY')) && valoresMes.payload.qualities[key].code == backend.user) {
 						valoresAnoAnterior.push(valoresMes.payload.qualities[key]);
 					}
 				}
 
 				var totalFatAtual = valoresAnoAtual.reduce(function (tot, elemento) {
-					return tot + elemento.fat;
+					return elemento.code == backend.user ? tot + elemento.fat : tot;
 				}, 0);
 
 				var totalFatAnterior = valoresAnoAnterior.reduce(function (tot, elemento) {
-					return tot + elemento.fat;
+					return elemento.code == backend.user ? tot + elemento.fat : tot;
 				}, 0);
 				let diferencaFat = 0, decimalFat = 0, percentualFat = 0;
 				diferencaFat = totalFatAtual - totalFatAnterior;
@@ -198,11 +207,11 @@ const enhance = compose(
 				types[0].valor = totalFatAtual.toFixed(2) + " vs " + totalFatAnterior.toFixed(2);
 
 				var totalProtAtual = valoresAnoAtual.reduce(function (tot, elemento) {
-					return tot + elemento.prot;
+					return elemento.code == backend.user ? tot + elemento.prot : tot;
 				}, 0);
 
 				var totalProtAnterior = valoresAnoAnterior.reduce(function (tot, elemento) {
-					return tot + elemento.prot;
+					return elemento.code == backend.user ? tot + elemento.prot : tot;
 				}, 0);
 
 				let diferencaProt = 0, decimalProt = 0, percentualProt = 0;
@@ -213,11 +222,11 @@ const enhance = compose(
 				types[1].valor = totalProtAtual.toFixed(2) + " vs " + totalProtAnterior.toFixed(2);
 
 				var totalCbtAtual = valoresAnoAtual.reduce(function (tot, elemento) {
-					return tot + elemento.cbt;
+					return elemento.code == backend.user ? tot + elemento.cbt : tot;
 				}, 0);
 
 				var totalCbtAnterior = valoresAnoAnterior.reduce(function (tot, elemento) {
-					return tot + elemento.cbt;
+					return elemento.code == backend.user ? tot + elemento.cbt : tot;
 				}, 0);
 
 				let diferencaCbt = 0, decimalCbt = 0, percentualCbt = 0;
@@ -228,11 +237,11 @@ const enhance = compose(
 				types[2].valor = parseInt(totalCbtAtual) + " vs " + parseInt(totalCbtAnterior);
 
 				var totalCcsAtual = valoresAnoAtual.reduce(function (tot, elemento) {
-					return tot + elemento.ccs;
+					return elemento.code == backend.user ? tot + elemento.ccs : tot;
 				}, 0);
 
 				var totalCcsAnterior = valoresAnoAnterior.reduce(function (tot, elemento) {
-					return tot + elemento.ccs;
+					return elemento.code == backend.user ? tot + elemento.ccs : tot;
 				}, 0);
 
 				let diferencaCcs = 0, decimalCcs = 0, percentualCcs = 0;
@@ -243,11 +252,11 @@ const enhance = compose(
 				types[3].valor = parseInt(totalCcsAtual) + " vs " + parseInt(totalCcsAnterior);
 
 				var totalEstAtual = valoresAnoAtual.reduce(function (tot, elemento) {
-					return tot + elemento.est;
+					return elemento.code == backend.user ? tot + elemento.est : tot;
 				}, 0);
 
 				var totalEstAnterior = valoresAnoAnterior.reduce(function (tot, elemento) {
-					return tot + elemento.est;
+					return elemento.code == backend.user ? tot + elemento.est : tot;
 				}, 0);
 
 				let diferencaEst = 0, decimalEst = 0, percentualEst = 0;
@@ -258,11 +267,11 @@ const enhance = compose(
 				types[4].valor = totalEstAtual.toFixed(2) + " vs " + totalEstAnterior.toFixed(2);
 
 				var totalEsdAtual = valoresAnoAtual.reduce(function (tot, elemento) {
-					return tot + elemento.esd;
+					return elemento.code == backend.user ? tot + elemento.esd : tot;
 				}, 0);
 
 				var totalEsdAnterior = valoresAnoAnterior.reduce(function (tot, elemento) {
-					return tot + elemento.esd;
+					return elemento.code == backend.user ? tot + elemento.esd : tot;
 				}, 0);
 
 				let diferencaEsd = 0, decimalEsd = 0, percentualEsd = 0;
@@ -285,7 +294,15 @@ const enhance = compose(
 				setComparacao(e);
 				setIsLegenda(e);
 				//const type = find(types, item => item.selected);
-				//getSearchQuality(changed.rangeAtual, quality.groupByYear, type.value);
+				//getSearchQuality(changed.rangeAtual, quality.groupByYear, type.value, backend.user);
+
+				var groupbyUser = {};
+				const keys = Object.keys(quality.groupByYear);
+				forEach(keys, item => {
+					if (quality.groupByYear[item].code == backend.user)
+						groupbyUser[item] = quality.groupByYear[item];
+				});
+				getSearchQuality(range, groupbyUser, 'fat', backend.user);
 
 				console.log('researched.searchQuality.mediaPeriodo[]', researched.searchQuality);
 				types[0].percentual = null;
@@ -300,7 +317,8 @@ const enhance = compose(
 				types[3].valor = parseInt(researched.searchQuality.mediaPeriodo['ccs']);
 				types[4].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(researched.searchQuality.mediaPeriodo['est']);
 				types[5].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(researched.searchQuality.mediaPeriodo['esd']);
-				getSearchQuality(range, quality.groupByYear, 'fat');
+
+				
 			}
 		},
 		open: ({ setClose }) => () => {
@@ -328,7 +346,8 @@ const enhance = compose(
 			setAnoAnterior,
 			setIsLegenda,
 			setComparacao,
-			setPrimeiraExecucao
+			setPrimeiraExecucao,
+			backend
 		}) => () => {
 			setRange({});
 			setFilter(true);
@@ -366,7 +385,13 @@ const enhance = compose(
 			console.log('passei no close do FilterCore 8');
 			const type = find(types, item => item.selected);
 			setType(type);
-			getSearchQuality(range, quality.groupByYear, 'fat');
+			var groupbyUser = {};
+			const keys = Object.keys(quality.groupByYear);
+			forEach(keys, item => {
+				if (quality.groupByYear[item].code == backend.user)
+					groupbyUser[item] = quality.groupByYear[item];
+			});
+			getSearchQuality(range, groupbyUser, 'fat', backend.user);
 			setPrimeiraExecucao(true);
 			console.log('passei no close do FilterCore 8');
 			setIsLegenda(false);
@@ -385,7 +410,8 @@ const enhance = compose(
 			anoAnterior,
 			changed,
 			getSearchQualityComparacao,
-			setPrimeiraExecucao
+			setPrimeiraExecucao,
+			backend
 		}) => e => {
 			setPrimeiraExecucao(false);
 			if (types[0].valor != null) {
@@ -403,14 +429,20 @@ const enhance = compose(
 					//if (__DEV__) console.log("Quality.js - handlersFilter", quality);
 					if (!isEmpty(range)) {
 						if (!searchToMonth) {
-							//console.log('TESTE ENTRE AI');
-							getSearchQuality(range, quality.groupByYear, type.value);
+							console.log('TESTE ENTRE AI', quality.groupByYear);
+							var groupbyUser = {};
+							const keys = Object.keys(quality.groupByYear);
+							forEach(keys, item => {
+								if (quality.groupByYear[item].code == backend.user)
+									groupbyUser[item] = quality.groupByYear[item];
+							});
+							getSearchQuality(range, groupbyUser, type.value, backend.user);
 						} else {
 							//console.log('TESTE ENTRE AI 2');
 							let mes = moment(searchMonth, 'MMMM/YYYY').format('MM/YYYY');
 							if (quality.groupByMonth[mes]) {
 								//console.log('TESTE ENTRE AI 2 2');
-								getDetailsDayQuality(quality.groupByMonth[mes], type.value);
+								getDetailsDayQuality(quality.groupByMonth[mes], type.value, backend.user);
 							}
 						}
 					}
@@ -428,7 +460,13 @@ const enhance = compose(
 					//console.log('Types quality', type);
 					setType(type);
 					setTpes(types);
-					let valoresMes = getSearchQualityComparacao(changed.rangeAtual, quality.groupByYear, type.value, changed.rangeAnoAnterior);
+					var groupbyUser = {};
+					const keys = Object.keys(quality.groupByYear);
+					forEach(keys, item => {
+						if (quality.groupByYear[item].code == backend.user)
+							groupbyUser[item] = quality.groupByYear[item];
+					});
+					let valoresMes = getSearchQualityComparacao(changed.rangeAtual, groupbyUser, type.value, changed.rangeAnoAnterior, backend.user);
 				}
 			}
 		},
@@ -448,7 +486,8 @@ const enhance = compose(
 			setType,
 			setTpes,
 			getSearchQualityComparacao,
-			setPrimeiraExecucao
+			setPrimeiraExecucao,
+			backend
 		}) => e => {
 			let rangeAnterior = {
 				startDate: moment(e.startDate, 'MM/YYYY').subtract(1, 'year').format('MM/YYYY'),
@@ -456,16 +495,24 @@ const enhance = compose(
 			}
 			if (size(e) === 2) {
 				setPrimeiraExecucao(false);
+
+				var groupbyUser = {};
+				const keys = Object.keys(quality.groupByYear);
+				forEach(keys, item => {
+					if (quality.groupByYear[item].code == backend.user)
+						groupbyUser[item] = quality.groupByYear[item];
+				});
 				
 				setChanged({ rangeAtual: e, rangeAnoAnterior: rangeAnterior });
 				if (anoAnterior) {
 					setRangeAnoAnterior(rangeAnterior);
-					getSearchQualityComparacao(e, quality.groupByYear, 'fat', rangeAnterior);
+					getSearchQualityComparacao(e, groupbyUser, 'fat', rangeAnterior, backend.user);
 				}
 				else {
 					setRange(e);
 					const type = find(types, item => item.selected);
-					getSearchQuality(e, quality.groupByYear, type.value);
+					console.log('TESTE ENTRE AI2', groupbyUser);
+					getSearchQuality(e, groupbyUser, type.value, backend.user);
 				}
 
 				setClose(false);
@@ -491,57 +538,73 @@ const enhance = compose(
 			setIsIN62,
 			setDecimalPlaces,
 			setPrimeiraExecucao,
-			setValoresIN62
+			setValoresIN62,
+			backend
 		}) => e => {
 			setPrimeiraExecucao(false);
 			if (!anoAnterior) {
 				const ex = Math.round(Math.abs(e.x));
-				let month;
-				month = researched.searchQuality.byIndex[ex];
+				const month = researched.searchQuality.byIndex[ex];
 				const type = find(types, item => item.selected);
 				let fat, prot, cbt, ccs, est, esd;
-				if (quality.groupByMonth[researched.searchQuality.byIndex[ex]]) {
+				if (quality.groupByMonth[month]) {
+					//console.log('aqui vai precisar de filtro', quality.groupByMonth[month]);
+					//console.log('user filtro', backend.user);
+					var totLen = quality.groupByMonth[month].reduce(function (tot, elemento) {
+						return ((elemento.code == backend.user) ? tot + 1 : tot);
+					}, 0);
 
 					var totalFat = quality.groupByMonth[month].reduce(function (tot, elemento) {
-						return tot + elemento.fat;
+						//console.log('elemento.code', elemento.code);
+						//console.log('elemento.fat', elemento.fat);
+						//console.log('elemento.tot', tot);
+						return ((elemento.code == backend.user) ? tot + elemento.fat : tot);
 					}, 0);
 
 					var totalProt = quality.groupByMonth[month].reduce(function (tot, elemento) {
-						return tot + elemento.prot;
+						//return tot + elemento.prot;
+						return ((elemento.code == backend.user) ? tot + elemento.prot : tot);
 					}, 0);
 
 					var totalCbt = quality.groupByMonth[month].reduce(function (tot, elemento) {
-						return tot + elemento.cbt;
+						//return tot + elemento.cbt;
+						return ((elemento.code == backend.user) ? tot + elemento.cbt : tot);
 					}, 0);
 
 					var totalCcs = quality.groupByMonth[month].reduce(function (tot, elemento) {
-						return tot + elemento.ccs;
+						//return tot + elemento.ccs;
+						return ((elemento.code == backend.user) ? tot + elemento.ccs : tot);
 					}, 0);
 
 					var totalEst = quality.groupByMonth[month].reduce(function (tot, elemento) {
-						return tot + elemento.est;
+						//return tot + elemento.est;
+						return ((elemento.code == backend.user) ? tot + elemento.est : tot);
 					}, 0);
 
 					var totalEsd = quality.groupByMonth[month].reduce(function (tot, elemento) {
-						return tot + elemento.esd;
+						//return tot + elemento.esd;
+						return ((elemento.code == backend.user) ? tot + elemento.esd : tot);
 					}, 0);
 
 					if (isNaN(totalCbt) || !totalCbt || totalCbt == 0) {
 						//console.log('não existe cbt', totalCbt)
-						cbt = '00000';
+						cbt = '0';
 						types[2].valor = cbt;
 					}
 					else {
-						cbt = totalCbt / quality.groupByMonth[month].length;
+						cbt = totalCbt / totLen;
 						types[2].valor = parseInt(cbt);
 					}
 
-					fat = totalFat / quality.groupByMonth[month].length;
-					prot = totalProt / quality.groupByMonth[month].length;
+					console.log('totalFat', totalFat);
+					console.log('totLen', totLen);
 
-					ccs = totalCcs / quality.groupByMonth[month].length;
-					est = totalEst / quality.groupByMonth[month].length;
-					esd = totalEsd / quality.groupByMonth[month].length;
+					fat = totalFat / totLen;
+					prot = totalProt / totLen;
+
+					ccs = totalCcs / totLen;
+					est = totalEst / totLen;
+					esd = totalEsd / totLen;
 
 					if (e && !isEmpty(e)) {
 						if (researched.searchQuality.average > e.y) {
@@ -554,13 +617,13 @@ const enhance = compose(
 							setIsIN62(false);
 
 							if (quality.groupByMonth[month]) {
-								getDetailsDayQuality(quality.groupByMonth[month], type.value);
+								getDetailsDayQuality(quality.groupByMonth[month], type.value, backend.user);
 								const dateFormat = moment(month, 'MM/YYYY').format('MMMM/YYYY');
 								setSearchMonth(dateFormat);
 								setClose(true);
 								setFilter(false);
 								setSearchToMonth(true);
-								setDecimalPlaces(1);
+								setDecimalPlaces(2);
 
 								types[0].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(fat);
 								types[1].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(prot);
@@ -596,7 +659,8 @@ const enhance = compose(
 			types,
 			getSearchQualityComparacao,
 			setComparacao,
-			setPrimeiraExecucao
+			setPrimeiraExecucao,
+			backend
 		}) => e => {
 			//console.log('Changed', changed);
 			if (changed.rangeAtual)
@@ -608,6 +672,13 @@ const enhance = compose(
 				let initDateFormat = moment(changed.rangeAtual.startDate, 'MM/YYYY').format('MMMM/YYYY');
 				let endDateFormat = moment(changed.rangeAtual.endDate, 'MM/YYYY').format('MMMM/YYYY');
 
+				var groupbyUser = {};
+				const keys = Object.keys(quality.groupByYear);
+				forEach(keys, item => {
+					if (quality.groupByYear[item].code == backend.user)
+						groupbyUser[item] = quality.groupByYear[item];
+				});
+
 				const type = find(types, item => item.selected);
 				if (comparacao) {
 					setRange(changed.rangeAtual);
@@ -615,7 +686,7 @@ const enhance = compose(
 					setAnoAnterior(true);
 					//console.log('OPA 1');
 					//console.log('TYPES', types);
-					getSearchQualityComparacao(changed.rangeAtual, quality.groupByYear, type.value, changed.rangeAnoAnterior);
+					getSearchQualityComparacao(changed.rangeAtual, groupbyUser, type.value, changed.rangeAnoAnterior, backend.user);
 					//console.log('RESEARCHED NA COMPARAÇÃO', researched.newState);
 					setComparacao(true);
 
@@ -632,18 +703,18 @@ const enhance = compose(
 				else {
 					if (changed.rangeAtual) {
 						if (!searchToMonth) {
-							getSearchQuality(changed.rangeAtual, quality.groupByYear, type.value);
+							getSearchQuality(changed.rangeAtual, groupbyUser, type.value, backend.user);
 						} else {
 							if (quality.groupByMonth[searchMonth])
-								getDetailsDayQuality(quality.groupByMonth[searchMonth], type.value);
+								getDetailsDayQuality(quality.groupByMonth[searchMonth], type.value, backend.user);
 						}
 					}
 					else {
 						if (!searchToMonth) {
-							getSearchQuality(range, quality.groupByYear, type.value);
+							getSearchQuality(range, groupbyUser, type.value, backend.user);
 						} else {
 							if (quality.groupByMonth[searchMonth])
-								getDetailsDayQuality(quality.groupByMonth[searchMonth], type.value);
+								getDetailsDayQuality(quality.groupByMonth[searchMonth], type.value, backend.user);
 						}
 					}
 					let stringData = `${initDateFormat.charAt(0).toUpperCase() + initDateFormat.slice(1)} - ${endDateFormat.charAt(0).toUpperCase() + endDateFormat.slice(1)}`;
@@ -663,11 +734,22 @@ const enhance = compose(
 			//console.log('THIS PROPS QUALITY GROUPBYYEAR', this.props.quality.groupByYear);
 			const type = find(this.props.types, item => item.selected);
 
+			console.log('TESTE ENTRE AI3', this.props.quality.groupByYear);
+
+			  var groupbyUser = {};
+			  const keys = Object.keys(this.props.quality.groupByYear);
+			  forEach(keys, item => {
+				  if (this.props.quality.groupByYear[item].code == this.props.backend.user)
+					groupbyUser[item] = this.props.quality.groupByYear[item];
+			  });
+			  console.log('groupbyUser', groupbyUser);
+
 			this.props.setType(type);
 			this.props.getSearchQuality(
 				range,
-				this.props.quality.groupByYear,
-				type.value
+				groupbyUser,
+				type.value,
+				this.props.backend.user
 			);
 			this.props.setPrimeiraExecucao(true);
 		}

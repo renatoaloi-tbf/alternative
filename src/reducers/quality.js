@@ -30,14 +30,15 @@ const getQuality = (state, {payload}) => {
     newState.groupByYear[item] = reduce(
       newState.groupByMonth[item],
       (prev, next) => {
-        const ccs = (prev.ccs ? prev.ccs : 0) + (next.css ? next.css : 0),
-          esd = (prev.esd ? prev.esd : 0) + (next.esd ? next.esd : 0),
-          est = (prev.est ? prev.est : 0) + (next.est ? next.est : 0),
-          fat = (prev.fat ? prev.fat : 0) + (next.fat ? next.fat : 0),
-          lact = (prev.lact ? prev.lact : 0) + (next.lact ? next.lact : 0),
-          prot = (prev.prot ? prev.prot : 0) + (next.prot ? next.prot : 0),
-          ufc = (prev.ufc ? prev.ufc : 0) + (next.ufc ? next.ufc : 0),
-          cbt = (prev.cbt ? prev.cbt : 0) + (next.cbt ? next.cbt : 0);
+        const ccs = ((prev.ccs ? prev.ccs : 0) + (next.css ? next.css : 0)) / 2.0,
+          esd = ((prev.esd ? prev.esd : 0) + (next.esd ? next.esd : 0)) / 2.0,
+          est = ((prev.est ? prev.est : 0) + (next.est ? next.est : 0)) / 2.0,
+          fat = ((prev.fat ? prev.fat : 0) + (next.fat ? next.fat : 0)) / 2.0,
+          lact = ((prev.lact ? prev.lact : 0) + (next.lact ? next.lact : 0)) / 2.0,
+          prot = ((prev.prot ? prev.prot : 0) + (next.prot ? next.prot : 0)) / 2.0,
+          ufc = ((prev.ufc ? prev.ufc : 0) + (next.ufc ? next.ufc : 0)) / 2.0,
+          cbt = ((prev.cbt ? prev.cbt : 0) + (next.cbt ? next.cbt : 0)) / 2.0
+          code = prev.code;
         return {
           ccs,
           esd,
@@ -46,11 +47,14 @@ const getQuality = (state, {payload}) => {
           lact,
           prot,
           ufc,
-          cbt
+          cbt,
+          code
         };
       }
     );
   });
+  
+  //console.log('contador', contador);
   console.log('getQuality', newState);
   return newState;
 };

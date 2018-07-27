@@ -1,23 +1,36 @@
-export const getSearchQuality = (range, qualities, type) => {
+export const getSearchQuality = (range, qualities, type, user) => {
   return {
     type: 'SEARCH_QUALITY',
     payload: {
       range,
       qualities,
-      type
+      type,
+      user
     }
   };
 };
 
 
-export const getSearchQualityComparacao = (range, qualities, type, rangeAnterior) => {
+export const getSearchQualityComparacao = (range, qualities, type, rangeAnterior, user) => {
   return {
     type: 'SEARCH_QUALITY_COMPARACAO',
     payload: {
       range,
       qualities,
       type,
-      rangeAnterior
+      rangeAnterior,
+      user
+    }
+  };
+};
+
+export const getDetailsDayQuality = (qualities, type, user) => {
+  return {
+    type: 'DETAILS_DAY_QUALITY',
+    payload: {
+      qualities,
+      type,
+      user
     }
   };
 };
@@ -49,16 +62,6 @@ export const getSearchVolumeAnoAnterior = (range, volumes, rangeAnterior, volume
       rangeAnterior,
       volumesAnteriores,
       user
-    }
-  };
-};
-
-export const getDetailsDayQuality = (qualities, type) => {
-  return {
-    type: 'DETAILS_DAY_QUALITY',
-    payload: {
-      qualities,
-      type
     }
   };
 };

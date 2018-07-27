@@ -41,8 +41,9 @@ const enhance = compose(
                     let arrayMesesAtual = [], arrayMesesAnoAnterior = [];
 
                     values.forEach(function(item, i)  {
-                        if ((arrayMesesAtual.indexOf(moment(item.searchDate, 'YYYY-MM-DD').locale('pt-br').format('MMM').toUpperCase()) == -1) && item.searchDate != "") 
-                            arrayMesesAtual[moment(item.searchDate, 'YYYY-MM-DD').locale('pt-br').format('MMM').toUpperCase()] = { y : 0 };
+                        if (item.searchDate != "")
+                            if ((arrayMesesAtual.indexOf(moment(item.searchDate).locale('pt-br').format('MMM').toUpperCase()) == -1)) 
+                                arrayMesesAtual[moment(item.searchDate).locale('pt-br').format('MMM').toUpperCase()] = { y : 0 };
                     });
                     for (var key in arrayMesesAtual) {
                         values.forEach(itemFI => {
@@ -55,8 +56,9 @@ const enhance = compose(
                     }
                     
                     valuesAnoAnterior.forEach(function(item, i)  {
-                        if ((arrayMesesAnoAnterior.indexOf(moment(item.searchDate, 'YYYY-MM-DD').locale('pt-br').format('MMM').toUpperCase()) == -1) && item.searchDate != "") 
-                        arrayMesesAnoAnterior[moment(item.searchDate, 'YYYY-MM-DD').locale('pt-br').format('MMM').toUpperCase()] = { y : 0 };
+                        if (item.searchDate != "")
+                            if ((arrayMesesAnoAnterior.indexOf(moment(item.searchDate).locale('pt-br').format('MMM').toUpperCase()) == -1)) 
+                                arrayMesesAnoAnterior[moment(item.searchDate).locale('pt-br').format('MMM').toUpperCase()] = { y : 0 };
                     });
 
                     for (var key in arrayMesesAnoAnterior) {
@@ -100,7 +102,7 @@ const enhance = compose(
                     var arrayCount = [];
                     var countMes = 0;
                     values.forEach((item, i) => { 
-                        var mesValues = moment(item.searchDate, 'YYYY-MM-DD').locale('pt-br').format('MMM').toUpperCase();
+                        var mesValues = moment(item.searchDate).locale('pt-br').format('MMM').toUpperCase();
                         if (arrayCount.indexOf(mesValues) == -1)
                         {
                             countMes++;
@@ -113,9 +115,12 @@ const enhance = compose(
                         let arrayMesesAtual = [];
 
                         values.forEach(function(item, i)  {
-                            if ((arrayMesesAtual.indexOf(moment(item.searchDate, 'YYYY-MM-DD').locale('pt-br').format('MMM').toUpperCase()) == -1) && item.searchDate != "") 
+                            if (item.searchDate != "")
                             {
-                                arrayMesesAtual[moment(item.searchDate, 'YYYY-MM-DD').locale('pt-br').format('MMM').toUpperCase()] = { y : 0 };
+                                if ((arrayMesesAtual.indexOf(moment(item.searchDate).locale('pt-br').format('MMM').toUpperCase()) == -1)) 
+                                {
+                                    arrayMesesAtual[moment(item.searchDate).locale('pt-br').format('MMM').toUpperCase()] = { y : 0 };
+                                }
                             }
                         });
                         for (var key in arrayMesesAtual) {
@@ -200,8 +205,8 @@ const enhance = compose(
                     values.forEach(valor => {
                         arrayMedia.push(media);
                         if (valor.y < media && moment(valueFormatter[0], 'MM/YYYY', true).isValid())
-                            //trataCores.push(processColor('#ffbd00'));
-                            trataCores.push(processColor('#ff0000'));
+                            trataCores.push(processColor('#ffbd00'));
+                            //trataCores.push(processColor('#ff0000'));
                         else
                             trataCores.push(processColor('#0096FF'));
                     });
@@ -392,7 +397,7 @@ const enhance = compose(
                     var countMes = 0;
                     console.log('passei aqui 6, viu?');
                     Object.values(valueFormatterIndex).forEach((item, i) => { 
-                        var mesValues = moment(item.searchDate, 'YYYY-MM-DD').locale('pt-br').format('MMM').toUpperCase();
+                        var mesValues = moment(item.searchDate).locale('pt-br').format('MMM').toUpperCase();
                         if (arrayCount.indexOf(mesValues) == -1)
                         {
                             countMes++;

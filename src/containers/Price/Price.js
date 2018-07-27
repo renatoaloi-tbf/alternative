@@ -83,7 +83,15 @@ const enhance = compose(
 
       console.log('PREÇO DO LEITE DO MES ANTERIOR', valorLtLeiteMesAnterior);
 
-      pricePeriod = { y: valorLtLeiteMesAnterior[0].price, period: moment().subtract(1, 'month').format('MMMM/YYYY') };
+      if (valorLtLeiteMesAnterior.length)
+      {
+        pricePeriod = { y: valorLtLeiteMesAnterior[0].price, period: moment().subtract(1, 'month').format('MMMM/YYYY') };
+      }
+      else
+      {
+        pricePeriod = { y: 0, period: moment().subtract(1, 'month').format('MMMM/YYYY') };
+      }
+
       pricePeriodAfter = { y: 0, period: moment().format('MMMM/YYYY') };
       this.props.setPeriodPrice(
         {
