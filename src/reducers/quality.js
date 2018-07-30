@@ -30,7 +30,8 @@ const getQuality = (state, {payload}) => {
     newState.groupByYear[item] = reduce(
       newState.groupByMonth[item],
       (prev, next) => {
-        const ccs = ((prev.ccs ? prev.ccs : 0) + (next.css ? next.css : 0)) / 2.0,
+        const 
+          ccs = ((prev.ccs ? prev.ccs : 0) + (next.ccs ? next.ccs : 0)) / 2.0,
           esd = ((prev.esd ? prev.esd : 0) + (next.esd ? next.esd : 0)) / 2.0,
           est = ((prev.est ? prev.est : 0) + (next.est ? next.est : 0)) / 2.0,
           fat = ((prev.fat ? prev.fat : 0) + (next.fat ? next.fat : 0)) / 2.0,
