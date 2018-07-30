@@ -63,7 +63,6 @@ const getData = (state, { payload }) => {
   const newState = cloneDeep(INITIAL_STATE);
   const { qualities, range, type, user } = payload;
   console.log('qualities', qualities);
-  //if (__DEV__) console.log("researched.js - getData1", range);
   const list = [], mediaPeriodo = [];
   newState.searchQuality.period = dateDiffList(range.startDate, range.endDate);
   mediaPeriodo['fat'] = 0;
@@ -73,7 +72,7 @@ const getData = (state, { payload }) => {
   mediaPeriodo['est'] = 0;
   mediaPeriodo['lact'] = 0;
   mediaPeriodo['prot'] = 0;
-  //console.log('newState.searchQuality', newState.searchQuality);
+  var contaFat = 0, contaCcs = 0, contaCbt = 0, contaEsd = 0, contaEst = 0, contaLact = 0, contaProt = 0;
   forEach(newState.searchQuality.period, (item, index) => {
     newState.searchQuality.byIndex[index] = item;
     if (qualities[item]) {
@@ -88,45 +87,45 @@ const getData = (state, { payload }) => {
         mediaPeriodo['prot'] = mediaPeriodo['prot'] + (qualities[item].prot ? qualities[item].prot : 0);
   
         list.push(qualities[item]);
+
+        if (qualities[item].fat) contaFat++;
+        if (qualities[item].ccs) contaCcs++;
+        if (qualities[item].cbt) contaCbt++;
+        if (qualities[item].esd) contaEsd++;
+        if (qualities[item].est) contaEst++;
+        if (qualities[item].lact) contaLact++;
+        if (qualities[item].prot) contaProt++;
       }
     } else {
       list.push(qualityConstant);
     }
   });
 
+  //console.log('media cbt nan', mediaPeriodo['cbt']);
+  //console.log('conta cbt nan', contaCbt);
   
-  mediaPeriodo['fat'] = mediaPeriodo['fat'] / newState.searchQuality.period.length;
-  mediaPeriodo['ccs'] = parseInt(mediaPeriodo['ccs'] / newState.searchQuality.period.length);
-  mediaPeriodo['cbt'] = parseInt(mediaPeriodo['cbt'] / newState.searchQuality.period.length);
-  mediaPeriodo['esd'] = mediaPeriodo['esd'] / newState.searchQuality.period.length;
-  mediaPeriodo['est'] = mediaPeriodo['est'] / newState.searchQuality.period.length;
-  mediaPeriodo['lact'] = mediaPeriodo['lact'] / newState.searchQuality.period.length;
-  mediaPeriodo['prot'] = mediaPeriodo['prot'] / newState.searchQuality.period.length;
+  mediaPeriodo['fat'] = ((contaFat == 0) ? 0 : mediaPeriodo['fat'] / contaFat);
+  mediaPeriodo['ccs'] = ((contaCcs == 0) ? 0 : Math.round(mediaPeriodo['ccs'] / contaCcs));
+  mediaPeriodo['cbt'] = ((contaCbt == 0) ? 0 : Math.round(mediaPeriodo['cbt'] / contaCbt));
+  mediaPeriodo['esd'] = ((contaEsd == 0) ? 0 : mediaPeriodo['esd'] / contaEsd);
+  mediaPeriodo['est'] = ((contaEst == 0) ? 0 : mediaPeriodo['est'] / contaEst);
+  mediaPeriodo['lact'] = ((contaLact == 0) ? 0 : mediaPeriodo['lact'] / contaLact);
+  mediaPeriodo['prot'] = ((contaProt == 0) ? 0 : mediaPeriodo['prot'] / contaProt);
 
-  /* mediaPeriodo['ccs'] = reduce(
-    map(qualities, item2 => {console.log('O VALOR DO FAT', item2.fat)}),
-    (prev, next) => prev + next
-  ); */
-
-  //console.log('total recolhido', mediaPeriodo);
   newState.searchQuality.mediaPeriodo = mediaPeriodo;
-  newState.searchQuality.items = map(list, item => ({ y: item[type] ? item[type] : 0 }));
-  /* newState.searchQuality.items = list.reduce((prev, curr) => {
-    return curr.code == user ? [...prev, { y: curr[type] ? curr[type] : 0 }] : prev;
-  }); */
-
-  //console.log('newState.searchQuality.items', newState.searchQuality.items);
+  //newState.searchQuality.items = map(list, item => ({ y: item[type] ? item[type] : 0 }));
+  var contador = 0;
+  forEach(list, (item) => {
+    if (item[type]) contador++;
+    newState.searchQuality.items.push({ y: item[type] ? item[type] : 0 });
+  });
   
   newState.searchQuality.total = reduce(
     map(newState.searchQuality.items, item => item.y),
     (prev, next) => prev + next
   );
-  newState.searchQuality.average = newState.searchQuality.total / newState.searchQuality.items.length;
+  newState.searchQuality.average = newState.searchQuality.total / contador; //newState.searchQuality.items.length;
   
-  //console.log('LIST GETDATA', list);
-  //console.log('QUALITIES GETDATA', qualities);
-  //console.log('TYPE GETDATA', type);
-  //console.log('NEW STATE GETDATA', newState);
   return newState;
 };
 
@@ -134,8 +133,6 @@ const getData = (state, { payload }) => {
 const getDataComparacaoAnoAnterior = (state, { payload }) => {
   const newState = cloneDeep(INITIAL_STATE);
   const { qualities, range, type, rangeAnterior, user } = payload;
-  //if (__DEV__) console.log("researched.js - getData1", range);
-  //if (__DEV__) console.log("researched.js - RANGE ANTERIOR", rangeAnterior);
 
   /** PESQUISA PERIODO ATUAL */
   const list = [], mediaPeriodo = [];
@@ -147,12 +144,9 @@ const getDataComparacaoAnoAnterior = (state, { payload }) => {
   mediaPeriodo['est'] = 0;
   mediaPeriodo['lact'] = 0;
   mediaPeriodo['prot'] = 0;
-
-  //console.log('newState.searchQuality.period', newState.searchQuality.period);
-  //console.log('qualities', qualities);
+  var contaFat = 0, contaCcs = 0, contaCbt = 0, contaEsd = 0, contaEst = 0, contaLact = 0, contaProt = 0;
   forEach(newState.searchQuality.period, (item, index) => {
     newState.searchQuality.byIndex[index] = item;
-    //console.log('Teste qualities item', item);
     if (qualities[item]) {
       if (qualities[item].code == user)
       {
@@ -164,54 +158,46 @@ const getDataComparacaoAnoAnterior = (state, { payload }) => {
         mediaPeriodo['est'] = mediaPeriodo['est'] + qualities[item].est;
         mediaPeriodo['lact'] = mediaPeriodo['lact'] + qualities[item].lact;
         mediaPeriodo['prot'] = mediaPeriodo['prot'] + qualities[item].prot;
-        //console.log('QUALITIES[ITEM] GETDATA', qualities[item]);
+
+        if (qualities[item].fat) contaFat++;
+        if (qualities[item].ccs) contaCcs++;
+        if (qualities[item].cbt) contaCbt++;
+        if (qualities[item].esd) contaEsd++;
+        if (qualities[item].est) contaEst++;
+        if (qualities[item].lact) contaLact++;
+        if (qualities[item].prot) contaProt++;
       }
     } else {
       list.push(qualityConstant);
     }
   });
-  mediaPeriodo['fat'] = mediaPeriodo['fat'] / newState.searchQuality.period.length;
-  mediaPeriodo['ccs'] = parseInt(mediaPeriodo['ccs'] / newState.searchQuality.period.length);
-  mediaPeriodo['cbt'] = parseInt(mediaPeriodo['cbt'] / newState.searchQuality.period.length);
-  mediaPeriodo['esd'] = mediaPeriodo['esd'] / newState.searchQuality.period.length;
-  mediaPeriodo['est'] = mediaPeriodo['est'] / newState.searchQuality.period.length;
-  mediaPeriodo['lact'] = mediaPeriodo['lact'] / newState.searchQuality.period.length;
-  mediaPeriodo['prot'] = mediaPeriodo['prot'] / newState.searchQuality.period.length;
+  mediaPeriodo['fat'] = ((contaFat == 0) ? 0 : mediaPeriodo['fat'] / contaFat);
+  mediaPeriodo['ccs'] = ((contaCcs == 0) ? 0 : Math.round(mediaPeriodo['ccs'] / contaCcs));
+  mediaPeriodo['cbt'] = ((contaCbt == 0) ? 0 : Math.round(mediaPeriodo['cbt'] / contaCbt));
+  mediaPeriodo['esd'] = ((contaEsd == 0) ? 0 : mediaPeriodo['esd'] / contaEsd);
+  mediaPeriodo['est'] = ((contaEst == 0) ? 0 : mediaPeriodo['est'] / contaEst);
+  mediaPeriodo['lact'] = ((contaLact == 0) ? 0 : mediaPeriodo['lact'] / contaLact);
+  mediaPeriodo['prot'] = ((contaProt == 0) ? 0 : mediaPeriodo['prot'] / contaProt);
 
-  /* mediaPeriodo['ccs'] = reduce(
-    map(qualities, item2 => {console.log('O VALOR DO FAT', item2.fat)}),
-    (prev, next) => prev + next
-  ); */
-
-  //console.log('total recolhido', mediaPeriodo);
   newState.searchQuality.mediaPeriodo = mediaPeriodo;
-  //console.log('ITEM TYPE', type);
   newState.searchQuality.items = map(list, item => ({ y: item[type] }));
-  //if (__DEV__) console.log("researched.js - getData2", newState);
-  //console.log('newState.searchQuality.items AAAAAAAAAAAAAAAAAAAA', newState.searchQuality.items);
   /** PESQUISA PERIODO ATUAL END */
 
   /** PESQUISA PERIODO ANTERIOR */
   const listAnoAnterior = [];
   newState.searchQualityAnoAnterior.period = dateDiffList(rangeAnterior.startDate, rangeAnterior.endDate);
-  //console.log('newState.searchQualityAnoAnterior.period', newState.searchQuality.period);
-  //console.log('qualitiesAnterior', qualities);
   forEach(newState.searchQualityAnoAnterior.period, (item, index) => {
     newState.searchQualityAnoAnterior.byIndex[index] = item;
-    //console.log('Teste qualities item', item);
     if (qualities[item]) {
       if (qualities[item].code == user)
       {
-        //console.log('QUALITIES ITEM CADA', qualities[item]);
         listAnoAnterior.push(qualities[item]);
       }
     } else {
       listAnoAnterior.push(qualityConstant);
     }
   });
-  //console.log('LIST ANO ANTERIOR', listAnoAnterior);
   newState.searchQualityAnoAnterior.items = map(listAnoAnterior, item => ({ y: item[type] }));
-  //console.log('newState.searchQualityAnoAnterior.items', newState.searchQualityAnoAnterior.items);
   /** PESQUISA PERIODO ANTERIOR END */
 
   return newState;
@@ -221,17 +207,12 @@ const getDetailsDayQuality = (state, { payload }) => {
   const newState = cloneDeep(INITIAL_STATE);
   const { qualities, type, user } = payload;
   if (qualities) {
-    if (!qualities.length) {
-      //console.log('não deveria, mas passei aqui');
+    /*if (!qualities.length) {
       let arrayQuality = [];
       arrayQuality.push(qualities);
       newState.searchQuality.period = map(arrayQuality, item => item.period);
 
-      /* newState.searchQuality.items = map(arrayQuality, item => ({
-        y: item[type] ? parseInt(item[type]) : 0
-      })); */
       forEach(qualities, item => {
-        //console.log('curr.code', item);
         if (item.code == user)
           newState.searchQuality.items.push({ y: item[type] ? item[type] : 0 });
       });
@@ -241,45 +222,27 @@ const getDetailsDayQuality = (state, { payload }) => {
           newState.searchQuality.byIndex[index] = item;
       });
     }
-    else {
-      //console.log('aqui eu deveria passar sim');
-      //console.log('qualities', qualities);
-      //console.log('qualities type', type);
-      newState.searchQuality.period = map(qualities, item => item.period);
-      /* newState.searchQuality.items = map(qualities, item => ({
-        y: item[type] ? item[type] : 0
-      })); */
-      /* newState.searchQuality.items = qualities.reduce((prev, curr) => {
-        console.log('prev.code', prev);
-        console.log('curr.code', curr);
-        return prev.code == user ? [...prev, { y: curr[type] ? curr[type] : 0 }] : prev;
-      }); */
-      forEach(qualities, item => {
-        //console.log('curr.code', item);
-        if (item.code == user)
-          newState.searchQuality.items.push({ y: item[type] ? item[type] : 0 });
-      });
-      //console.log('newState.searchQuality.items', newState.searchQuality.items);
+    else {*/
+    var contador = 0;
+    newState.searchQuality.period = map(qualities, item => item.period);
+    forEach(qualities, item => {
+      if (item.code == user)
+        newState.searchQuality.items.push({ y: item[type] ? item[type] : 0 });
+      if(item[type]) contador++;
+    });
 
-      forEach(qualities, (item, index) => {
-        if (item.code == user)
-          newState.searchQuality.byIndex[index] = item;
-      });
-    }
+    forEach(qualities, (item, index) => {
+      if (item.code == user)
+        newState.searchQuality.byIndex[index] = item;
+    });
+    //}
 
-    //console.log('entrou ou não entrou, eis a questão', type);
-    
     newState.searchQuality.total = reduce(
       map(newState.searchQuality.items, item => item.y),
       (prev, next) => prev + next
     );
     newState.searchQuality.average =
-      newState.searchQuality.total / newState.searchQuality.items.length;
-    
-    //console.log('newState.searchQuality.total', newState.searchQuality.total);
-    //console.log('newState.searchQuality.items.length', newState.searchQuality.items.length);
-    //console.log('newState.searchQuality.average', newState.searchQuality.average);
-
+      newState.searchQuality.total / contador; //newState.searchQuality.items.length;
   }
   return newState;
 };
@@ -295,18 +258,15 @@ const setArray = number => {
 };
 
 const getVolumeData = (state, { payload }) => {
-  //console.log('nao passei aqui, talquei?');
   const newState = cloneDeep(INITIAL_STATE);
   const { range, volumes, primeiraVisao, user } = payload;
   const start = moment(range.startDate, 'MM/YYYY').startOf('month');
   const end = moment(range.endDate, 'MM/YYYY').endOf('month');
   const ra = moment.range(start, end);
-  //console.log('ra', ra);
-  console.log('volumes', volumes);
+  //console.log('volumes', volumes);
   const filterVolumes = filter(volumes, item => 
     ra.contains(moment(item.start_date.substr(0, 10), 'YYYY-MM-DD')) && item.code == user
   );
-  //console.log('filterVolumes', filterVolumes);
   forEach(filterVolumes, (item, index) => {
     newState.searchVolume.byIndex[index] = item;
   });

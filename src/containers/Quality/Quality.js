@@ -193,11 +193,11 @@ const enhance = compose(
 				}
 
 				var totalFatAtual = valoresAnoAtual.reduce(function (tot, elemento) {
-					return elemento.code == backend.user ? tot + elemento.fat : tot;
+					return elemento.code == backend.user ? tot + (elemento.fat ? elemento.fat : 0) : tot;
 				}, 0);
 
 				var totalFatAnterior = valoresAnoAnterior.reduce(function (tot, elemento) {
-					return elemento.code == backend.user ? tot + elemento.fat : tot;
+					return elemento.code == backend.user ? tot + (elemento.fat ? elemento.fat : 0) : tot;
 				}, 0);
 				let diferencaFat = 0, decimalFat = 0, percentualFat = 0;
 				diferencaFat = totalFatAtual - totalFatAnterior;
@@ -207,11 +207,11 @@ const enhance = compose(
 				types[0].valor = totalFatAtual.toFixed(2) + " vs " + totalFatAnterior.toFixed(2);
 
 				var totalProtAtual = valoresAnoAtual.reduce(function (tot, elemento) {
-					return elemento.code == backend.user ? tot + elemento.prot : tot;
+					return elemento.code == backend.user ? tot + (elemento.prot ? elemento.prot : 0) : tot;
 				}, 0);
 
 				var totalProtAnterior = valoresAnoAnterior.reduce(function (tot, elemento) {
-					return elemento.code == backend.user ? tot + elemento.prot : tot;
+					return elemento.code == backend.user ? tot + (elemento.prot ? elemento.prot : 0) : tot;
 				}, 0);
 
 				let diferencaProt = 0, decimalProt = 0, percentualProt = 0;
@@ -222,26 +222,33 @@ const enhance = compose(
 				types[1].valor = totalProtAtual.toFixed(2) + " vs " + totalProtAnterior.toFixed(2);
 
 				var totalCbtAtual = valoresAnoAtual.reduce(function (tot, elemento) {
-					return elemento.code == backend.user ? tot + elemento.cbt : tot;
+					return elemento.code == backend.user ? tot + (elemento.cbt ? elemento.cbt : 0) : tot;
 				}, 0);
 
 				var totalCbtAnterior = valoresAnoAnterior.reduce(function (tot, elemento) {
-					return elemento.code == backend.user ? tot + elemento.cbt : tot;
+					return elemento.code == backend.user ? tot + (elemento.cbt ? elemento.cbt : 0) : tot;
 				}, 0);
 
 				let diferencaCbt = 0, decimalCbt = 0, percentualCbt = 0;
 				diferencaCbt = totalCbtAtual - totalCbtAnterior;
-				decimalCbt = diferencaCbt / totalCbtAnterior;
+				if (totalCbtAnterior == 0) decimalCbt = 0;
+				else decimalCbt = diferencaCbt / totalCbtAnterior;
+
+				console.log('diferencaCbt', diferencaCbt);
+				console.log('totalCbtAnterior', totalCbtAnterior);
+				console.log('totalCbtAtual', totalCbtAtual);
+
+
 				percentualCbt = decimalCbt * 100;
 				types[2].percentual = percentualCbt;
-				types[2].valor = parseInt(totalCbtAtual) + " vs " + parseInt(totalCbtAnterior);
+				types[2].valor = Math.round(totalCbtAtual) + " vs " + Math.round(totalCbtAnterior);
 
 				var totalCcsAtual = valoresAnoAtual.reduce(function (tot, elemento) {
-					return elemento.code == backend.user ? tot + elemento.ccs : tot;
+					return elemento.code == backend.user ? tot + (elemento.ccs ? elemento.ccs : 0) : tot;
 				}, 0);
 
 				var totalCcsAnterior = valoresAnoAnterior.reduce(function (tot, elemento) {
-					return elemento.code == backend.user ? tot + elemento.ccs : tot;
+					return elemento.code == backend.user ? tot + (elemento.ccs ? elemento.ccs : 0) : tot;
 				}, 0);
 
 				let diferencaCcs = 0, decimalCcs = 0, percentualCcs = 0;
@@ -249,14 +256,14 @@ const enhance = compose(
 				decimalCcs = diferencaCcs / totalCcsAnterior;
 				percentualCcs = decimalCcs * 100;
 				types[3].percentual = percentualCcs;
-				types[3].valor = parseInt(totalCcsAtual) + " vs " + parseInt(totalCcsAnterior);
+				types[3].valor = Math.round(totalCcsAtual) + " vs " + Math.round(totalCcsAnterior);
 
 				var totalEstAtual = valoresAnoAtual.reduce(function (tot, elemento) {
-					return elemento.code == backend.user ? tot + elemento.est : tot;
+					return elemento.code == backend.user ? tot + (elemento.est ? elemento.est : 0) : tot;
 				}, 0);
 
 				var totalEstAnterior = valoresAnoAnterior.reduce(function (tot, elemento) {
-					return elemento.code == backend.user ? tot + elemento.est : tot;
+					return elemento.code == backend.user ? tot + (elemento.est ? elemento.est : 0) : tot;
 				}, 0);
 
 				let diferencaEst = 0, decimalEst = 0, percentualEst = 0;
@@ -267,11 +274,11 @@ const enhance = compose(
 				types[4].valor = totalEstAtual.toFixed(2) + " vs " + totalEstAnterior.toFixed(2);
 
 				var totalEsdAtual = valoresAnoAtual.reduce(function (tot, elemento) {
-					return elemento.code == backend.user ? tot + elemento.esd : tot;
+					return elemento.code == backend.user ? tot + (elemento.esd ? elemento.esd : 0) : tot;
 				}, 0);
 
 				var totalEsdAnterior = valoresAnoAnterior.reduce(function (tot, elemento) {
-					return elemento.code == backend.user ? tot + elemento.esd : tot;
+					return elemento.code == backend.user ? tot + (elemento.esd ? elemento.esd : 0) : tot;
 				}, 0);
 
 				let diferencaEsd = 0, decimalEsd = 0, percentualEsd = 0;
@@ -411,7 +418,8 @@ const enhance = compose(
 			changed,
 			getSearchQualityComparacao,
 			setPrimeiraExecucao,
-			backend
+			backend,
+			setDecimalPlaces
 		}) => e => {
 			setPrimeiraExecucao(false);
 			if (types[0].valor != null) {
@@ -424,6 +432,8 @@ const enhance = compose(
 						}
 					});
 					const type = find(types, item => item.selected);
+					if (type.value == 'ccs' || type.value == 'cbt') { console.log('type1', type); setDecimalPlaces(0); } 
+					else { console.log('type12', type); setDecimalPlaces(2); }
 					setType(type);
 					setTpes(types);
 					//if (__DEV__) console.log("Quality.js - handlersFilter", quality);
@@ -457,6 +467,8 @@ const enhance = compose(
 						}
 					});
 					const type = find(types, item => item.selected);
+					if (type.value == 'ccs' || type.value == 'cbt') { console.log('type2', type); setDecimalPlaces(0); } 
+					else { console.log('type22', type); setDecimalPlaces(2); }
 					//console.log('Types quality', type);
 					setType(type);
 					setTpes(types);
@@ -494,7 +506,7 @@ const enhance = compose(
 				endDate: moment(e.endDate, 'MM/YYYY').subtract(1, 'year').format('MM/YYYY')
 			}
 			if (size(e) === 2) {
-				setPrimeiraExecucao(false);
+				setPrimeiraExecucao(true);
 
 				var groupbyUser = {};
 				const keys = Object.keys(quality.groupByYear);
@@ -513,6 +525,7 @@ const enhance = compose(
 					const type = find(types, item => item.selected);
 					console.log('TESTE ENTRE AI2', groupbyUser);
 					getSearchQuality(e, groupbyUser, type.value, backend.user);
+					
 				}
 
 				setClose(false);
@@ -550,14 +563,22 @@ const enhance = compose(
 				if (quality.groupByMonth[month]) {
 					//console.log('aqui vai precisar de filtro', quality.groupByMonth[month]);
 					//console.log('user filtro', backend.user);
+					var contaFat = 0, contaCcs = 0, contaCbt = 0, contaEsd = 0, contaEst = 0, contaLact = 0, contaProt = 0;
 					var totLen = quality.groupByMonth[month].reduce(function (tot, elemento) {
+						if ((elemento.code == backend.user) && elemento.fat) contaFat++;
+						if ((elemento.code == backend.user) && elemento.ccs) contaCcs++;
+						if ((elemento.code == backend.user) && elemento.cbt) contaCbt++;
+						if ((elemento.code == backend.user) && elemento.esd) contaEsd++;
+						if ((elemento.code == backend.user) && elemento.est) contaEst++;
+						if ((elemento.code == backend.user) && elemento.lact) contaLact++;
+						if ((elemento.code == backend.user) && elemento.prot) contaProt++;
 						return ((elemento.code == backend.user) ? tot + 1 : tot);
 					}, 0);
 
 					var totalFat = quality.groupByMonth[month].reduce(function (tot, elemento) {
-						//console.log('elemento.code', elemento.code);
-						//console.log('elemento.fat', elemento.fat);
-						//console.log('elemento.tot', tot);
+						console.log('elemento.code', elemento.code);
+						console.log('elemento.fat', elemento.fat ? elemento.fat : 'nada');
+						console.log('elemento.tot', tot);
 						return ((elemento.code == backend.user) ? tot + elemento.fat : tot);
 					}, 0);
 
@@ -592,19 +613,19 @@ const enhance = compose(
 						types[2].valor = cbt;
 					}
 					else {
-						cbt = totalCbt / totLen;
+						cbt = totalCbt / contaCbt;
 						types[2].valor = parseInt(cbt);
 					}
 
 					console.log('totalFat', totalFat);
-					console.log('totLen', totLen);
+					console.log('totLen', contaFat);
 
-					fat = totalFat / totLen;
-					prot = totalProt / totLen;
+					fat = totalFat / contaFat;
+					prot = totalProt / contaProt;
 
-					ccs = totalCcs / totLen;
-					est = totalEst / totLen;
-					esd = totalEsd / totLen;
+					ccs = totalCcs / contaCcs;
+					est = totalEst / contaEst;
+					esd = totalEsd / contaEsd;
 
 					if (e && !isEmpty(e)) {
 						if (researched.searchQuality.average > e.y) {
@@ -635,11 +656,7 @@ const enhance = compose(
 						}
 					}
 				}
-
-
-
 			}
-
 		},
 		apply: ({
 			setFilter,
