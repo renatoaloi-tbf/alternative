@@ -73,7 +73,7 @@ const getData = (state, { payload }) => {
   mediaPeriodo['est'] = 0;
   mediaPeriodo['lact'] = 0;
   mediaPeriodo['prot'] = 0;
-  //console.log('newState.searchQuality', newState.searchQuality);
+  
   forEach(newState.searchQuality.period, (item, index) => {
     newState.searchQuality.byIndex[index] = item;
     if (qualities[item]) {
@@ -87,14 +87,14 @@ const getData = (state, { payload }) => {
         mediaPeriodo['lact'] = mediaPeriodo['lact'] + (qualities[item].lact ? qualities[item].lact : 0);
         mediaPeriodo['prot'] = mediaPeriodo['prot'] + (qualities[item].prot ? qualities[item].prot : 0);
   
-        list.push(qualities[item]);
+        list.push(qualities[item]); 
       }
     } else {
       list.push(qualityConstant);
     }
   });
 
-  
+
   mediaPeriodo['fat'] = mediaPeriodo['fat'] / newState.searchQuality.period.length;
   mediaPeriodo['ccs'] = parseInt(mediaPeriodo['ccs'] / newState.searchQuality.period.length);
   mediaPeriodo['cbt'] = parseInt(mediaPeriodo['cbt'] / newState.searchQuality.period.length);
@@ -164,7 +164,7 @@ const getDataComparacaoAnoAnterior = (state, { payload }) => {
         mediaPeriodo['est'] = mediaPeriodo['est'] + qualities[item].est;
         mediaPeriodo['lact'] = mediaPeriodo['lact'] + qualities[item].lact;
         mediaPeriodo['prot'] = mediaPeriodo['prot'] + qualities[item].prot;
-        //console.log('QUALITIES[ITEM] GETDATA', qualities[item]);
+        
       }
     } else {
       list.push(qualityConstant);
