@@ -805,13 +805,18 @@ export const Quality = enhance(
 	}) => {
 		console.log('ANO ANTERIOR TESTE', anoAnterior);
 		console.log('MEDIA DO PERIODO', researched.searchQuality);
+		console.log('erro muito louco', researched.searchQuality.mediaPeriodo);
+		console.log('primeiraExecucao', primeiraExecucao);
 		if (primeiraExecucao) {
-			types[0].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(researched.searchQuality.mediaPeriodo['fat']);
-			types[1].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(researched.searchQuality.mediaPeriodo['prot']);
-			types[2].valor = parseInt(researched.searchQuality.mediaPeriodo['cbt']);
-			types[3].valor = parseInt(researched.searchQuality.mediaPeriodo['ccs']);
-			types[4].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(researched.searchQuality.mediaPeriodo['est']);
-			types[5].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(researched.searchQuality.mediaPeriodo['esd']);
+			if (researched.searchQuality.mediaPeriodo['fat'])
+			{
+				types[0].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(researched.searchQuality.mediaPeriodo['fat']);
+				types[1].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(researched.searchQuality.mediaPeriodo['prot']);
+				types[2].valor = parseInt(researched.searchQuality.mediaPeriodo['cbt']);
+				types[3].valor = parseInt(researched.searchQuality.mediaPeriodo['ccs']);
+				types[4].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(researched.searchQuality.mediaPeriodo['est']);
+				types[5].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(researched.searchQuality.mediaPeriodo['esd']);
+			}
 		}
 		return (
 			<Wrapper secondary>

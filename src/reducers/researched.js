@@ -180,7 +180,7 @@ const getDataComparacaoAnoAnterior = (state, { payload }) => {
   mediaPeriodo['prot'] = ((contaProt == 0) ? 0 : mediaPeriodo['prot'] / contaProt);
 
   newState.searchQuality.mediaPeriodo = mediaPeriodo;
-  newState.searchQuality.items = map(list, item => ({ y: item[type] }));
+  newState.searchQuality.items = map(list, item => ({ y: item[type] ? item[type] : 0 }));
   /** PESQUISA PERIODO ATUAL END */
 
   /** PESQUISA PERIODO ANTERIOR */
@@ -197,7 +197,7 @@ const getDataComparacaoAnoAnterior = (state, { payload }) => {
       listAnoAnterior.push(qualityConstant);
     }
   });
-  newState.searchQualityAnoAnterior.items = map(listAnoAnterior, item => ({ y: item[type] }));
+  newState.searchQualityAnoAnterior.items = map(listAnoAnterior, item => ({ y: item[type] ? item[type] : 0 }));
   /** PESQUISA PERIODO ANTERIOR END */
 
   return newState;
@@ -503,10 +503,13 @@ const getPriceData = (state, { payload }) => {
   });
 
   const totalPesquisa = reduce(
-    map(newState.searchPrice.filter, item => item.price),
-    (prev, next) => prev + next
+    map(newState.searchPrice.filter, item => parseFloat(item.price)),
+    (prev, next) => { console.log('prev', prev); console.log('next', next); return(prev + next); } 
   );
 
+  console.log('totalpesquisa', totalPesquisa);
+  console.log('newState.searchPrice.filter.length', newState.searchPrice.filter.length);
+  
   newState.searchPrice.media = totalPesquisa / newState.searchPrice.filter.length;
 
   return newState;

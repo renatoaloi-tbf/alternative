@@ -73,7 +73,7 @@ const enhance = compose(
       );
       const range = {
         startDate: moment().startOf('month').subtract(11, 'month'),
-        endDate: moment().startOf('month')
+        endDate: moment().startOf('month').subtract(1, 'day')
       };
       let pricePeriod, pricePeriodAfter, valorLtLeiteMesAnterior;
 
@@ -232,14 +232,13 @@ const enhance = compose(
       const pricePeriod = researched.searchPrice.byIndex[e.x] ? researched.searchPrice.byIndex[e.x] : researched.searchPrice.byIndex[0];
       let pricePeriodAfter = researched.searchPrice.byIndex[e.x + 1] ? researched.searchPrice.byIndex[e.x + 1] : researched.searchPrice.byIndex[1];
       const pd = moment().month(e + 1);
-      pricePeriodAfter = pricePeriodAfter
-        ? pricePeriodAfter
-        : { y: 'Previsão', period: pd.format('MMMM/YYYY') };
+      pricePeriodAfter = { y: 'Previsão', period: moment().format('MMMM/YYYY') };
+      
 
-      /* setPeriodPrice({
+      setPeriodPrice({
         pricePeriod,
         pricePeriodAfter
-      }); */
+      });
     },
     handlerClose: ({
       setDetails,
