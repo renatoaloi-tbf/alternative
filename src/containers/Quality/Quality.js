@@ -155,8 +155,6 @@ const enhance = compose(
 				setAnoAnterior(e);
 				setIsLegenda(e);
 
-				//console.group('COMPARAÇÃO');
-
 				const type = find(types, item => item.selected);
 				
 				var groupbyUser = {};
@@ -233,15 +231,9 @@ const enhance = compose(
 				diferencaCbt = totalCbtAtual - totalCbtAnterior;
 				if (totalCbtAnterior == 0) decimalCbt = 0;
 				else decimalCbt = diferencaCbt / totalCbtAnterior;
-
-				console.log('diferencaCbt', diferencaCbt);
-				console.log('totalCbtAnterior', totalCbtAnterior);
-				console.log('totalCbtAtual', totalCbtAtual);
-
-
 				percentualCbt = decimalCbt * 100;
 				types[2].percentual = percentualCbt;
-				types[2].valor = Math.round(totalCbtAtual) + " vs " + Math.round(totalCbtAnterior);
+				types[2].valor = totalCbtAtual.toFixed(2) + " vs " + totalCbtAnterior.toFixed(2);
 
 				var totalCcsAtual = valoresAnoAtual.reduce(function (tot, elemento) {
 					return elemento.code == backend.user ? tot + (elemento.ccs ? elemento.ccs : 0) : tot;
@@ -290,18 +282,13 @@ const enhance = compose(
 
 
 				setComparacao(true);
-				//console.groupEnd('COMPARAÇÃO');
 			}
 			else {
-				console.log('TESTE daniel', e);
-
 				setRange(range);
 				setRangeAnoAnterior(rangeAnoAnterior);
 				setAnoAnterior(e);
 				setComparacao(e);
 				setIsLegenda(e);
-				//const type = find(types, item => item.selected);
-				//getSearchQuality(changed.rangeAtual, quality.groupByYear, type.value, backend.user);
 
 				var groupbyUser = {};
 				const keys = Object.keys(quality.groupByYear);
@@ -320,7 +307,7 @@ const enhance = compose(
 				types[5].percentual = null;
 				types[0].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(researched.searchQuality.mediaPeriodo['fat']);
 				types[1].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(researched.searchQuality.mediaPeriodo['prot']);
-				types[2].valor = parseInt(researched.searchQuality.mediaPeriodo['cbt']);
+				types[2].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(researched.searchQuality.mediaPeriodo['cbt']);
 				types[3].valor = parseInt(researched.searchQuality.mediaPeriodo['ccs']);
 				types[4].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(researched.searchQuality.mediaPeriodo['est']);
 				types[5].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(researched.searchQuality.mediaPeriodo['esd']);
@@ -354,12 +341,14 @@ const enhance = compose(
 			setIsLegenda,
 			setComparacao,
 			setPrimeiraExecucao,
-			backend
+			backend,
+			setSearchToMonth
 		}) => () => {
 			setRange({});
 			setFilter(true);
 			setClose(false);
 			setComparacao(false);
+			setSearchToMonth(false);
 
 			setSearchMonth('Mais recentes');
 			console.log('passei no close do FilterCore 6');
@@ -432,14 +421,13 @@ const enhance = compose(
 						}
 					});
 					const type = find(types, item => item.selected);
-					if (type.value == 'ccs' || type.value == 'cbt') { console.log('type1', type); setDecimalPlaces(0); } 
-					else { console.log('type12', type); setDecimalPlaces(2); }
+					if (type.value == 'ccs' /* || type.value == 'cbt' */) { setDecimalPlaces(0); } 
+					else { setDecimalPlaces(2); }
 					setType(type);
 					setTpes(types);
-					//if (__DEV__) console.log("Quality.js - handlersFilter", quality);
 					if (!isEmpty(range)) {
 						if (!searchToMonth) {
-							console.log('TESTE ENTRE AI', quality.groupByYear);
+							console.log('passei aqui viu 1');
 							var groupbyUser = {};
 							const keys = Object.keys(quality.groupByYear);
 							forEach(keys, item => {
@@ -448,17 +436,15 @@ const enhance = compose(
 							});
 							getSearchQuality(range, groupbyUser, type.value, backend.user);
 						} else {
-							//console.log('TESTE ENTRE AI 2');
+							console.log('passei aqui viu 2');
 							let mes = moment(searchMonth, 'MMMM/YYYY').format('MM/YYYY');
 							if (quality.groupByMonth[mes]) {
-								//console.log('TESTE ENTRE AI 2 2');
 								getDetailsDayQuality(quality.groupByMonth[mes], type.value, backend.user);
 							}
 						}
 					}
 				}
 				else {
-					//console.log('HANDLERS FILTER COMPARATIVO', e);
 					forEach(types, item => {
 						if (item.value === e.value) {
 							item.selected = !e.selected;
@@ -467,9 +453,8 @@ const enhance = compose(
 						}
 					});
 					const type = find(types, item => item.selected);
-					if (type.value == 'ccs' || type.value == 'cbt') { console.log('type2', type); setDecimalPlaces(0); } 
-					else { console.log('type22', type); setDecimalPlaces(2); }
-					//console.log('Types quality', type);
+					if (type.value == 'ccs' /* || type.value == 'cbt' */) { setDecimalPlaces(0); } 
+					else { setDecimalPlaces(2); }
 					setType(type);
 					setTpes(types);
 					var groupbyUser = {};
@@ -523,11 +508,8 @@ const enhance = compose(
 				else {
 					setRange(e);
 					const type = find(types, item => item.selected);
-					console.log('TESTE ENTRE AI2', groupbyUser);
 					getSearchQuality(e, groupbyUser, type.value, backend.user);
-					
 				}
-
 				setClose(false);
 			}
 			else {
@@ -561,8 +543,6 @@ const enhance = compose(
 				const type = find(types, item => item.selected);
 				let fat, prot, cbt, ccs, est, esd;
 				if (quality.groupByMonth[month]) {
-					//console.log('aqui vai precisar de filtro', quality.groupByMonth[month]);
-					//console.log('user filtro', backend.user);
 					var contaFat = 0, contaCcs = 0, contaCbt = 0, contaEsd = 0, contaEst = 0, contaLact = 0, contaProt = 0;
 					var totLen = quality.groupByMonth[month].reduce(function (tot, elemento) {
 						if ((elemento.code == backend.user) && elemento.fat) contaFat++;
@@ -576,49 +556,28 @@ const enhance = compose(
 					}, 0);
 
 					var totalFat = quality.groupByMonth[month].reduce(function (tot, elemento) {
-						console.log('elemento.code', elemento.code);
-						console.log('elemento.fat', elemento.fat ? elemento.fat : 'nada');
-						console.log('elemento.tot', tot);
 						return ((elemento.code == backend.user) ? tot + elemento.fat : tot);
 					}, 0);
 
 					var totalProt = quality.groupByMonth[month].reduce(function (tot, elemento) {
-						//return tot + elemento.prot;
 						return ((elemento.code == backend.user) ? tot + elemento.prot : tot);
 					}, 0);
 
 					var totalCbt = quality.groupByMonth[month].reduce(function (tot, elemento) {
-						//return tot + elemento.cbt;
 						return ((elemento.code == backend.user) ? tot + elemento.cbt : tot);
 					}, 0);
 
 					var totalCcs = quality.groupByMonth[month].reduce(function (tot, elemento) {
-						//return tot + elemento.ccs;
 						return ((elemento.code == backend.user) ? tot + elemento.ccs : tot);
 					}, 0);
 
 					var totalEst = quality.groupByMonth[month].reduce(function (tot, elemento) {
-						//return tot + elemento.est;
 						return ((elemento.code == backend.user) ? tot + elemento.est : tot);
 					}, 0);
 
 					var totalEsd = quality.groupByMonth[month].reduce(function (tot, elemento) {
-						//return tot + elemento.esd;
 						return ((elemento.code == backend.user) ? tot + elemento.esd : tot);
 					}, 0);
-
-					if (isNaN(totalCbt) || !totalCbt || totalCbt == 0) {
-						//console.log('não existe cbt', totalCbt)
-						cbt = '0';
-						types[2].valor = cbt;
-					}
-					else {
-						cbt = totalCbt / contaCbt;
-						types[2].valor = parseInt(cbt);
-					}
-
-					console.log('totalFat', totalFat);
-					console.log('totLen', contaFat);
 
 					fat = totalFat / contaFat;
 					prot = totalProt / contaProt;
@@ -629,12 +588,10 @@ const enhance = compose(
 
 					if (e && !isEmpty(e)) {
 						if (researched.searchQuality.average > e.y) {
-							console.log('ENTRA NO IF');
 							setValoresIN62([fat, prot, esd, cbt, est, ccs]);
 							setIsIN62(true);
 						}
 						else {
-							console.log('ENTRA NO ELSE');
 							setIsIN62(false);
 
 							if (quality.groupByMonth[month]) {
@@ -645,11 +602,17 @@ const enhance = compose(
 								setFilter(false);
 								setSearchToMonth(true);
 								setDecimalPlaces(2);
-
 								types[0].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(fat);
 								types[1].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(prot);
-
-								types[3].valor = parseInt(ccs);
+								if (isNaN(totalCbt) || !totalCbt || totalCbt == 0) {
+									cbt = '0';
+									types[2].valor = types[2].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(cbt);
+								}
+								else {
+									cbt = totalCbt / contaCbt;
+									types[2].valor = types[2].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(cbt);
+								}
+								types[3].valor = Math.round(ccs);
 								types[4].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(est);
 								types[5].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(esd);
 							}
@@ -679,7 +642,6 @@ const enhance = compose(
 			setPrimeiraExecucao,
 			backend
 		}) => e => {
-			//console.log('Changed', changed);
 			if (changed.rangeAtual)
       		{
 				setFilter(false);
@@ -701,16 +663,11 @@ const enhance = compose(
 					setRange(changed.rangeAtual);
 					setRangeAnoAnterior(changed.rangeAnoAnterior);
 					setAnoAnterior(true);
-					//console.log('OPA 1');
-					//console.log('TYPES', types);
 					getSearchQualityComparacao(changed.rangeAtual, groupbyUser, type.value, changed.rangeAnoAnterior, backend.user);
-					//console.log('RESEARCHED NA COMPARAÇÃO', researched.newState);
 					setComparacao(true);
 
-					//console.log('ENTROU NA COMPARAÇÃO', comparacao);
 					let initDateFormat = moment(changed.rangeAtual.startDate, 'MM/YYYY').format('MMM/YY');
 					let endDateFormat = moment(changed.rangeAtual.endDate, 'MM/YYYY').format('MMM/YY');
-
 
 					let initDateFormatAnterior = moment(changed.rangeAnoAnterior.startDate, 'MM/YYYY').format('MMM/YY');
 					let endDateFormatAnterior = moment(changed.rangeAnoAnterior.endDate, 'MM/YYYY').format('MMM/YY');
@@ -743,23 +700,18 @@ const enhance = compose(
 	}),
 	lifecycle({
 		componentWillMount() {
-			//console.log('PROPS', this.props);
 			const range = {
 				startDate: moment().startOf('month').subtract(12, 'month'),
 				endDate: moment().startOf('month')
 			};
-			//console.log('THIS PROPS QUALITY GROUPBYYEAR', this.props.quality.groupByYear);
 			const type = find(this.props.types, item => item.selected);
 
-			console.log('TESTE ENTRE AI3', this.props.quality.groupByYear);
-
-			  var groupbyUser = {};
-			  const keys = Object.keys(this.props.quality.groupByYear);
-			  forEach(keys, item => {
-				  if (this.props.quality.groupByYear[item].code == this.props.backend.user)
-					groupbyUser[item] = this.props.quality.groupByYear[item];
-			  });
-			  console.log('groupbyUser', groupbyUser);
+			var groupbyUser = {};
+			const keys = Object.keys(this.props.quality.groupByYear);
+			forEach(keys, item => {
+				if (this.props.quality.groupByYear[item].code == this.props.backend.user)
+				groupbyUser[item] = this.props.quality.groupByYear[item];
+			});
 
 			this.props.setType(type);
 			this.props.getSearchQuality(
@@ -803,17 +755,13 @@ export const Quality = enhance(
 		primeiraExecucao,
 		valoresIN62
 	}) => {
-		console.log('ANO ANTERIOR TESTE', anoAnterior);
-		console.log('MEDIA DO PERIODO', researched.searchQuality);
-		console.log('erro muito louco', researched.searchQuality.mediaPeriodo);
-		console.log('primeiraExecucao', primeiraExecucao);
 		if (primeiraExecucao) {
 			if (researched.searchQuality.mediaPeriodo['fat'])
 			{
 				types[0].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(researched.searchQuality.mediaPeriodo['fat']);
 				types[1].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(researched.searchQuality.mediaPeriodo['prot']);
-				types[2].valor = parseInt(researched.searchQuality.mediaPeriodo['cbt']);
-				types[3].valor = parseInt(researched.searchQuality.mediaPeriodo['ccs']);
+				types[2].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(researched.searchQuality.mediaPeriodo['cbt']);
+				types[3].valor = Math.round(researched.searchQuality.mediaPeriodo['ccs']);
 				types[4].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(researched.searchQuality.mediaPeriodo['est']);
 				types[5].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(researched.searchQuality.mediaPeriodo['esd']);
 			}
@@ -848,7 +796,6 @@ export const Quality = enhance(
 							ListEmptyComponent={<EmptyText>Nenhum pedido realizado.</EmptyText>}
 							data={types}
 							renderItem={({ item }) => {
-
 								return <ItemQuality onPress={handlersFilter} type={item} anoAnterior={anoAnterior} />;
 							}}
 						/>

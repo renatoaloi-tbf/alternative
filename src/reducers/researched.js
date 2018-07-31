@@ -100,20 +100,16 @@ const getData = (state, { payload }) => {
       list.push(qualityConstant);
     }
   });
-
-  //console.log('media cbt nan', mediaPeriodo['cbt']);
-  //console.log('conta cbt nan', contaCbt);
   
   mediaPeriodo['fat'] = ((contaFat == 0) ? 0 : mediaPeriodo['fat'] / contaFat);
   mediaPeriodo['ccs'] = ((contaCcs == 0) ? 0 : Math.round(mediaPeriodo['ccs'] / contaCcs));
-  mediaPeriodo['cbt'] = ((contaCbt == 0) ? 0 : Math.round(mediaPeriodo['cbt'] / contaCbt));
+  mediaPeriodo['cbt'] = ((contaCbt == 0) ? 0 : mediaPeriodo['cbt'] / contaCbt);
   mediaPeriodo['esd'] = ((contaEsd == 0) ? 0 : mediaPeriodo['esd'] / contaEsd);
   mediaPeriodo['est'] = ((contaEst == 0) ? 0 : mediaPeriodo['est'] / contaEst);
   mediaPeriodo['lact'] = ((contaLact == 0) ? 0 : mediaPeriodo['lact'] / contaLact);
   mediaPeriodo['prot'] = ((contaProt == 0) ? 0 : mediaPeriodo['prot'] / contaProt);
 
   newState.searchQuality.mediaPeriodo = mediaPeriodo;
-  //newState.searchQuality.items = map(list, item => ({ y: item[type] ? item[type] : 0 }));
   var contador = 0;
   forEach(list, (item) => {
     if (item[type]) contador++;
@@ -124,7 +120,7 @@ const getData = (state, { payload }) => {
     map(newState.searchQuality.items, item => item.y),
     (prev, next) => prev + next
   );
-  newState.searchQuality.average = newState.searchQuality.total / contador; //newState.searchQuality.items.length;
+  newState.searchQuality.average = newState.searchQuality.total / contador;
   
   return newState;
 };
@@ -173,7 +169,7 @@ const getDataComparacaoAnoAnterior = (state, { payload }) => {
   });
   mediaPeriodo['fat'] = ((contaFat == 0) ? 0 : mediaPeriodo['fat'] / contaFat);
   mediaPeriodo['ccs'] = ((contaCcs == 0) ? 0 : Math.round(mediaPeriodo['ccs'] / contaCcs));
-  mediaPeriodo['cbt'] = ((contaCbt == 0) ? 0 : Math.round(mediaPeriodo['cbt'] / contaCbt));
+  mediaPeriodo['cbt'] = ((contaCbt == 0) ? 0 : mediaPeriodo['cbt'] / contaCbt);
   mediaPeriodo['esd'] = ((contaEsd == 0) ? 0 : mediaPeriodo['esd'] / contaEsd);
   mediaPeriodo['est'] = ((contaEst == 0) ? 0 : mediaPeriodo['est'] / contaEst);
   mediaPeriodo['lact'] = ((contaLact == 0) ? 0 : mediaPeriodo['lact'] / contaLact);
@@ -207,22 +203,6 @@ const getDetailsDayQuality = (state, { payload }) => {
   const newState = cloneDeep(INITIAL_STATE);
   const { qualities, type, user } = payload;
   if (qualities) {
-    /*if (!qualities.length) {
-      let arrayQuality = [];
-      arrayQuality.push(qualities);
-      newState.searchQuality.period = map(arrayQuality, item => item.period);
-
-      forEach(qualities, item => {
-        if (item.code == user)
-          newState.searchQuality.items.push({ y: item[type] ? item[type] : 0 });
-      });
-
-      forEach(arrayQuality, (item, index) => {
-        if (item.code == user)
-          newState.searchQuality.byIndex[index] = item;
-      });
-    }
-    else {*/
     var contador = 0;
     newState.searchQuality.period = map(qualities, item => item.period);
     forEach(qualities, item => {
@@ -235,14 +215,13 @@ const getDetailsDayQuality = (state, { payload }) => {
       if (item.code == user)
         newState.searchQuality.byIndex[index] = item;
     });
-    //}
 
     newState.searchQuality.total = reduce(
       map(newState.searchQuality.items, item => item.y),
       (prev, next) => prev + next
     );
     newState.searchQuality.average =
-      newState.searchQuality.total / contador; //newState.searchQuality.items.length;
+      newState.searchQuality.total / contador; 
   }
   return newState;
 };
@@ -263,7 +242,6 @@ const getVolumeData = (state, { payload }) => {
   const start = moment(range.startDate, 'MM/YYYY').startOf('month');
   const end = moment(range.endDate, 'MM/YYYY').endOf('month');
   const ra = moment.range(start, end);
-  //console.log('volumes', volumes);
   const filterVolumes = filter(volumes, item => 
     ra.contains(moment(item.start_date.substr(0, 10), 'YYYY-MM-DD')) && item.code == user
   );
@@ -350,36 +328,16 @@ const getVolumeDataAnoAnterior = (state, { payload }) => {
   newState.searchVolume.period = setArray(newState.searchVolume.items.length);
 
   // Conta do Total do Mês Corrente
-  /* newState.searchVolume.currentMonth = moment().format('MMMM/YYYY');
-  const filterVolumesCurrentMonth = filterVolumes.filter(item => {
-    return moment(item.searchDate, 'YYYY-MM-DD').format('MMMM/YYYY') == newState.searchVolume.currentMonth
-  });
-  newState.searchVolume.total = reduce(
-    map(filterVolumesCurrentMonth, item => item.volume),
-    (prev, next) => prev + next
-  ); */
   newState.searchVolume.total = newState.searchVolume.totalAnoAtual;
   newState.searchVolume.currentMonth = 'período';
 
   // Conta da Média do Mês Anterior
-  /* newState.searchVolume.lastMonth = moment().subtract(1, 'month').format('MMMM/YYYY');
-  const filterMesAnterior = volumes.filter(item => {
-    return moment(item.searchDate, 'YYYY-MM-DD').format('MMMM/YYYY') == newState.searchVolume.lastMonth
-  });
-  const totalLastMonth = reduce(
-    map(filterMesAnterior, item => item.volume),
-    (prev, next) => prev + next
-  ); */
-  //newState.searchVolume.averageLastMonth = totalLastMonth / filterMesAnterior.length;
   newState.searchVolume.averageLastMonth = 
     newState.searchVolume.totalAnoAtual / newState.searchVolume.items.length;
-
-  console.log('depois desses', newState.searchVolume);
 
   /**
    * VOLUME DO ANO ANTERIOR
    */
-
 
   // Range do ano anterior
   const startAnterior = moment(rangeAnterior.startDate, 'MM/YYYY').startOf('month');
@@ -404,14 +362,12 @@ const getVolumeDataAnoAnterior = (state, { payload }) => {
     (prev, next) => prev + next
   );
 
-
   newState.searchVolumeAnoAnterior.items = map(filterVolumesAnteriores, item => ({ y: item.volume, searchDate: item.searchDate }));
   newState.searchVolumeAnoAnterior.period = setArray(newState.searchVolumeAnoAnterior.items.length);
   newState.searchVolumeAnoAnterior.currentMonth = startAnterior.format('MMMM');
   newState.searchVolumeAnoAnterior.lastMonth = startAnterior.subtract(1, 'month').format('MMMM');
 
   newState.searchVolumeAnoAnterior.lastYear = moment(rangeAnterior.startDate, 'MM/YYYY').format('YYYY');
-
 
   //Calculando diferença percentual entre os anos
   if (!newState.searchVolumeAnoAnterior.total) {
@@ -432,7 +388,6 @@ const getVolumeDataAnoAnterior = (state, { payload }) => {
     let percentual = decimal * 100;
     newState.searchVolumeAnoAnterior.diferenca_percent = percentual > 0 ? "+" + percentual.toFixed(2) : percentual.toFixed(2);
   }
-
 
   return newState;
 };

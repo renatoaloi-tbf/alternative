@@ -106,7 +106,7 @@ export const StatementOfPayment = enhance(
                 Fornecedor
               </TextLeft>
               <TextRight inverted size={13}>
-                {statements.byMonth[month].cfop}
+                {statements.byMonth[month].code}
               </TextRight>
             </WrapperText>
             <WrapperText>
