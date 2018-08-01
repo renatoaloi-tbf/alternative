@@ -8,7 +8,8 @@ const INITIAL_STATE = {
   infos: {
     basePrice: 0,
     marketBonus: 0,
-    period: moment().format('M/YYYY')
+    period: moment().format('M/YYYY'),
+    tendency: ''
   }
 };
 
@@ -18,35 +19,43 @@ const getFactors = (state, {payload}) => {
   const newState = cloneDeep(state);
 
   const {milkPriceFactors} = payload.data[0];
-  console.log('milkPriceFactors', milkPriceFactors);
   newState.infos.basePrice = milkPriceFactors.basePrice;
   newState.infos.period = milkPriceFactors.period;
   newState.infos.marketBonus = milkPriceFactors.marketBonus;
-  let arrayCbt = [], arrayCcs = [], arrayFat = [], arrayProt = [], arrayVolume = [];
-  milkPriceFactors.cbt.forEach(item => {
-    arrayCbt.push(item)
+  newState.infos.tendency = milkPriceFactors.tendency;
+  let arrayCbt = [], arrayCcs = [], arrayBpf = [], arrayPncebt = [], arrayFat = [], arrayProt = [], arrayVolume = [], arrayKm = [];
+  milkPriceFactors.cbt.values.forEach(item => {
+    arrayCbt.push({ ...item, type: milkPriceFactors.cbt.type })
   });
-  milkPriceFactors.fat.forEach(item => {
-    arrayFat.push(item)
+  milkPriceFactors.ccs.values.forEach(item => {
+    arrayCcs.push({ ...item, type: milkPriceFactors.ccs.type })
   });
-  milkPriceFactors.ccs.forEach(item => {
-    arrayCcs.push(item)
+  milkPriceFactors.bpf.values.forEach(item => {
+    arrayBpf.push({ ...item, type: milkPriceFactors.bpf.type })
   });
-  milkPriceFactors.prot.forEach(item => {
-    arrayProt.push(item)
+  milkPriceFactors.pncebt.values.forEach(item => {
+    arrayPncebt.push({ ...item, type: milkPriceFactors.pncebt.type })
   });
-  milkPriceFactors.volume.forEach(item => {
-    arrayVolume.push(item)
+  milkPriceFactors.fat.values.forEach(item => {
+    arrayFat.push({ ...item, type: milkPriceFactors.fat.type })
+  });
+  milkPriceFactors.prot.values.forEach(item => {
+    arrayProt.push({ ...item, type: milkPriceFactors.prot.type })
+  });
+  milkPriceFactors.volume.values.forEach(item => {
+    arrayVolume.push({ ...item, type: milkPriceFactors.volume.type })
+  });
+  milkPriceFactors.km.values.forEach(item => {
+    arrayKm.push({ ...item, type: milkPriceFactors.km.type })
   });
 
-  var merge = arrayCbt.concat(arrayFat).concat(arrayCcs).concat(arrayProt).concat(arrayVolume);
+  var merge = arrayCbt.concat(arrayCcs).concat(arrayBpf).concat(arrayPncebt)
+                      .concat(arrayFat).concat(arrayProt).concat(arrayVolume).concat(arrayKm);
   newState.items.push(merge);
-  if (__DEV__) console.log("factors.js - getFactors", newState);
   return newState;
 };
 
 export const factors = (state = INITIAL_STATE, action) => {
-  //if (__DEV__) console.log("factors.js - default", state);
   switch (action.type) {
     case 'LOGIN_SUCCESS':
       return getFactors(state, action);
