@@ -27,11 +27,12 @@ const enhance = compose(
         detalheDia: bool,
         dia: string,
         update: bool,
-        decimalPlaces: number
+        decimalPlaces: number,
+        granularidade: number
     }),
     withProps(({ values, valueFormatter, valueFormatterIndex, onSelect, media, 
         tipo, anoAnterior, valuesAnoAnterior, detalheDia, dia, 
-        formatterMeses, testeUnique, decimalPlaces
+        formatterMeses, testeUnique, decimalPlaces, granularidade
     }) => ({
         data: (() => {
             let arrayTeste = [{ y: 0, searchDate: '' }];
@@ -444,6 +445,7 @@ const enhance = compose(
                         drawAxisLine: false,
                         drawGridLines: true,
                         axisMinimum: 0,
+                        granularity: granularidade ? granularidade : 1,
                         limitLines: [{
                             limit: media,
                             label: parseFloat(media).toFixed(decimalPlaces ? decimalPlaces : 0),
