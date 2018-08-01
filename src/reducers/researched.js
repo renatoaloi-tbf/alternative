@@ -103,7 +103,7 @@ const getData = (state, { payload }) => {
   
   mediaPeriodo['fat'] = ((contaFat == 0) ? 0 : mediaPeriodo['fat'] / contaFat);
   mediaPeriodo['ccs'] = ((contaCcs == 0) ? 0 : Math.round(mediaPeriodo['ccs'] / contaCcs));
-  mediaPeriodo['cbt'] = ((contaCbt == 0) ? 0 : mediaPeriodo['cbt'] / contaCbt);
+  mediaPeriodo['cbt'] = ((contaCbt == 0) ? 0 : parseInt(Math.round(mediaPeriodo['cbt'] / contaCbt)));
   mediaPeriodo['esd'] = ((contaEsd == 0) ? 0 : mediaPeriodo['esd'] / contaEsd);
   mediaPeriodo['est'] = ((contaEst == 0) ? 0 : mediaPeriodo['est'] / contaEst);
   mediaPeriodo['lact'] = ((contaLact == 0) ? 0 : mediaPeriodo['lact'] / contaLact);
@@ -113,14 +113,19 @@ const getData = (state, { payload }) => {
   var contador = 0;
   forEach(list, (item) => {
     if (item[type]) contador++;
-    newState.searchQuality.items.push({ y: item[type] ? item[type] : 0 });
+    if (type == 'cbt') newState.searchQuality.items.push({ y: item[type] ? parseInt(Math.round(item[type])) : 0 });
+    else newState.searchQuality.items.push({ y: item[type] ? item[type] : 0 });
   });
+  console.log('LISTA QUALIDADE', newState.searchQuality.items);
   
   newState.searchQuality.total = reduce(
     map(newState.searchQuality.items, item => item.y),
     (prev, next) => prev + next
   );
-  newState.searchQuality.average = newState.searchQuality.total / contador;
+  console.log('LISTA TOTAL', newState.searchQuality.total);
+  if(type == 'cbt') newState.searchQuality.average = parseInt(Math.round(newState.searchQuality.total / contador));
+  else newState.searchQuality.average = newState.searchQuality.total / contador;
+  console.log('LISTA MEDIA', newState.searchQuality.average);
   
   return newState;
 };
@@ -206,8 +211,11 @@ const getDetailsDayQuality = (state, { payload }) => {
     var contador = 0;
     newState.searchQuality.period = map(qualities, item => item.period);
     forEach(qualities, item => {
-      if (item.code == user)
-        newState.searchQuality.items.push({ y: item[type] ? item[type] : 0 });
+      if (item.code == user) {
+        if (type == 'cbt') newState.searchQuality.items.push({ y: item[type] ? parseInt(Math.round(item[type])) : 0 });
+        else newState.searchQuality.items.push({ y: item[type] ? item[type] : 0 });
+      }
+        
       if(item[type]) contador++;
     });
 
@@ -220,8 +228,10 @@ const getDetailsDayQuality = (state, { payload }) => {
       map(newState.searchQuality.items, item => item.y),
       (prev, next) => prev + next
     );
-    newState.searchQuality.average =
-      newState.searchQuality.total / contador; 
+
+    if(type == 'cbt') newState.searchQuality.average = parseInt(Math.round(newState.searchQuality.total / contador));
+    else newState.searchQuality.average = newState.searchQuality.total / contador;
+
   }
   return newState;
 };

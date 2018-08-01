@@ -126,6 +126,7 @@ const enhance = compose(
 	withState('isIN62', 'setIsIN62', false),
 	withState('modalVisible', 'setModalVisible', false),
 	withState('decimalPlaces', 'setDecimalPlaces', 2),
+	withState('granularidade', 'setGranularidade', 1),
 	withState('primeiraExecucao', 'setPrimeiraExecucao', false),
 	withState('valoresIN62', 'setValoresIN62', []),
 	withHandlers({
@@ -156,7 +157,7 @@ const enhance = compose(
 				setIsLegenda(e);
 
 				const type = find(types, item => item.selected);
-				
+
 				var groupbyUser = {};
 				const keys = Object.keys(quality.groupByYear);
 				forEach(keys, item => {
@@ -312,7 +313,7 @@ const enhance = compose(
 				types[4].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(researched.searchQuality.mediaPeriodo['est']);
 				types[5].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(researched.searchQuality.mediaPeriodo['esd']);
 
-				
+
 			}
 		},
 		open: ({ setClose }) => () => {
@@ -408,11 +409,13 @@ const enhance = compose(
 			getSearchQualityComparacao,
 			setPrimeiraExecucao,
 			backend,
-			setDecimalPlaces
+			setDecimalPlaces,
+			setGranularidade
 		}) => e => {
 			setPrimeiraExecucao(false);
 			if (types[0].valor != null) {
 				if (!anoAnterior) {
+					console.log('PASSA AQUI???!!!');
 					forEach(types, item => {
 						if (item.value === e.value) {
 							item.selected = !e.selected;
@@ -421,7 +424,33 @@ const enhance = compose(
 						}
 					});
 					const type = find(types, item => item.selected);
-					if (type.value == 'ccs' /* || type.value == 'cbt' */) { setDecimalPlaces(0); } 
+
+					switch (type.value) {
+						case 'ccs':
+							setDecimalPlaces(0);
+							setGranularidade(250);
+							break;
+						case 'cbt':
+							setDecimalPlaces(0);
+							setGranularidade(1);
+							break;
+						case 'fat':
+							setGranularidade(1.5);
+							break;
+						case 'prot':
+							setGranularidade(1.5);
+							break;
+						case 'esd':
+							setGranularidade(3.5);
+							break;
+						case 'est':
+							setGranularidade(3.5);
+							break;
+						default:
+							setDecimalPlaces(2);
+							break;
+					}
+					if (type.value == 'ccs' || type.value == 'cbt') { setDecimalPlaces(0); }
 					else { setDecimalPlaces(2); }
 					setType(type);
 					setTpes(types);
@@ -453,7 +482,7 @@ const enhance = compose(
 						}
 					});
 					const type = find(types, item => item.selected);
-					if (type.value == 'ccs' /* || type.value == 'cbt' */) { setDecimalPlaces(0); } 
+					if (type.value == 'ccs' /* || type.value == 'cbt' */) { setDecimalPlaces(0); }
 					else { setDecimalPlaces(2); }
 					setType(type);
 					setTpes(types);
@@ -499,7 +528,7 @@ const enhance = compose(
 					if (quality.groupByYear[item].code == backend.user)
 						groupbyUser[item] = quality.groupByYear[item];
 				});
-				
+
 				setChanged({ rangeAtual: e, rangeAnoAnterior: rangeAnterior });
 				if (anoAnterior) {
 					setRangeAnoAnterior(rangeAnterior);
@@ -541,6 +570,7 @@ const enhance = compose(
 				const ex = Math.round(Math.abs(e.x));
 				const month = researched.searchQuality.byIndex[ex];
 				const type = find(types, item => item.selected);
+				console.log('TIPO AQUI', type);
 				let fat, prot, cbt, ccs, est, esd;
 				if (quality.groupByMonth[month]) {
 					var contaFat = 0, contaCcs = 0, contaCbt = 0, contaEsd = 0, contaEst = 0, contaLact = 0, contaProt = 0;
@@ -606,11 +636,11 @@ const enhance = compose(
 								types[1].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(prot);
 								if (isNaN(totalCbt) || !totalCbt || totalCbt == 0) {
 									cbt = '0';
-									types[2].valor = types[2].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(cbt);
+									types[2].valor = cbt;
 								}
 								else {
 									cbt = totalCbt / contaCbt;
-									types[2].valor = types[2].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(cbt);
+									types[2].valor = Math.round(cbt);
 								}
 								types[3].valor = Math.round(ccs);
 								types[4].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(est);
@@ -642,8 +672,7 @@ const enhance = compose(
 			setPrimeiraExecucao,
 			backend
 		}) => e => {
-			if (changed.rangeAtual)
-      		{
+			if (changed.rangeAtual) {
 				setFilter(false);
 				setClose(true);
 				setPrimeiraExecucao(false);
@@ -710,10 +739,11 @@ const enhance = compose(
 			const keys = Object.keys(this.props.quality.groupByYear);
 			forEach(keys, item => {
 				if (this.props.quality.groupByYear[item].code == this.props.backend.user)
-				groupbyUser[item] = this.props.quality.groupByYear[item];
+					groupbyUser[item] = this.props.quality.groupByYear[item];
 			});
 
 			this.props.setType(type);
+			this.props.setGranularidade(1.5);
 			this.props.getSearchQuality(
 				range,
 				groupbyUser,
@@ -753,14 +783,14 @@ export const Quality = enhance(
 		openModal,
 		decimalPlaces,
 		primeiraExecucao,
-		valoresIN62
+		valoresIN62,
+		granularidade
 	}) => {
 		if (primeiraExecucao) {
-			if (researched.searchQuality.mediaPeriodo['fat'])
-			{
+			if (researched.searchQuality.mediaPeriodo['fat']) {
 				types[0].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(researched.searchQuality.mediaPeriodo['fat']);
 				types[1].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(researched.searchQuality.mediaPeriodo['prot']);
-				types[2].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(researched.searchQuality.mediaPeriodo['cbt']);
+				types[2].valor = researched.searchQuality.mediaPeriodo['cbt'];
 				types[3].valor = Math.round(researched.searchQuality.mediaPeriodo['ccs']);
 				types[4].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(researched.searchQuality.mediaPeriodo['est']);
 				types[5].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(researched.searchQuality.mediaPeriodo['esd']);
@@ -813,6 +843,7 @@ export const Quality = enhance(
 								detalheDia={detalheDia}
 								dia={dadosDia}
 								decimalPlaces={decimalPlaces}
+								granularidade={granularidade}
 							/>
 						)}
 						{isLegenda && (
