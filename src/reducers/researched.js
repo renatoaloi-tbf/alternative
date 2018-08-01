@@ -257,12 +257,17 @@ const getVolumeData = (state, { payload }) => {
   });
   newState.searchVolume.total = reduce(
     map(filterVolumesCurrentMonth, item => item.volume),
-    (prev, next) => prev + next
+    (prev, next) => prev + next 
   );
 
   newState.searchVolume.lastMonth = moment().subtract(1, 'month').format('MMMM/YYYY');
   newState.searchVolume.average =
     newState.searchVolume.total / newState.searchVolume.items.length;
+
+  console.log('newState.searchVolume.total1', newState.searchVolume.total);
+  console.log('newState.searchVolume.items.length1', newState.searchVolume.items.length);
+  console.log('newState.searchVolume.average1', newState.searchVolume.average);
+
   const filterMesAnterior = volumes.filter(item => {
     return moment(item.searchDate, 'YYYY-MM-DD').format('MMMM/YYYY') == newState.searchVolume.lastMonth
             && item.code == user;
@@ -316,6 +321,11 @@ const getVolumeDataAnoAnterior = (state, { payload }) => {
     }
     somaMes += item.y;
   });
+
+  // Conta do Total do Mês Corrente
+  newState.searchVolume.total = newState.searchVolume.totalAnoAtual;
+  newState.searchVolume.currentMonth = 'período';
+
   console.log('countMes', countMes);
   console.log('somaMes', somaMes);
   if (countMes > 1)
@@ -324,12 +334,12 @@ const getVolumeDataAnoAnterior = (state, { payload }) => {
     newState.searchVolume.average =
       newState.searchVolume.total / newState.searchVolume.items.length;
 
+  console.log('newState.searchVolume.total2', newState.searchVolume.total);
+  console.log('newState.searchVolume.items.length2', newState.searchVolume.items.length);
+  console.log('newState.searchVolume.average2', newState.searchVolume.average);
+
   // ???????????????
   newState.searchVolume.period = setArray(newState.searchVolume.items.length);
-
-  // Conta do Total do Mês Corrente
-  newState.searchVolume.total = newState.searchVolume.totalAnoAtual;
-  newState.searchVolume.currentMonth = 'período';
 
   // Conta da Média do Mês Anterior
   newState.searchVolume.averageLastMonth = 

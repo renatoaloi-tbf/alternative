@@ -244,13 +244,13 @@ const enhance = compose(
                 }
                 else {
                     console.log('passei aqui 4, viu?');
-                    values = [];
+                    /* values = [];
                     for (let index = 0; index < 15; index++) {
                         arrayMedia.push(media);
                         values.push({ y: 0 });
                         trataCores.push(processColor('#0096FF'));
                         arrayMedia.push(media);
-                    }
+                    } */
                 }
             }
             if (anoAnterior) {
@@ -434,8 +434,9 @@ const enhance = compose(
             };
         })(),
         yAxis: (() => {
-            //console.log('MEDIAAAAAAAAAAAS', media);
+            console.log('MEDIAAAAAAAAAAAS', values);
             if (media) {
+                console.log('decimalPlaces', decimalPlaces);
                 return {
                     left: {
                         valueFormatter: [ 'F|' + (decimalPlaces ? decimalPlaces : 0), '||' ],
@@ -471,6 +472,7 @@ const enhance = compose(
             else {
                 return {
                     left: {
+                        valueFormatter: [ 'F|' + (decimalPlaces ? decimalPlaces : 0), '||' ],
                         drawLabels: true,
                         drawAxisLine: false,
                         drawGridLines: true,
@@ -495,7 +497,6 @@ const enhance = compose(
             
         })(),
         zoom: (() => {
-            console.log('values.length', values.length);
             return {
                 scaleX: 0.1145833 * values.length,
                 scaleY: 1,
@@ -512,7 +513,6 @@ const enhance = compose(
 );
 
 const BarChartLinePure = enhance(({ data, xAxis, yAxis, onSelect, zoom, media, decimalPlaces }) => {
-    //console.log('decimalPlaces', decimalPlaces);
     return (
         <Wrapper>
             <BarStyle
