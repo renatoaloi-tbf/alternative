@@ -343,7 +343,9 @@ const enhance = compose(
 			setComparacao,
 			setPrimeiraExecucao,
 			backend,
-			setSearchToMonth
+			setSearchToMonth,
+			setTpes,
+			setGranularidade
 		}) => () => {
 			setRange({});
 			setFilter(true);
@@ -380,8 +382,17 @@ const enhance = compose(
 				types[5].valor = 0;
 			}
 			console.log('passei no close do FilterCore 8');
+			forEach(types, item => {
+				if (item.value ==='fat') {
+					item.selected = true;
+				} else {
+					item.selected = false;
+				}
+			});
+			setTpes(types);
 			const type = find(types, item => item.selected);
 			setType(type);
+			setGranularidade(1.5);
 			var groupbyUser = {};
 			const keys = Object.keys(quality.groupByYear);
 			forEach(keys, item => {
@@ -521,7 +532,8 @@ const enhance = compose(
 			}
 			if (size(e) === 2) {
 				setPrimeiraExecucao(true);
-
+				console.log('quality.groupByYear', quality.groupByYear);
+				
 				var groupbyUser = {};
 				const keys = Object.keys(quality.groupByYear);
 				forEach(keys, item => {
@@ -537,6 +549,7 @@ const enhance = compose(
 				else {
 					setRange(e);
 					const type = find(types, item => item.selected);
+					console.log('groupbyUser', groupbyUser);
 					getSearchQuality(e, groupbyUser, type.value, backend.user);
 				}
 				setClose(false);
@@ -570,7 +583,6 @@ const enhance = compose(
 				const ex = Math.round(Math.abs(e.x));
 				const month = researched.searchQuality.byIndex[ex];
 				const type = find(types, item => item.selected);
-				console.log('TIPO AQUI', type);
 				let fat, prot, cbt, ccs, est, esd;
 				if (quality.groupByMonth[month]) {
 					var contaFat = 0, contaCcs = 0, contaCbt = 0, contaEsd = 0, contaEst = 0, contaLact = 0, contaProt = 0;
@@ -594,6 +606,7 @@ const enhance = compose(
 					}, 0);
 
 					var totalCbt = quality.groupByMonth[month].reduce(function (tot, elemento) {
+						!elemento.cbt ? elemento.cbt = 0 : elemento.cbt = elemento.cbt;
 						return ((elemento.code == backend.user) ? tot + elemento.cbt : tot);
 					}, 0);
 
@@ -611,7 +624,7 @@ const enhance = compose(
 
 					fat = totalFat / contaFat;
 					prot = totalProt / contaProt;
-
+					cbt = totalCbt / contaCbt;
 					ccs = totalCcs / contaCcs;
 					est = totalEst / contaEst;
 					esd = totalEsd / contaEsd;
@@ -631,17 +644,23 @@ const enhance = compose(
 								setClose(true);
 								setFilter(false);
 								setSearchToMonth(true);
-								setDecimalPlaces(2);
-								types[0].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(fat);
-								types[1].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(prot);
-								if (isNaN(totalCbt) || !totalCbt || totalCbt == 0) {
-									cbt = '0';
-									types[2].valor = cbt;
+								if (type.value == 'cbt') {
+									setDecimalPlaces(0);
 								}
 								else {
-									cbt = totalCbt / contaCbt;
+									setDecimalPlaces(2);
+								}
+								
+								types[0].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(fat);
+								types[1].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(prot);
+								if (totalCbt) {
+									
 									types[2].valor = Math.round(cbt);
 								}
+								else {
+									types[2].valor = 0;
+								}
+								
 								types[3].valor = Math.round(ccs);
 								types[4].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(est);
 								types[5].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(esd);
@@ -786,6 +805,7 @@ export const Quality = enhance(
 		valoresIN62,
 		granularidade
 	}) => {
+		console.log('MEDIA PERIODO', types);
 		if (primeiraExecucao) {
 			if (researched.searchQuality.mediaPeriodo['fat']) {
 				types[0].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(researched.searchQuality.mediaPeriodo['fat']);

@@ -72,12 +72,15 @@ const getData = (state, { payload }) => {
   mediaPeriodo['est'] = 0;
   mediaPeriodo['lact'] = 0;
   mediaPeriodo['prot'] = 0;
+  console.log('RESEARCHED newState.searchQuality', newState.searchQuality);
   var contaFat = 0, contaCcs = 0, contaCbt = 0, contaEsd = 0, contaEst = 0, contaLact = 0, contaProt = 0;
   forEach(newState.searchQuality.period, (item, index) => {
+
     newState.searchQuality.byIndex[index] = item;
     if (qualities[item]) {
       if (qualities[item].code == user)
       {
+        console.log('ESSE É O MEDIA PERIODO CBT', qualities[item].cbt);
         mediaPeriodo['fat'] = mediaPeriodo['fat'] + (qualities[item].fat ? qualities[item].fat : 0);
         mediaPeriodo['ccs'] = mediaPeriodo['ccs'] + (qualities[item].ccs ? qualities[item].ccs : 0);
         mediaPeriodo['cbt'] = mediaPeriodo['cbt'] + (qualities[item].cbt ? qualities[item].cbt : 0);
@@ -100,6 +103,8 @@ const getData = (state, { payload }) => {
       list.push(qualityConstant);
     }
   });
+  console.log('ESSA É A MEDIA DO PERIODO', mediaPeriodo['cbt']);
+  console.log('ESSE É O CONTA CBT', contaCbt);
   
   mediaPeriodo['fat'] = ((contaFat == 0) ? 0 : mediaPeriodo['fat'] / contaFat);
   mediaPeriodo['ccs'] = ((contaCcs == 0) ? 0 : Math.round(mediaPeriodo['ccs'] / contaCcs));
@@ -110,6 +115,7 @@ const getData = (state, { payload }) => {
   mediaPeriodo['prot'] = ((contaProt == 0) ? 0 : mediaPeriodo['prot'] / contaProt);
 
   newState.searchQuality.mediaPeriodo = mediaPeriodo;
+  console.log('ESSA É A MEDIA DO PERIODO', newState.searchQuality.mediaPeriodo);
   var contador = 0;
   forEach(list, (item) => {
     if (item[type]) contador++;
@@ -212,6 +218,7 @@ const getDetailsDayQuality = (state, { payload }) => {
     newState.searchQuality.period = map(qualities, item => item.period);
     forEach(qualities, item => {
       if (item.code == user) {
+        console.log('TESTE ENTRA AQUI', item);
         if (type == 'cbt') newState.searchQuality.items.push({ y: item[type] ? parseInt(Math.round(item[type])) : 0 });
         else newState.searchQuality.items.push({ y: item[type] ? item[type] : 0 });
       }
