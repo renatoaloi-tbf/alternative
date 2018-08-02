@@ -191,6 +191,32 @@ const enhance = compose(
 					}
 				}
 
+				var contaFatAtual = 0, contaCcsAtual = 0, contaCbtAtual = 0, contaEsdAtual = 0, contaEstAtual = 0, contaLactAtual = 0, contaProtAtual = 0;
+				var totLenAtual = valoresAnoAtual.reduce(function (tot, elemento) {
+					//console.log('mau elemento', elemento);
+					if ((elemento.code == backend.user) && elemento.fat) contaFatAtual++;
+					if ((elemento.code == backend.user) && elemento.ccs) contaCcsAtual++;
+					if ((elemento.code == backend.user) && elemento.cbt) contaCbtAtual++;
+					if ((elemento.code == backend.user) && elemento.esd) contaEsdAtual++;
+					if ((elemento.code == backend.user) && elemento.est) contaEstAtual++;
+					if ((elemento.code == backend.user) && elemento.lact) contaLactAtual++;
+					if ((elemento.code == backend.user) && elemento.prot) contaProtAtual++;
+					return ((elemento.code == backend.user) ? tot + 1 : tot);
+				}, 0);
+
+				var contaFatAnterior = 0, contaCcsAnterior = 0, contaCbtAnterior = 0, contaEsdAnterior = 0, contaEstAnterior = 0, contaLactAnterior = 0, contaProtAnterior = 0;
+				var totLenAnterior = valoresAnoAnterior.reduce(function (tot, elemento) {
+					//console.log('mau elemento anterior', elemento);
+					if ((elemento.code == backend.user) && elemento.fat) contaFatAnterior++;
+					if ((elemento.code == backend.user) && elemento.ccs) contaCcsAnterior++;
+					if ((elemento.code == backend.user) && elemento.cbt) contaCbtAnterior++;
+					if ((elemento.code == backend.user) && elemento.esd) contaEsdAnterior++;
+					if ((elemento.code == backend.user) && elemento.est) contaEstAnterior++;
+					if ((elemento.code == backend.user) && elemento.lact) contaLactAnterior++;
+					if ((elemento.code == backend.user) && elemento.prot) contaProtAnterior++;
+					return ((elemento.code == backend.user) ? tot + 1 : tot);
+				}, 0);
+
 				var totalFatAtual = valoresAnoAtual.reduce(function (tot, elemento) {
 					return elemento.code == backend.user ? tot + (elemento.fat ? elemento.fat : 0) : tot;
 				}, 0);
@@ -199,9 +225,18 @@ const enhance = compose(
 					return elemento.code == backend.user ? tot + (elemento.fat ? elemento.fat : 0) : tot;
 				}, 0);
 				let diferencaFat = 0, decimalFat = 0, percentualFat = 0;
+				
+				
+				if (contaFatAtual == 0) totalFatAtual = 0;
+				else totalFatAtual = (totalFatAtual / contaFatAtual);
+				if (contaFatAnterior == 0) totalFatAnterior = 0;
+				else totalFatAnterior = (totalFatAnterior / contaFatAnterior);
+				
 				diferencaFat = totalFatAtual - totalFatAnterior;
-				decimalFat = diferencaFat / totalFatAnterior;
+				if (totalFatAnterior == 0) decimalFat = 0;
+				else decimalFat = diferencaFat / totalFatAnterior;
 				percentualFat = decimalFat * 100;
+
 				types[0].percentual = percentualFat;
 				types[0].valor = totalFatAtual.toFixed(2) + " vs " + totalFatAnterior.toFixed(2);
 
@@ -214,8 +249,15 @@ const enhance = compose(
 				}, 0);
 
 				let diferencaProt = 0, decimalProt = 0, percentualProt = 0;
+
+				if (contaProtAtual == 0) totalProtAtual = 0;
+				else totalProtAtual = (totalProtAtual / contaProtAtual);
+				if (contaProtAnterior == 0) totalProtAnterior = 0;
+				else totalProtAnterior = (totalProtAnterior / contaProtAnterior);
+
 				diferencaProt = totalProtAtual - totalProtAnterior;
-				decimalProt = diferencaProt / totalProtAnterior;
+				if (totalProtAnterior == 0) decimalProt = 0;
+				else decimalProt = diferencaProt / totalProtAnterior;
 				percentualProt = decimalProt * 100;
 				types[1].percentual = percentualProt;
 				types[1].valor = totalProtAtual.toFixed(2) + " vs " + totalProtAnterior.toFixed(2);
@@ -229,6 +271,12 @@ const enhance = compose(
 				}, 0);
 
 				let diferencaCbt = 0, decimalCbt = 0, percentualCbt = 0;
+
+				if (contaCbtAtual == 0) totalCbtAtual = 0;
+				else totalCbtAtual = (totalCbtAtual / contaCbtAtual);
+				if (contaCbtAnterior == 0) totalCbtAnterior = 0;
+				else totalCbtAnterior = (totalCbtAnterior / contaCbtAnterior);
+
 				diferencaCbt = totalCbtAtual - totalCbtAnterior;
 				if (totalCbtAnterior == 0) decimalCbt = 0;
 				else decimalCbt = diferencaCbt / totalCbtAnterior;
@@ -245,8 +293,15 @@ const enhance = compose(
 				}, 0);
 
 				let diferencaCcs = 0, decimalCcs = 0, percentualCcs = 0;
+
+				if (contaCcsAtual == 0) totalCcsAtual = 0;
+				else totalCcsAtual = (totalCcsAtual / contaCcsAtual);
+				if (contaCcsAnterior == 0) totalCcsAnterior = 0;
+				else totalCcsAnterior = (totalCcsAnterior / contaCcsAnterior);
+
 				diferencaCcs = totalCcsAtual - totalCcsAnterior;
-				decimalCcs = diferencaCcs / totalCcsAnterior;
+				if (totalCcsAnterior == 0) decimalCcs = 0;
+				else decimalCcs = diferencaCcs / totalCcsAnterior;
 				percentualCcs = decimalCcs * 100;
 				types[3].percentual = percentualCcs;
 				types[3].valor = Math.round(totalCcsAtual) + " vs " + Math.round(totalCcsAnterior);
@@ -260,8 +315,15 @@ const enhance = compose(
 				}, 0);
 
 				let diferencaEst = 0, decimalEst = 0, percentualEst = 0;
+
+				if (contaEstAtual == 0) totalEstAtual = 0;
+				else totalEstAtual = (totalEstAtual / contaEstAtual);
+				if (contaEstAnterior == 0) totalEstAnterior = 0;
+				else totalEstAnterior = (totalEstAnterior / contaEstAnterior);
+
 				diferencaEst = totalEstAtual - totalEstAnterior;
-				decimalEst = diferencaEst / totalEstAnterior;
+				if (totalEstAnterior == 0) decimalEst = 0;
+				else decimalEst = diferencaEst / totalEstAnterior;
 				percentualEst = decimalEst * 100;
 				types[4].percentual = percentualEst;
 				types[4].valor = totalEstAtual.toFixed(2) + " vs " + totalEstAnterior.toFixed(2);
@@ -275,8 +337,15 @@ const enhance = compose(
 				}, 0);
 
 				let diferencaEsd = 0, decimalEsd = 0, percentualEsd = 0;
+
+				if (contaEsdAtual == 0) totalEsdAtual = 0;
+				else totalEsdAtual = (totalEsdAtual / contaEsdAtual);
+				if (contaEsdAnterior == 0) totalEsdAnterior = 0;
+				else totalEsdAnterior = (totalEsdAnterior / contaEsdAnterior);
+
 				diferencaEsd = totalEsdAtual - totalEsdAnterior;
-				decimalEsd = diferencaEsd / totalEsdAnterior;
+				if (totalEsdAnterior == 0) decimalEsd = 0;
+				else decimalEsd = diferencaEsd / totalEsdAnterior;
 				percentualEsd = decimalEsd * 100;
 				types[5].percentual = percentualEsd;
 				types[5].valor = totalEsdAtual.toFixed(2) + " vs " + totalEsdAnterior.toFixed(2);
@@ -356,7 +425,7 @@ const enhance = compose(
 			setSearchMonth('Mais recentes');
 			console.log('passei no close do FilterCore 6');
 			const range = {
-				startDate: moment().startOf('month').subtract(12, 'month'),
+				startDate: moment().startOf('month').subtract(11, 'month'),
 				endDate: moment().startOf('month')
 			};
 			setRange({ ...range });
@@ -644,7 +713,7 @@ const enhance = compose(
 								setClose(true);
 								setFilter(false);
 								setSearchToMonth(true);
-								if (type.value == 'cbt') {
+								if (type.value == 'cbt' || type.value == 'ccs') {
 									setDecimalPlaces(0);
 								}
 								else {
