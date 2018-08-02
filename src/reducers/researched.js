@@ -253,7 +253,7 @@ const getVolumeData = (state, { payload }) => {
   const end = moment(range.endDate, 'MM/YYYY').endOf('month');
   const ra = moment.range(start, end);
   const filterVolumes = filter(volumes, item => 
-    ra.contains(moment(item.start_date.substr(0, 10), 'YYYY-MM-DD')) && item.code == user
+    ra.contains(moment(item.start_date.substr(0, 10), 'YYYY-MM-DD')) && item.code == user && item.volume != 0
   );
   forEach(filterVolumes, (item, index) => {
     newState.searchVolume.byIndex[index] = item;
@@ -292,9 +292,10 @@ const getVolumeData = (state, { payload }) => {
 
 
 const getVolumeDataAnoAnterior = (state, { payload }) => {
-  console.log('aqui eu passei');
+  
   const newState = cloneDeep(INITIAL_STATE);
   const { range, volumes, rangeAnterior, volumesAnteriores, user } = payload;
+  console.log('aqui eu passei', volumes);
 
   /**
    * VOLUME DO ANO ATUAL
@@ -305,7 +306,7 @@ const getVolumeDataAnoAnterior = (state, { payload }) => {
 
   // Filtro Atual
   const filterVolumes = filter(volumes, item =>
-    ra.contains(moment(item.searchDate, 'YYYY-MM-DD')) && item.code == user
+    ra.contains(moment(item.searchDate, 'YYYY-MM-DD')) && item.code == user && item.volume != 0
   );
   forEach(filterVolumes, (item, index) => {
     newState.searchVolume.byIndex[index] = item;
@@ -364,7 +365,7 @@ const getVolumeDataAnoAnterior = (state, { payload }) => {
   const endAnterior = moment(rangeAnterior.endDate, 'MM/YYYY').endOf('month');
   const raAnterior = moment.range(startAnterior, endAnterior);
   const filterVolumesAnteriores = filter(volumesAnteriores, item =>
-    raAnterior.contains(moment(item.searchDate, 'YYYY-MM-DD')) && item.code == user
+    raAnterior.contains(moment(item.searchDate, 'YYYY-MM-DD')) && item.code == user && item.volume != 0
   );
 
   //console.log('FILTER VOLUMES ANO ANTERIOR', filterVolumesAnteriores);
