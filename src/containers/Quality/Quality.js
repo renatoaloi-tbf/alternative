@@ -606,8 +606,8 @@ const enhance = compose(
 					}, 0);
 
 					var totalCbt = quality.groupByMonth[month].reduce(function (tot, elemento) {
-						!elemento.cbt ? elemento.cbt = 0 : elemento.cbt = elemento.cbt;
-						return ((elemento.code == backend.user) ? tot + elemento.cbt : tot);
+						!elemento.cbt ? elemento.cbt = 0 : elemento.cbt = Math.round(elemento.cbt);
+						return ((elemento.code == backend.user) ? Math.round(tot) + Math.round(elemento.cbt) : Math.round(tot));
 					}, 0);
 
 					var totalCcs = quality.groupByMonth[month].reduce(function (tot, elemento) {
@@ -654,7 +654,7 @@ const enhance = compose(
 								types[0].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(fat);
 								types[1].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(prot);
 								if (totalCbt) {
-									
+									console.log('OI',cbt);
 									types[2].valor = Math.round(cbt);
 								}
 								else {
