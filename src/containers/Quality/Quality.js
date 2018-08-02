@@ -749,7 +749,7 @@ const enhance = compose(
 	lifecycle({
 		componentWillMount() {
 			const range = {
-				startDate: moment().startOf('month').subtract(12, 'month'),
+				startDate: moment().startOf('month').subtract(11, 'month'),
 				endDate: moment().startOf('month')
 			};
 			const type = find(this.props.types, item => item.selected);
