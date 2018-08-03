@@ -129,6 +129,9 @@ const enhance = compose(
 	withState('granularidade', 'setGranularidade', 1),
 	withState('primeiraExecucao', 'setPrimeiraExecucao', false),
 	withState('valoresIN62', 'setValoresIN62', []),
+	withState('relatorioQualidade', 'setRelatorioQualidade', []),
+	withState('valoresIN62Status', 'setValoresIN62Status', []),
+	withState('valoresIN62Padrao', 'setValoresIN62Padrao', []),
 	withHandlers({
 		handlerComparacao: ({
 			setAnoAnterior,
@@ -645,12 +648,15 @@ const enhance = compose(
 			setDecimalPlaces,
 			setPrimeiraExecucao,
 			setValoresIN62,
-			backend
+			backend, 
+			setValoresIN62Status,
+			setValoresIN62Padrao
 		}) => e => {
 			setPrimeiraExecucao(false);
 			if (!anoAnterior) {
 				const ex = Math.round(Math.abs(e.x));
 				const month = researched.searchQuality.byIndex[ex];
+				//console.log('researched.searchQuality.byIndex[ex]', researched.searchQuality.byIndex[ex]);
 				const type = find(types, item => item.selected);
 				let fat, prot, cbt, ccs, est, esd;
 				if (quality.groupByMonth[month]) {
@@ -699,42 +705,54 @@ const enhance = compose(
 					esd = totalEsd / contaEsd;
 
 					if (e && !isEmpty(e)) {
-						if (researched.searchQuality.average > e.y) {
-							setValoresIN62([fat, prot, esd, cbt, est, ccs]);
-							setIsIN62(true);
-						}
-						else {
-							setIsIN62(false);
 
-							if (quality.groupByMonth[month]) {
-								getDetailsDayQuality(quality.groupByMonth[month], type.value, backend.user);
-								const dateFormat = moment(month, 'MM/YYYY').format('MMMM/YYYY');
-								setSearchMonth(dateFormat);
-								setClose(true);
-								setFilter(false);
-								setSearchToMonth(true);
-								if (type.value == 'cbt' || type.value == 'ccs') {
-									setDecimalPlaces(0);
-								}
-								else {
-									setDecimalPlaces(2);
-								}
+						console.log('ESSE É O E', quality.milkQualityReport);
+						const standards = quality.milkQualityStandards;
+						setValoresIN62Padrao([standards.fat, standards.prot, standards.esd, standards.cbt, standards.est, standards.ccs]);
+						quality.milkQualityReport.forEach(function(report, index) {
+							if (researched.searchQuality.byIndex[ex] == report.period) {
 								
-								types[0].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(fat);
-								types[1].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(prot);
-								if (totalCbt) {
-									console.log('OI',cbt);
-									types[2].valor = Math.round(cbt);
-								}
-								else {
-									types[2].valor = 0;
-								}
-								
-								types[3].valor = Math.round(ccs);
-								types[4].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(est);
-								types[5].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(esd);
+								setValoresIN62([report.fat, report.prot, report.esd, report.cbt, report.est, report.ccs]);
+								setValoresIN62Status([report.fatstatus, report.protstatus, report.esdstatus, report.cbtstatus, report.eststatus, report.ccsstatus]);
+								setIsIN62(true);
 							}
-						}
+							else {
+								setIsIN62(false);
+	
+								if (quality.groupByMonth[month]) {
+									getDetailsDayQuality(quality.groupByMonth[month], type.value, backend.user);
+									const dateFormat = moment(month, 'MM/YYYY').format('MMMM/YYYY');
+									setSearchMonth(dateFormat);
+									setClose(true);
+									setFilter(false);
+									setSearchToMonth(true);
+									if (type.value == 'cbt' || type.value == 'ccs') {
+										setDecimalPlaces(0);
+									}
+									else {
+										setDecimalPlaces(2);
+									}
+									
+									types[0].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(fat);
+									types[1].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(prot);
+									if (totalCbt) {
+										console.log('OI',cbt);
+										types[2].valor = Math.round(cbt);
+									}
+									else {
+										types[2].valor = 0;
+									}
+									
+									types[3].valor = Math.round(ccs);
+									types[4].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(est);
+									types[5].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(esd);
+								}
+							}
+
+						});
+
+
+						
 					}
 				}
 			}
@@ -829,7 +847,7 @@ const enhance = compose(
 				if (this.props.quality.groupByYear[item].code == this.props.backend.user)
 					groupbyUser[item] = this.props.quality.groupByYear[item];
 			});
-
+			this.props.setRelatorioQualidade(this.props.quality.milkQualityReport);
 			this.props.setType(type);
 			this.props.setGranularidade(1.5);
 			this.props.getSearchQuality(
@@ -872,7 +890,10 @@ export const Quality = enhance(
 		decimalPlaces,
 		primeiraExecucao,
 		valoresIN62,
-		granularidade
+		granularidade,
+		relatorioQualidade,
+		valoresIN62Status,
+		valoresIN62Padrao
 	}) => {
 		console.log('MEDIA PERIODO', types);
 		if (primeiraExecucao) {
@@ -933,6 +954,7 @@ export const Quality = enhance(
 								dia={dadosDia}
 								decimalPlaces={decimalPlaces}
 								granularidade={granularidade}
+								qualityReport={relatorioQualidade}
 							/>
 						)}
 						{isLegenda && (
@@ -962,6 +984,8 @@ export const Quality = enhance(
 						buttonText="Estou Ciente"
 						visible={modalVisible}
 						valores={valoresIN62}
+						valoresStatus={valoresIN62Status}
+						valoresPadrao={valoresIN62Padrao}
 					/>
 				</ScrollWrapperStyle>
 			</Wrapper>

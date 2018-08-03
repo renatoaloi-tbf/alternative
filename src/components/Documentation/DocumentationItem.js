@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import styled, {css} from 'styled-components/native';
 import {compose, setPropTypes, withHandlers, pure, withProps, withState} from 'recompose';
-import {string, func} from 'prop-types';
+import {string, func, array} from 'prop-types';
 import {TouchableOpacity, Image} from 'react-native';
 
 import {Text, Icon, IconUri} from '~/components/shared';
@@ -21,7 +21,10 @@ const enhance = compose(
     month: string,
     value: string,
     onPress: func,
-    setVisible: func
+    setVisible: func,
+    valores: array,
+    valoresStatus: array,
+    valoresPadrao: array
   }),
   withState('isVisible', 'setVisible', false),
   withHandlers({
@@ -83,7 +86,9 @@ const DocumentationItemEnhance = enhance(
             title="IN62"
             buttonText="Estou Ciente"
             visible={props.isVisible}
-            valores={[0,0,0,0,0,0]}
+            valores={props.valores}
+            valoresStatus={props.valoresStatus}
+            valoresPadrao={props.valoresPadrao}
           />
 
       </TouchableOpacityDefault>

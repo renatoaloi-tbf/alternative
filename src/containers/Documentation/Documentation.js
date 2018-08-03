@@ -29,7 +29,7 @@ require('intl/locale-data/jsonp/pt');
 
 const enhance = compose(
   connect(
-    ({statements, researched}) => ({statements, researched}),
+    ({quality, statements, researched}) => ({statements, researched, quality}),
     {getStatements}
   ),
   withState('count', 'setCount', ({statements}) => {
@@ -48,17 +48,23 @@ const enhance = compose(
   }),
   withState('isFilter', 'setIsFilter', true),
   withState('isStatements', 'setStatements', true),
+  withState('isIn62Data', 'setIsIn62Data', false),
   withState('period', 'setPeriod', moment().format('MMMM [de] YYYY')),
   withState('searchPeriod', 'setSearchPeriod', moment().format('MM/YYYY')),
+  withState('valoresIN62', 'setValoresIN62', []),
+  withState('valoresIN62Status', 'setValoresIN62Status', []),
+  withState('valoresIN62Padrao', 'setValoresIN62Padrao', []),
   withHandlers({
     handlerClose: ({
       setIsFilter,
       setStatements,
       setPeriod,
-      setSearchPeriod
+      setSearchPeriod,
+      setIsIn62Data
     }) => () => {
       setIsFilter(true);
       setStatements(false);
+      setIsIn62Data(false);
       setPeriod(moment().format('MMMM [de] YYYY'));
       setSearchPeriod(moment().format('MM/YYYY'));
     },
@@ -68,7 +74,12 @@ const enhance = compose(
       statements,
       setPeriod,
       setSearchPeriod,
-      setCount
+      setCount,
+      setIsIn62Data,
+      quality,
+      setValoresIN62Status,
+      setValoresIN62,
+      setValoresIN62Padrao
     }) => e => {
       setIsFilter(false);
       setPeriod(moment(e.label, 'MMM/YYYY').format('MMMM [de] YYYY'));
@@ -91,6 +102,33 @@ const enhance = compose(
       } else {
         setStatements(false);
       }
+
+      const standards = quality.milkQualityStandards;
+      setValoresIN62Padrao([standards.fat, standards.prot, standards.esd, standards.cbt, standards.est, standards.ccs]);
+
+
+      let isIn62;
+      let arrayValoresIN62 = [0, 0, 0, 0, 0, 0];
+      let arrayValoresIN62Status = [0, 0, 0, 0, 0, 0];
+      quality.milkQualityReport.forEach(function (value, key) {
+        if (value.period == e.value) {
+          arrayValoresIN62 = [value.fat, value.prot, value.esd, value.cbt, value.est, value.ccs];
+          arrayValoresIN62Status = [value.fatstatus, value.protstatus, value.esdstatus, value.cbtstatus, value.eststatus, value.ccsstatus];
+          isIn62 = true; 
+          return;
+        }
+        else {
+          arrayValoresIN62 = [0, 0, 0, 0, 0, 0];
+          arrayValoresIN62Status = [0, 0, 0, 0, 0, 0];
+          isIn62 = false; 
+        }
+      });
+      setIsIn62Data(isIn62);
+      setValoresIN62Status(arrayValoresIN62Status);
+      setValoresIN62(arrayValoresIN62);
+
+
+
     }
   }),
   lifecycle({
@@ -98,9 +136,36 @@ const enhance = compose(
       this.props.setIsFilter(true);
       const now = moment().format('MM/YYYY');
       const isData = this.props.statements.byMonth[now];
-      console.log('now', now);
-      console.log('statements', this.props.statements);
-      console.log('isData', isData);
+
+
+      const standards = this.props.quality.milkQualityStandards;
+      this.props.setValoresIN62Padrao([standards.fat, standards.prot, standards.esd, standards.cbt, standards.est, standards.ccs]);
+
+
+      let isIn62;
+      let arrayValoresIN62 = [0, 0, 0, 0, 0, 0];
+      let arrayValoresIN62Status = [0, 0, 0, 0, 0, 0];
+
+
+      this.props.quality.milkQualityReport.forEach(function (value, key) {
+        if (value.period == now) {
+          arrayValoresIN62 = [value.fat, value.prot, value.esd, value.cbt, value.est, value.ccs];
+          arrayValoresIN62Status = [value.fatstatus, value.protstatus, value.esdstatus, value.cbtstatus, value.eststatus, value.ccsstatus];
+          isIn62 = true; 
+          return;
+        }
+        else {
+          arrayValoresIN62 = [0, 0, 0, 0, 0, 0];
+          arrayValoresIN62Status = [0, 0, 0, 0, 0, 0];
+          isIn62 = false; 
+        }
+      });
+      
+      
+      this.props.setValoresIN62(arrayValoresIN62);
+      this.props.setValoresIN62Status(arrayValoresIN62Status);
+      this.props.setIsIn62Data(isIn62);
+
       if (isData) {
         this.props.setStatements(true);
         this.props.setSearchPeriod(now);
@@ -119,10 +184,12 @@ export const Documentation = enhance(
     period,
     isStatements,
     searchPeriod,
-    count
+    count,
+    isIn62Data,
+    valoresIN62,
+    valoresIN62Status,
+    valoresIN62Padrao
   }) => {
-    console.log('searchPeriod', searchPeriod);
-    console.log('count', count);
     return (
       <Wrapper secondary>
         <TopBar
@@ -148,6 +215,9 @@ export const Documentation = enhance(
                 icon="statement"
                 description="Demonstrativo de pagamento"
                 value={count}
+                valores={valoresIN62}
+                valoresStatus={valoresIN62Status}
+                valoresPadrao={valoresIN62Padrao}
               />
             )}
             <DocumentationItem
@@ -155,6 +225,9 @@ export const Documentation = enhance(
               route="PriceMinimum"
               icon="currency-usd"
               description="Preço mínimo"
+              valores={valoresIN62}
+              valoresStatus={valoresIN62Status}
+              valoresPadrao={valoresIN62Padrao}
             />
             <DocumentationItem
               route="Blank"
@@ -162,6 +235,9 @@ export const Documentation = enhance(
               icon="onenote"
               description="Nota Fiscal"
               month={searchPeriod}
+              valores={valoresIN62}
+              valoresStatus={valoresIN62Status}
+              valoresPadrao={valoresIN62Padrao}
             />
             <DocumentationItem
               warning
@@ -169,13 +245,22 @@ export const Documentation = enhance(
               icon="note"
               description="Demonstrativo de imposto de renda"
               month={searchPeriod}
+              valores={valoresIN62}
+              valoresStatus={valoresIN62Status}
+              valoresPadrao={valoresIN62Padrao}
             />
-            <DocumentationItem
-              warningLigth
-              icon="alert"
-              route="In62"
-              description="Resultados fora do padrão - IN62"
-            />
+            {isIn62Data && (
+              <DocumentationItem
+                warningLigth
+                icon="alert"
+                route="In62"
+                description="Resultados fora do padrão - IN62"
+                valores={valoresIN62}
+                valoresStatus={valoresIN62Status}
+                valoresPadrao={valoresIN62Padrao}
+              />
+            )}
+            
           </WrapperItem>
         </ScrollWrapperStyle>
       </Wrapper>

@@ -4,13 +4,19 @@ import moment from 'moment';
 const INITIAL_STATE = {
   allIds: [],
   groupByMonth: {},
-  groupByYear: {}
+  groupByYear: {},
+  milkQualityStandards: {}, 
+  milkQualityReport: []
 };
 
 const getQuality = (state, {payload}) => {
   const newState = cloneDeep(state);
-  const {milkQuality} = payload.data[0];
+  const {milkQuality, milkQualityStandards, milkQualityReport} = payload.data[0];
+  newState.milkQualityStandards = milkQualityStandards;
+  newState.milkQualityReport = milkQualityReport;
   console.log('MILK QUALITY GERAL', milkQuality);
+  console.log('MILK QUALITY STANDARDS', milkQualityStandards);
+  console.log('MILK QUALITY REPORT', milkQualityReport);
   forEach(milkQuality, item => {
     if (newState.allIds.indexOf(item._id) === -1) {
       const ranger = moment(item.period, 'DD/MM/YY').format('MM/YYYY');
@@ -25,7 +31,6 @@ const getQuality = (state, {payload}) => {
       newState.allIds.push(item._id);
     }
   });
-  console.log('TEEEEEEEESTE', newState.groupByYear);
   const keys = Object.keys(newState.groupByMonth);
   var contaFatMedia = [], contaCcsMedia = [], contaCbtMedia = [], contaEsdMedia = [], contaEstMedia = [], contaLactMedia = [], contaProtMedia = [];
   
@@ -67,7 +72,6 @@ const getQuality = (state, {payload}) => {
         'ufc': 0,
         'code': item2.code
       }
-      
     });
     
     if (newState.groupByYear[item].cbt) newState.groupByYear[item].cbt = newState.groupByYear[item].cbt / contaCbtMedia[item];
@@ -77,50 +81,10 @@ const getQuality = (state, {payload}) => {
     if (newState.groupByYear[item].fat) newState.groupByYear[item].fat = newState.groupByYear[item].fat / contaFatMedia[item];
     if (newState.groupByYear[item].lact) newState.groupByYear[item].lact = newState.groupByYear[item].lact / contaLactMedia[item];
     if (newState.groupByYear[item].prot) newState.groupByYear[item].prot = newState.groupByYear[item].prot / contaProtMedia[item];
-    //console.log('newState.groupByYear[item].cbt', newState.groupByYear[item].cbt / contaCbtMedia[item]);
     
   });
   console.log('GroupByYear', newState.groupByYear);
-  /* console.log('countCbtMedia', contaCbtMedia);
-  console.log('contaCcsMedia', contaCcsMedia);
-  console.log('contaEsdMedia', contaEsdMedia);
-  console.log('contaEstMedia', contaEstMedia);
-  console.log('contaFatMedia', contaFatMedia);
-  console.log('contaLactMedia', contaLactMedia);
-  console.log('contaProtMedia', contaProtMedia); */
-
-  /* forEach(keys, item => {
-    newState.groupByYear[item] = reduce(
-      newState.groupByMonth[item],
-      (prev, next) => {
-
-        const 
-          ccs = ((prev.ccs ? prev.ccs : 0) + (next.ccs ? next.ccs : 0)) / 2.0,
-          esd = ((prev.esd ? prev.esd : 0) + (next.esd ? next.esd : 0)) / 2.0,
-          est = ((prev.est ? prev.est : 0) + (next.est ? next.est : 0)) / 2.0,
-          fat = ((prev.fat ? prev.fat : 0) + (next.fat ? next.fat : 0)) / 2.0,
-          lact = ((prev.lact ? prev.lact : 0) + (next.lact ? next.lact : 0)) / 2.0,
-          prot = ((prev.prot ? prev.prot : 0) + (next.prot ? next.prot : 0)) / 2.0,
-          ufc = ((prev.ufc ? prev.ufc : 0) + (next.ufc ? next.ufc : 0)) / 2.0,
-          cbt = ((prev.cbt ? prev.cbt : 0) + (next.cbt ? next.cbt : 0)) / 2.0,
-          
-          code = prev.code;          
-        return {
-          ccs,
-          esd,
-          est,
-          fat,
-          lact,
-          prot,
-          ufc,
-          cbt,
-          code
-        };
-      }
-    );
-  }); */
   
-  //console.log('contador', contador);
   console.log('getQuality', newState);
   return newState;
 };

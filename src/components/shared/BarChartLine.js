@@ -28,13 +28,15 @@ const enhance = compose(
         dia: string,
         update: bool,
         decimalPlaces: number,
-        granularidade: number
+        granularidade: number,
+        qualityReport: array
     }),
     withProps(({ values, valueFormatter, valueFormatterIndex, onSelect, media, 
         tipo, anoAnterior, valuesAnoAnterior, detalheDia, dia, 
-        formatterMeses, testeUnique, decimalPlaces, granularidade
+        formatterMeses, testeUnique, decimalPlaces, granularidade, qualityReport
     }) => ({
         data: (() => {
+            
             let arrayTeste = [{ y: 0, searchDate: '' }];
             console.log('passei aqui 1, viu?', values);
             if (anoAnterior) {
@@ -173,7 +175,9 @@ const enhance = compose(
                     }
                     else {
                         console.log('É AQUI QUE ENTRA');
+                        
                         if (valuesAnoAnterior.length > 0) {
+
                             valuesAnoAnterior.forEach(vaa => {                                
                                 if (vaa.y < media && moment(valueFormatter[0], 'MM/YYYY', true).isValid())
                                     trataCoresAnoAnterior.push(processColor('#ffbd00'));
@@ -202,15 +206,32 @@ const enhance = compose(
                     }
                 }
                 else {
-                    console.log('passei aqui 3, viu?', values);
-                    values.forEach(valor => {
-                        arrayMedia.push(media);
-                        if (valor.y < media && moment(valueFormatter[0], 'MM/YYYY', true).isValid())
-                            trataCores.push(processColor('#ffbd00'));
-                            //trataCores.push(processColor('#ff0000'));
-                        else
-                            trataCores.push(processColor('#0096FF'));
+                    console.log('QUALITY REPORT', qualityReport);
+                    qualityReport.forEach(function(report, indexReport) {
+                        values.forEach(function(valor, index) {
+                            arrayMedia.push(media);      
+                            /* console.log('valueFormatter[index]', valueFormatter[index]);
+                            console.log('report.period', report.period); */
+                            if (report.period == valueFormatter[index] && moment(valueFormatter[0], 'MM/YYYY', true).isValid()){
+                                
+                                //console.log('ENTRA AQUI 1 #AMARELO');
+                                console.log('%c ENTRA AQUI 1 #AMARELO! ' + valueFormatter[index], 'background: #ffbd00; color: #ffffff');
+                                trataCores[index] = processColor('#ffbd00');
+                                
+                            }
+                                
+                            else {
+                                console.log('%c ENTRA AQUI 2 #AZUL! ' + valueFormatter[index], 'background: #0096FF; color: #ffffff');
+                                trataCores[index] = processColor('#0096FF');
+                                //trataCores.push(processColor('#0096FF'));
+                            }
+                                
+                        });    
+
+                        
                     });
+
+                    console.log('%c ENTRA AQUI 2 TRATACORES! ' + trataCores, 'background: #0096FF; color: #ffffff');
                 }
             }
             else {
