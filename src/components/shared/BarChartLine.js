@@ -212,7 +212,9 @@ const enhance = compose(
                             arrayMedia.push(media);      
                             /* console.log('valueFormatter[index]', valueFormatter[index]);
                             console.log('report.period', report.period); */
-                            if (report.period == valueFormatter[index] && moment(valueFormatter[0], 'MM/YYYY', true).isValid()){
+                            if (report.period == valueFormatter[index] 
+                                && moment(valueFormatter[0], 'MM/YYYY', true).isValid()
+                                ){
                                 
                                 //console.log('ENTRA AQUI 1 #AMARELO');
                                 console.log('%c ENTRA AQUI 1 #AMARELO! ' + valueFormatter[index], 'background: #ffbd00; color: #ffffff');
@@ -220,7 +222,7 @@ const enhance = compose(
                                 
                             }
                                 
-                            else {
+                            else if (trataCores[index] != processColor('#ffbd00')) {
                                 console.log('%c ENTRA AQUI 2 #AZUL! ' + valueFormatter[index], 'background: #0096FF; color: #ffffff');
                                 trataCores[index] = processColor('#0096FF');
                                 //trataCores.push(processColor('#0096FF'));

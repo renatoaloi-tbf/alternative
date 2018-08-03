@@ -54,6 +54,7 @@ const enhance = compose(
   withState('valoresIN62', 'setValoresIN62', []),
   withState('valoresIN62Status', 'setValoresIN62Status', []),
   withState('valoresIN62Padrao', 'setValoresIN62Padrao', []),
+  withState('periodoIn62', 'setPeriodoIn62', moment().format('MM/YYYY')),
   withHandlers({
     handlerClose: ({
       setIsFilter,
@@ -79,7 +80,8 @@ const enhance = compose(
       quality,
       setValoresIN62Status,
       setValoresIN62,
-      setValoresIN62Padrao
+      setValoresIN62Padrao,
+      setPeriodoIn62
     }) => e => {
       setIsFilter(false);
       setPeriod(moment(e.label, 'MMM/YYYY').format('MMMM [de] YYYY'));
@@ -107,27 +109,32 @@ const enhance = compose(
       setValoresIN62Padrao([standards.fat, standards.prot, standards.esd, standards.cbt, standards.est, standards.ccs]);
 
 
-      let isIn62;
+      let isIn62 = false;
+      var valueExt = {};
       let arrayValoresIN62 = [0, 0, 0, 0, 0, 0];
       let arrayValoresIN62Status = [0, 0, 0, 0, 0, 0];
+      let periodoIn62 = moment().format('MM/YYYY');
+
       quality.milkQualityReport.forEach(function (value, key) {
-        if (value.period == e.value) {
-          arrayValoresIN62 = [value.fat, value.prot, value.esd, value.cbt, value.est, value.ccs];
-          arrayValoresIN62Status = [value.fatstatus, value.protstatus, value.esdstatus, value.cbtstatus, value.eststatus, value.ccsstatus];
-          isIn62 = true; 
-          return;
-        }
-        else {
-          arrayValoresIN62 = [0, 0, 0, 0, 0, 0];
-          arrayValoresIN62Status = [0, 0, 0, 0, 0, 0];
-          isIn62 = false; 
+        if (value.period == e.value)
+        {
+          periodoIn62 = value.period;
+          valueExt = value;
+          isIn62 = true;
         }
       });
+      if (valueExt.fat && isIn62) {
+        arrayValoresIN62 = [valueExt.fat, valueExt.prot, valueExt.esd, valueExt.cbt, valueExt.est, valueExt.ccs];
+        arrayValoresIN62Status = [valueExt.fatstatus, valueExt.protstatus, valueExt.esdstatus, valueExt.cbtstatus, valueExt.eststatus, valueExt.ccsstatus];
+      }
+      else {
+        arrayValoresIN62 = [0, 0, 0, 0, 0, 0];
+        arrayValoresIN62Status = [0, 0, 0, 0, 0, 0];
+      }
+      setPeriodoIn62(periodoIn62);
       setIsIn62Data(isIn62);
       setValoresIN62Status(arrayValoresIN62Status);
       setValoresIN62(arrayValoresIN62);
-
-
 
     }
   }),
@@ -142,26 +149,33 @@ const enhance = compose(
       this.props.setValoresIN62Padrao([standards.fat, standards.prot, standards.esd, standards.cbt, standards.est, standards.ccs]);
 
 
-      let isIn62;
+      let isIn62 = false;
+      var valueExt = {};
       let arrayValoresIN62 = [0, 0, 0, 0, 0, 0];
       let arrayValoresIN62Status = [0, 0, 0, 0, 0, 0];
-
+      let periodoIn62 = moment().format('MM/YYYY');
 
       this.props.quality.milkQualityReport.forEach(function (value, key) {
-        if (value.period == now) {
-          arrayValoresIN62 = [value.fat, value.prot, value.esd, value.cbt, value.est, value.ccs];
-          arrayValoresIN62Status = [value.fatstatus, value.protstatus, value.esdstatus, value.cbtstatus, value.eststatus, value.ccsstatus];
-          isIn62 = true; 
-          return;
-        }
-        else {
-          arrayValoresIN62 = [0, 0, 0, 0, 0, 0];
-          arrayValoresIN62Status = [0, 0, 0, 0, 0, 0];
-          isIn62 = false; 
+        if (value.period == now)
+        {
+          periodoIn62 = value.period;
+          isIn62 = true;
+          valueExt = value;
         }
       });
+
+      if (valueExt.fat && isIn62) {
+        arrayValoresIN62 = [valueExt.fat, valueExt.prot, valueExt.esd, valueExt.cbt, valueExt.est, valueExt.ccs];
+        arrayValoresIN62Status = [valueExt.fatstatus, valueExt.protstatus, valueExt.esdstatus, valueExt.cbtstatus, valueExt.eststatus, valueExt.ccsstatus];
+        isIn62 = true;
+      }
+      else {
+        arrayValoresIN62 = [0, 0, 0, 0, 0, 0];
+        arrayValoresIN62Status = [0, 0, 0, 0, 0, 0];
+        isIn62 = false; 
+      }
       
-      
+      this.props.setPeriodoIn62(periodoIn62);
       this.props.setValoresIN62(arrayValoresIN62);
       this.props.setValoresIN62Status(arrayValoresIN62Status);
       this.props.setIsIn62Data(isIn62);
@@ -188,7 +202,8 @@ export const Documentation = enhance(
     isIn62Data,
     valoresIN62,
     valoresIN62Status,
-    valoresIN62Padrao
+    valoresIN62Padrao,
+    periodoIn62
   }) => {
     return (
       <Wrapper secondary>
@@ -258,6 +273,7 @@ export const Documentation = enhance(
                 valores={valoresIN62}
                 valoresStatus={valoresIN62Status}
                 valoresPadrao={valoresIN62Padrao}
+                periodoIn62={periodoIn62}
               />
             )}
             

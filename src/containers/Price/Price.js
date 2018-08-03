@@ -65,7 +65,7 @@ const enhance = compose(
     };
   }),
   lifecycle({
-    async componentWillMount() {
+    componentWillMount() {
       const { startDate, endDate } = this.props.range;
 
       this.props.setSearchMonth(
@@ -102,8 +102,9 @@ const enhance = compose(
 
       console.log('ITEM', this.props.price.items);
       console.log('ITEM PERIOD', this.props.price.period);
-      await this.props.setAllPrices(this.props.price.items);
-      await this.props.getPrices(this.props.price.items, range, this.props.year);
+      this.props.setAllPrices(this.props.price.items);
+      this.props.getPrices(this.props.price.items, range, this.props.year);
+      console.log('ITEM COM FILTRO', this.props.researched);
     }
   }),
   withHandlers({
@@ -214,12 +215,6 @@ const enhance = compose(
       pricePeriod = pricePeriod ? pricePeriod : { y: 0, period: moment(range.startDate, 'MM/YYYY').format('MMMM/YYYY') };
       pricePeriodAfter = pricePeriodAfter ? pricePeriodAfter : { y: 0, period: moment(range.endDate, 'MM/YYYY').format('MMMM/YYYY') };
 
-      /* setPeriodPrice({
-        pricePeriod,
-        pricePeriodAfter
-      }); */
-
-
     },
     previsao: ({ navigator }) => e => {
       navigator.push({
@@ -264,16 +259,6 @@ const enhance = compose(
       setInverted(false);
       setRange({});
       setClose(false);
-      /* const range = {
-        startDate: moment().subtract(1, 'month'),
-        endDate: moment()
-      };
-      setSearchMonth(
-        `${moment(range.startDate, 'MM/YYYY').format('MMM/YYYY')} - ${moment(
-          range.endDate,
-          'MM/YYYY'
-        ).format('MMM/YYYY')}`
-      ); */
 
       setSearchMonth(
         `${moment().format('YYYY')}`
@@ -282,25 +267,6 @@ const enhance = compose(
         startDate: moment().startOf('month').subtract(11, 'month'),
         endDate: moment().startOf('month')
       };
-      /* let pricePeriod, pricePeriodAfter, valorLtLeiteMesAnterior;
-      console.log('SEARCH PRICE', researched);
-      valorLtLeiteMesAnterior = researched.searchPrice.items.filter(function (item) {
-        return item.period == moment().subtract(1, 'month').format('MM/YYYY');
-      });
-
-      console.log('PREÇO DO LEITE DO MES ANTERIOR', valorLtLeiteMesAnterior);
-
-      pricePeriod = { y: valorLtLeiteMesAnterior[0].price, period: moment().subtract(1, 'month').format('MMMM/YYYY') };
-      pricePeriodAfter = { y: 0, period: moment().format('MMMM/YYYY') };
-      setPeriodPrice(
-        {
-          pricePeriod,
-          pricePeriodAfter
-        }
-      )
- */
-
-      
 
       setRange({ ...range });
       setIsCollected(false);
@@ -360,10 +326,6 @@ const enhance = compose(
         pricePeriodAfter = pricePeriodAfter ? pricePeriodAfter : { y: 0, period: moment(e.endDate, 'MM/YYYY').format('MMMM/YYYY') };
         setChanged({ rangeAtual: e, rangeAnoAnterior: rangeAnterior });
 
-        /* setPeriodPrice({
-          pricePeriod,
-          pricePeriodAfter
-        }); */
       }
       else {
         console.log('Passa aqui ou não?')

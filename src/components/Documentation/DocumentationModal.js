@@ -9,7 +9,7 @@ import { TouchableHighlight, View, StyleSheet, Text as TextNative } from 'react-
 import { Icon } from '../../components/shared/Icon';
 
 import { Table, TableWrapper, Row, Rows, Col, Cols, Cell } from 'react-native-table-component';
-
+import moment from 'moment';
 import Intl from 'intl';
 
 require('intl/locale-data/jsonp/pt');
@@ -22,7 +22,8 @@ const enhance = compose(
     close: func,
     valores: array,
     valoresStatus: array,
-    valoresPadrao: array
+    valoresPadrao: array,
+    periodoIn62: string
   }),
   defaultProps({
     visible: false
@@ -37,7 +38,7 @@ const enhance = compose(
 );
 
 export const DocumentationModal = enhance(
-  ({ title, onPress, buttonText, open, close, visible, valores, valoresStatus, valoresPadrao }) => {
+  ({ title, onPress, buttonText, open, close, visible, valores, valoresStatus, valoresPadrao, periodoIn62 }) => {
     const tableData = {
       tableHead: ['Análise', 'Resultado', 'Padrão'],
       tableRows: [
@@ -59,7 +60,7 @@ export const DocumentationModal = enhance(
           </TopBar>
           <Body style={{ borderWidth: 0, borderColor: 'green', borderStyle: 'solid' }}>
             <Titulo size={18} weight={'bold'}>Resultados de análises fora das especificações da IN62</Titulo>
-            <SubTitulo size={14} color={'#777777'}>Mês de Referência Janeiro de 2018</SubTitulo>
+            <SubTitulo size={14} color={'#777777'}>Mês de Referência {moment(periodoIn62, 'MM/YYYY').format('MMMM [de] YYYY').charAt(0).toUpperCase() + moment(periodoIn62, 'MM/YYYY').format('MMMM [de] YYYY').slice(1)}</SubTitulo>
             <View>
               <Table borderStyle={{ borderWidth: 0 }}>
                 <Row data={tableData.tableHead} style={{ marginBottom: 5 }} textStyle={{ color: '#000000', fontWeight: 'bold' }} />

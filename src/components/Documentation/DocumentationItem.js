@@ -24,7 +24,8 @@ const enhance = compose(
     setVisible: func,
     valores: array,
     valoresStatus: array,
-    valoresPadrao: array
+    valoresPadrao: array,
+    periodoIn62: string
   }),
   withState('isVisible', 'setVisible', false),
   withHandlers({
@@ -89,6 +90,7 @@ const DocumentationItemEnhance = enhance(
             valores={props.valores}
             valoresStatus={props.valoresStatus}
             valoresPadrao={props.valoresPadrao}
+            periodoIn62={props.periodoIn62}
           />
 
       </TouchableOpacityDefault>

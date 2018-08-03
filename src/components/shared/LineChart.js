@@ -21,8 +21,6 @@ const enhancer = compose(
   }),
   withProps(({ values, valueFormatter, onSelect, comparacao, media, valuesComparacao }) => ({
     data: (() => {
-      
-      
       if (!comparacao) {
         valuesEmReais = values.map(function (x) { return { y: x.y, marker: 'R$ ' + new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 2 }).format(x.y) } });
         console.log('VALORES', valuesEmReais)
