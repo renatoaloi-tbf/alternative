@@ -177,7 +177,6 @@ const enhance = compose(
 				const endAnoAnterior = moment(changed.rangeAnoAnterior.endDate, 'MM/YYYY').endOf('month');
 				const raAnoAnterior = moment.range(startAnoAnterior, endAnoAnterior);
 
-
 				let valoresAnoAtual = [], valoresAnoAnterior = [];
 				for (const key in valoresMes.payload.qualities) {
 					if (raAnoAtual.contains(moment(key, 'MM/YYYY')) && valoresMes.payload.qualities[key].code == backend.user) {
@@ -193,7 +192,6 @@ const enhance = compose(
 
 				var contaFatAtual = 0, contaCcsAtual = 0, contaCbtAtual = 0, contaEsdAtual = 0, contaEstAtual = 0, contaLactAtual = 0, contaProtAtual = 0;
 				var totLenAtual = valoresAnoAtual.reduce(function (tot, elemento) {
-					//console.log('mau elemento', elemento);
 					if ((elemento.code == backend.user) && elemento.fat) contaFatAtual++;
 					if ((elemento.code == backend.user) && elemento.ccs) contaCcsAtual++;
 					if ((elemento.code == backend.user) && elemento.cbt) contaCbtAtual++;
@@ -206,7 +204,6 @@ const enhance = compose(
 
 				var contaFatAnterior = 0, contaCcsAnterior = 0, contaCbtAnterior = 0, contaEsdAnterior = 0, contaEstAnterior = 0, contaLactAnterior = 0, contaProtAnterior = 0;
 				var totLenAnterior = valoresAnoAnterior.reduce(function (tot, elemento) {
-					//console.log('mau elemento anterior', elemento);
 					if ((elemento.code == backend.user) && elemento.fat) contaFatAnterior++;
 					if ((elemento.code == backend.user) && elemento.ccs) contaCcsAnterior++;
 					if ((elemento.code == backend.user) && elemento.cbt) contaCbtAnterior++;
@@ -350,7 +347,6 @@ const enhance = compose(
 				types[5].percentual = percentualEsd;
 				types[5].valor = totalEsdAtual.toFixed(2) + " vs " + totalEsdAnterior.toFixed(2);
 
-
 				setComparacao(true);
 			}
 			else {
@@ -381,8 +377,6 @@ const enhance = compose(
 				types[3].valor = parseInt(researched.searchQuality.mediaPeriodo['ccs']);
 				types[4].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(researched.searchQuality.mediaPeriodo['est']);
 				types[5].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(researched.searchQuality.mediaPeriodo['esd']);
-
-
 			}
 		},
 		open: ({ setClose }) => () => {

@@ -452,32 +452,53 @@ const getPriceData = (state, { payload }) => {
   let range2map = years.map(m => m.format('MMYYYY'));
 
   filterPrices.forEach(price => {
-    price.y = price.price;
+      price.y = price.price;
   });
 
   newState.searchPrice.filter = filterPrices;
   console.log('FILTER PRICE', filterPrices);
-  newState.searchPrice.items = map(range2map, (item, index) => {
+  /* newState.searchPrice.items = map(range2map, (item, index) => {
     const findPrice = find(filterPrices, price => moment(price.period, 'MM/YYYY').format('MMYYYY') === item);
     if (findPrice) {
       //console.log('FIND PRICE:', { y: parseFloat(findPrice.price), ano: findPrice.year, anoMes: moment(findPrice.period, 'MM/YYYY').format('MMMM/YYYY')});
       return { y: parseFloat(findPrice.price), ano: findPrice.year, anoMes: moment(findPrice.period, 'MM/YYYY').format('MMMM/YYYY') };
     }
-    return { y: 0, ano: moment(item.toString(), 'MM/YYYY').format('YYYY'), anoMes: moment(item.toString(), 'MM/YYYY').format('MMMM/YYYY') };
+    //return { y: 0, ano: moment(item.toString(), 'MM/YYYY').format('YYYY'), anoMes: moment(item.toString(), 'MM/YYYY').format('MMMM/YYYY') };
+  }); */
+  forEach(range2map, (item, index) => {
+    const findPrice = find(filterPrices, price => moment(price.period, 'MM/YYYY').format('MMYYYY') === item);
+    if (findPrice) {
+      if (parseFloat(findPrice.price) != 0)
+        newState.searchPrice.items.push({ 
+          y: parseFloat(findPrice.price), 
+          ano: findPrice.year, 
+          anoMes: moment(findPrice.period, 'MM/YYYY').format('MMMM/YYYY') 
+        });
+    }
   });
 
   const periodo = filter(range2map, item =>
     range2.contains(moment(moment(item, 'MMYYYY').startOf('month').format('YYYY-MM-DD')))
   );
 
-  newState.searchPrice.period = map(periodo, (item, index) =>
+  /* newState.searchPrice.period = map(periodo, (item, index) =>
     moment()
       .month(moment(item, 'MMYYYY').format('MMMM'))
       .format('MMM')
-  );
+  ); */
+
+  forEach(periodo, (item, index) => {
+    const findMes = find(newState.searchPrice.items, price => moment(item, 'MMYYYY').format('MMYYYY') === moment(price.anoMes, 'MMMM/YYYY').format('MMYYYY'));
+    if (findMes)
+      newState.searchPrice.period.push(moment()
+                                  .month(moment(item, 'MMYYYY').format('MMMM'))
+                                  .format('MMM'));
+  });
 
 
   console.log('PRICE PERIOD', newState.searchPrice.period);
+  console.log('PRICE ITEMS1', newState.searchPrice.items);
+  
   forEach(newState.searchPrice.items, (item, index) => {
     newState.searchPrice.byIndex[index] = {
       ...item,
