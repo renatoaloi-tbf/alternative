@@ -118,9 +118,12 @@ const getData = (state, { payload }) => {
   console.log('ESSA É A MEDIA DO PERIODO', newState.searchQuality.mediaPeriodo);
   var contador = 0;
   forEach(list, (item) => {
-    if (item[type]) contador++;
-    if (type == 'cbt') newState.searchQuality.items.push({ y: item[type] ? parseInt(Math.round(item[type])) : 0 });
-    else newState.searchQuality.items.push({ y: item[type] ? item[type] : 0 });
+    if (item.code == user)
+    {
+      if (item[type]) contador++;
+      if (type == 'cbt') newState.searchQuality.items.push({ y: item[type] ? parseInt(Math.round(item[type])) : 0 });
+      else newState.searchQuality.items.push({ y: item[type] ? item[type] : 0 });
+    }
   });
   console.log('LISTA QUALIDADE', newState.searchQuality.items);
   
