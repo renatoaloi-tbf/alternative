@@ -461,6 +461,7 @@ const enhance = compose(
             console.log('MEDIAAAAAAAAAAAS', values);
             if (media) {
                 console.log('decimalPlaces', decimalPlaces);
+                var decPlaces = decimalPlaces ? decimalPlaces : 0;
                 return {
                     left: {
                         valueFormatter: [ 'F|' + (decimalPlaces ? decimalPlaces : 0), '||' ],
@@ -471,7 +472,8 @@ const enhance = compose(
                         granularity: granularidade ? granularidade : 1,
                         limitLines: [{
                             limit: media,
-                            label: parseFloat(media).toFixed(decimalPlaces ? decimalPlaces : 0),
+                            //label: parseFloat(media).toFixed(decimalPlaces ? decimalPlaces : 0),
+                            label: new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: decPlaces, maximumFractionDigits: decPlaces }).format(parseFloat(media)),
                             lineColor: processColor('#FF8600'),
                             lineWidth: 1,
                             valueTextColor: processColor('white'),
