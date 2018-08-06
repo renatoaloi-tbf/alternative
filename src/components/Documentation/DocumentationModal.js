@@ -45,9 +45,9 @@ export const DocumentationModal = enhance(
         ['Gordura', {value: valores[0], status: valoresStatus[0]}, valoresPadrao[0]],
         ['Proteína', {value: valores[1], status: valoresStatus[1]}, valoresPadrao[1]],
         ['ESD', {value: valores[2], status: valoresStatus[2]}, valoresPadrao[2]],
-        ['CBT', {value: valores[3], status: valoresStatus[3]}, valoresPadrao[3]],
+        ['CBT', {value: parseInt(Math.round(valores[3])), status: valoresStatus[3]}, valoresPadrao[3]],
         ['EST', {value: valores[4], status: valoresStatus[4]}, valoresPadrao[4]],
-        ['CCS', {value: valores[5], status: valoresStatus[5]}, valoresPadrao[5]]
+        ['CCS', {value: parseInt(Math.round(valores[5])), status: valoresStatus[5]}, valoresPadrao[5]]
       ]
     }
     const checkNormal = <Icon style={{ color: '#6d6d6d', marginRight: 20 }} size={15} opacity={0.00} name="check" />;
