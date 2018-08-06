@@ -265,6 +265,7 @@ const getVolumeData = (state, { payload }) => {
   const filterVolumes = filter(volumes, item => 
     ra.contains(moment(item.start_date.substr(0, 10), 'YYYY-MM-DD')) && item.code == user && item.volume != 0
   );
+  
   forEach(filterVolumes, (item, index) => {
     newState.searchVolume.byIndex[index] = item;
   });
@@ -280,6 +281,7 @@ const getVolumeData = (state, { payload }) => {
     (prev, next) => prev + next 
   );
 
+  
   newState.searchVolume.lastMonth = moment().subtract(1, 'month').format('MMMM/YYYY');
   newState.searchVolume.average =
     newState.searchVolume.total / newState.searchVolume.items.length;
@@ -290,13 +292,18 @@ const getVolumeData = (state, { payload }) => {
 
   const filterMesAnterior = volumes.filter(item => {
     return moment(item.searchDate, 'YYYY-MM-DD').format('MMMM/YYYY') == newState.searchVolume.lastMonth
-            && item.code == user;
+            && item.code == user && item.volume != 0;
   });
   const totalLastMonth = reduce(
     map(filterMesAnterior, item => item.volume),
     (prev, next) => prev + next
   );
+
+  console.log('ESSE É O TOTAL', totalLastMonth);
+  console.log('ESSE É O LENGTH', filterMesAnterior.length);
   newState.searchVolume.averageLastMonth = totalLastMonth / filterMesAnterior.length;
+  
+  console.log('newState.searchVolume',newState.searchVolume);
   return newState;
 };
 
@@ -355,7 +362,10 @@ const getVolumeDataAnoAnterior = (state, { payload }) => {
     newState.searchVolume.average =
       newState.searchVolume.total / newState.searchVolume.items.length;
 
-  console.log('newState.searchVolume.total2', newState.searchVolume.total);
+
+  
+  console.log('ESSE É O TOTAL 2', newState.searchVolume.total);
+  console.log('ESSE É O LENGTH 2', newState.searchVolume.items.length);
   console.log('newState.searchVolume.items.length2', newState.searchVolume.items.length);
   console.log('newState.searchVolume.average2', newState.searchVolume.average);
 
