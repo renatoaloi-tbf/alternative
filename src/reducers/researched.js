@@ -121,7 +121,7 @@ const getData = (state, { payload }) => {
     if (item.code == user)
     {
       if (item[type]) contador++;
-      if (type == 'cbt') newState.searchQuality.items.push({ y: item[type] ? parseInt(Math.round(item[type])) : 0 });
+      if (type == 'cbt') newState.searchQuality.items.push({ y: item[type] ? item[type] : 0 });
       else newState.searchQuality.items.push({ y: item[type] ? item[type] : 0 });
     }
   });
@@ -221,24 +221,19 @@ const getDetailsDayQuality = (state, { payload }) => {
     newState.searchQuality.period = map(qualities, item => item.period);
     forEach(qualities, item => {
       if (item.code == user) {
-        console.log('TESTE ENTRA AQUI', item);
         if (type == 'cbt') newState.searchQuality.items.push({ y: item[type] ? parseInt(Math.round(item[type])) : 0 });
         else newState.searchQuality.items.push({ y: item[type] ? item[type] : 0 });
+        if(item[type] > 0) contador++;
       }
-        
-      if(item[type]) contador++;
     });
-
     forEach(qualities, (item, index) => {
       if (item.code == user)
         newState.searchQuality.byIndex[index] = item;
     });
-
     newState.searchQuality.total = reduce(
       map(newState.searchQuality.items, item => item.y),
       (prev, next) => prev + next
     );
-
     if(type == 'cbt') newState.searchQuality.average = parseInt(Math.round(newState.searchQuality.total / contador));
     else newState.searchQuality.average = newState.searchQuality.total / contador;
 

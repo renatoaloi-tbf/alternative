@@ -534,9 +534,10 @@ const enhance = compose(
 					setTpes(types);
 					if (!isEmpty(range)) {
 						if (!searchToMonth) {
-							console.log('passei aqui viu 1');
+							console.log('passei aqui viu 1', backend.user);
 							var groupbyUser = {};
 							const keys = Object.keys(quality.groupByYear);
+							console.log('quality.groupByYear', quality.groupByYear);
 							forEach(keys, item => {
 								if (quality.groupByYear[item].code == backend.user)
 									groupbyUser[item] = quality.groupByYear[item];
@@ -652,7 +653,6 @@ const enhance = compose(
 			if (!anoAnterior) {
 				const ex = Math.round(Math.abs(e.x));
 				const month = researched.searchQuality.byIndex[ex];
-				//console.log('researched.searchQuality.byIndex[ex]', researched.searchQuality.byIndex[ex]);
 				const type = find(types, item => item.selected);
 				let fat, prot, cbt, ccs, est, esd;
 				if (quality.groupByMonth[month]) {
@@ -726,7 +726,7 @@ const enhance = compose(
 							achei = true;
 						}
 						else  {
-							console.log('OI EEE2');
+							
 							setIsIN62(false);
 
 							if (quality.groupByMonth[month]) {
@@ -855,6 +855,7 @@ const enhance = compose(
 				if (this.props.quality.groupByYear[item].code == this.props.backend.user)
 					groupbyUser[item] = this.props.quality.groupByYear[item];
 			});
+			this.props.setRange(range);
 			this.props.setRelatorioQualidade(this.props.quality.milkQualityReport);
 			this.props.setType(type);
 			this.props.setGranularidade(1.5);
