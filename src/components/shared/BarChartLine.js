@@ -31,22 +31,22 @@ const enhance = compose(
         granularidade: number,
         qualityReport: array
     }),
-    withProps(({ values, valueFormatter, valueFormatterIndex, onSelect, media, 
-        tipo, anoAnterior, valuesAnoAnterior, detalheDia, dia, 
+    withProps(({ values, valueFormatter, valueFormatterIndex, onSelect, media,
+        tipo, anoAnterior, valuesAnoAnterior, detalheDia, dia,
         formatterMeses, testeUnique, decimalPlaces, granularidade, qualityReport
     }) => ({
         data: (() => {
-            
+
             let arrayTeste = [{ y: 0, searchDate: '' }];
             console.log('passei aqui 1, viu?', values);
             if (anoAnterior) {
                 if (tipo == "volume") {
                     let arrayMesesAtual = [], arrayMesesAnoAnterior = [];
 
-                    values.forEach(function(item, i)  {
+                    values.forEach(function (item, i) {
                         if (item.searchDate != "")
-                            if ((arrayMesesAtual.indexOf(moment(item.searchDate).locale('pt-br').format('MMM').toUpperCase()) == -1)) 
-                                arrayMesesAtual[moment(item.searchDate).locale('pt-br').format('MMM').toUpperCase()] = { y : 0 };
+                            if ((arrayMesesAtual.indexOf(moment(item.searchDate).locale('pt-br').format('MMM').toUpperCase()) == -1))
+                                arrayMesesAtual[moment(item.searchDate).locale('pt-br').format('MMM').toUpperCase()] = { y: 0 };
                     });
                     for (var key in arrayMesesAtual) {
                         values.forEach(itemFI => {
@@ -55,13 +55,13 @@ const enhance = compose(
                                     arrayMesesAtual[key].y = arrayMesesAtual[key].y + itemFI.y;
                                 }
                             }
-                        });    
+                        });
                     }
-                    
-                    valuesAnoAnterior.forEach(function(item, i)  {
+
+                    valuesAnoAnterior.forEach(function (item, i) {
                         if (item.searchDate != "")
-                            if ((arrayMesesAnoAnterior.indexOf(moment(item.searchDate).locale('pt-br').format('MMM').toUpperCase()) == -1)) 
-                                arrayMesesAnoAnterior[moment(item.searchDate).locale('pt-br').format('MMM').toUpperCase()] = { y : 0 };
+                            if ((arrayMesesAnoAnterior.indexOf(moment(item.searchDate).locale('pt-br').format('MMM').toUpperCase()) == -1))
+                                arrayMesesAnoAnterior[moment(item.searchDate).locale('pt-br').format('MMM').toUpperCase()] = { y: 0 };
                     });
 
                     for (var key in arrayMesesAnoAnterior) {
@@ -71,25 +71,25 @@ const enhance = compose(
                                     arrayMesesAnoAnterior[key].y = arrayMesesAnoAnterior[key].y + itemFI.y;
                                 }
                             }
-                            
-                        });    
+
+                        });
                     }
                     values = [], valuesAnoAnterior = [];
-                    for(var key in arrayMesesAtual) {
+                    for (var key in arrayMesesAtual) {
                         if (key != 'unique')
                             values.push(arrayMesesAtual[key]);
                     }
-                    for(var keyAnterior in arrayMesesAnoAnterior) {
+                    for (var keyAnterior in arrayMesesAnoAnterior) {
                         if (keyAnterior != 'unique')
                             valuesAnoAnterior.push(arrayMesesAnoAnterior[keyAnterior]);
                     }
                     formatterMeses = Object.keys(arrayMesesAtual);
                     formatterMesesAnoAnterior = Object.keys(arrayMesesAnoAnterior);
-                    Array.prototype.unique = function() {
+                    Array.prototype.unique = function () {
                         var a = this.concat();
-                        for(var i=0; i<a.length; ++i) {
-                            for(var j=i+1; j<a.length; ++j) {
-                                if(a[i] === a[j])
+                        for (var i = 0; i < a.length; ++i) {
+                            for (var j = i + 1; j < a.length; ++j) {
+                                if (a[i] === a[j])
                                     a.splice(j--, 1);
                             }
                         }
@@ -98,31 +98,25 @@ const enhance = compose(
                     testeUnique = formatterMeses.concat(formatterMesesAnoAnterior).unique();
                 }
             }
-            else
-            {
-                if (tipo == "volume") 
-                {
+            else {
+                if (tipo == "volume") {
                     var arrayCount = [];
                     var countMes = 0;
-                    values.forEach((item, i) => { 
+                    values.forEach((item, i) => {
                         var mesValues = moment(item.searchDate).locale('pt-br').format('MMM').toUpperCase();
-                        if (arrayCount.indexOf(mesValues) == -1)
-                        {
+                        if (arrayCount.indexOf(mesValues) == -1) {
                             countMes++;
                             arrayCount.push(mesValues);
                         }
                     });
-                    if (countMes > 1)
-                    {
+                    if (countMes > 1) {
                         console.log('passei aqui 2, viu?');
                         let arrayMesesAtual = [];
 
-                        values.forEach(function(item, i)  {
-                            if (item.searchDate != "")
-                            {
-                                if ((arrayMesesAtual.indexOf(moment(item.searchDate).locale('pt-br').format('MMM').toUpperCase()) == -1)) 
-                                {
-                                    arrayMesesAtual[moment(item.searchDate).locale('pt-br').format('MMM').toUpperCase()] = { y : 0 };
+                        values.forEach(function (item, i) {
+                            if (item.searchDate != "") {
+                                if ((arrayMesesAtual.indexOf(moment(item.searchDate).locale('pt-br').format('MMM').toUpperCase()) == -1)) {
+                                    arrayMesesAtual[moment(item.searchDate).locale('pt-br').format('MMM').toUpperCase()] = { y: 0 };
                                 }
                             }
                         });
@@ -133,10 +127,10 @@ const enhance = compose(
                                         arrayMesesAtual[key].y = arrayMesesAtual[key].y + itemFI.y;
                                     }
                                 }
-                            });    
+                            });
                         }
                         values = [];
-                        for(var key in arrayMesesAtual) {
+                        for (var key in arrayMesesAtual) {
                             if (key != 'unique')
                                 values.push(arrayMesesAtual[key]);
                         }
@@ -175,16 +169,16 @@ const enhance = compose(
                     }
                     else {
                         console.log('É AQUI QUE ENTRA');
-                        
+
                         if (valuesAnoAnterior.length > 0) {
 
-                            valuesAnoAnterior.forEach(vaa => {                                
+                            valuesAnoAnterior.forEach(vaa => {
                                 if (vaa.y < media && moment(valueFormatter[0], 'MM/YYYY', true).isValid())
                                     trataCoresAnoAnterior.push(processColor('#ffbd00'));
                                 else
                                     trataCoresAnoAnterior.push(processColor('#00cdff'));
                             });
-    
+
                             values.forEach(valor => {
                                 arrayMedia.push(media);
                                 if (valor.y < media && moment(valueFormatter[0], 'MM/YYYY', true).isValid())
@@ -206,32 +200,41 @@ const enhance = compose(
                     }
                 }
                 else {
-                    console.log('QUALITY REPORT', qualityReport);
-                    qualityReport.forEach(function(report, indexReport) {
-                        values.forEach(function(valor, index) {
-                            arrayMedia.push(media);      
-                            /* console.log('valueFormatter[index]', valueFormatter[index]);
-                            console.log('report.period', report.period); */
-                            if (report.period == valueFormatter[index] 
-                                && moment(valueFormatter[0], 'MM/YYYY', true).isValid()
-                                ){
-                                
-                                //console.log('ENTRA AQUI 1 #AMARELO');
-                                console.log('%c ENTRA AQUI 1 #AMARELO! ' + valueFormatter[index], 'background: #ffbd00; color: #ffffff');
-                                trataCores[index] = processColor('#ffbd00');
-                                
-                            }
-                                
-                            else if (trataCores[index] != processColor('#ffbd00')) {
-                                console.log('%c ENTRA AQUI 2 #AZUL! ' + valueFormatter[index], 'background: #0096FF; color: #ffffff');
-                                trataCores[index] = processColor('#0096FF');
-                                //trataCores.push(processColor('#0096FF'));
-                            }
-                                
-                        });    
+                    if (qualityReport) {
+                        console.log('QUALITY REPORT', qualityReport);
+                        qualityReport.forEach(function (report, indexReport) {
+                            values.forEach(function (valor, index) {
+                                arrayMedia.push(media);
+                                /* console.log('valueFormatter[index]', valueFormatter[index]);
+                                console.log('report.period', report.period); */
+                                if (report.period == valueFormatter[index]
+                                    && moment(valueFormatter[0], 'MM/YYYY', true).isValid()
+                                ) {
 
-                        
-                    });
+                                    //console.log('ENTRA AQUI 1 #AMARELO');
+                                    console.log('%c ENTRA AQUI 1 #AMARELO! ' + valueFormatter[index], 'background: #ffbd00; color: #ffffff');
+                                    trataCores[index] = processColor('#ffbd00');
+
+                                }
+
+                                else if (trataCores[index] != processColor('#ffbd00')) {
+                                    console.log('%c ENTRA AQUI 2 #AZUL! ' + valueFormatter[index], 'background: #0096FF; color: #ffffff');
+                                    trataCores[index] = processColor('#0096FF');
+                                    //trataCores.push(processColor('#0096FF'));
+                                }
+
+                            });
+
+
+                        });
+                    }
+                    else {
+                        values.forEach(valor => {
+                            arrayMedia.push(media);
+                            trataCores.push(processColor('#0096FF'));
+                        });
+                    }
+
 
                     console.log('%c ENTRA AQUI 2 TRATACORES! ' + trataCores, 'background: #0096FF; color: #ffffff');
                 }
@@ -420,23 +423,20 @@ const enhance = compose(
                     var arrayCount = [];
                     var countMes = 0;
                     console.log('passei aqui 6, viu?');
-                    Object.values(valueFormatterIndex).forEach((item, i) => { 
+                    Object.values(valueFormatterIndex).forEach((item, i) => {
                         var mesValues = moment(item.searchDate).locale('pt-br').format('MMM').toUpperCase();
-                        if (arrayCount.indexOf(mesValues) == -1)
-                        {
+                        if (arrayCount.indexOf(mesValues) == -1) {
                             countMes++;
                             arrayCount.push(mesValues);
                         }
                     });
                     Object.values(valueFormatterIndex).forEach(element => {
-                        if (countMes > 1)
-                        {
+                        if (countMes > 1) {
                             if (novoFormato.indexOf(moment(element.searchDate, 'YYYY-MM-DD').locale('pt-br').format('MMM').toUpperCase()) == -1) {
                                 novoFormato.push(moment(element.searchDate, 'YYYY-MM-DD').locale('pt-br').format('MMM').toUpperCase());
                             }
                         }
-                        else 
-                        {
+                        else {
                             console.log('element.searchDate', element.searchDate);
                             novoFormato.push(moment(element.searchDate, 'YYYY-MM-DD').format('DD'));
                         }
@@ -464,7 +464,7 @@ const enhance = compose(
                 var decPlaces = decimalPlaces ? decimalPlaces : 0;
                 return {
                     left: {
-                        valueFormatter: [ 'F|' + (decimalPlaces ? decimalPlaces : 0), '||' ],
+                        valueFormatter: ['F|' + (decimalPlaces ? decimalPlaces : 0), '||'],
                         drawLabels: true,
                         drawAxisLine: false,
                         drawGridLines: true,
@@ -472,8 +472,8 @@ const enhance = compose(
                         granularity: granularidade ? granularidade : 1,
                         limitLines: [{
                             limit: media,
-                            //label: parseFloat(media).toFixed(decimalPlaces ? decimalPlaces : 0),
-                            label: new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: decPlaces, maximumFractionDigits: decPlaces }).format(parseFloat(media)),
+                            label: parseFloat(media).toFixed(decimalPlaces ? decimalPlaces : 0).replace('.', ','),
+                            //label: new Intl.NumberFormat('pt-BR', { style: 'decimal',  minimumFractionDigits: decPlaces, maximumFractionDigits: decPlaces }).format(parseFloat(media)),
                             lineColor: processColor('#FF8600'),
                             lineWidth: 1,
                             valueTextColor: processColor('white'),
@@ -499,7 +499,7 @@ const enhance = compose(
             else {
                 return {
                     left: {
-                        valueFormatter: [ 'F|' + (decimalPlaces ? decimalPlaces : 0), '||' ],
+                        valueFormatter: ['F|' + (decimalPlaces ? decimalPlaces : 0), '||'],
                         drawLabels: true,
                         drawAxisLine: false,
                         drawGridLines: true,
@@ -521,7 +521,7 @@ const enhance = compose(
                     axisMinimum: 0
                 };
             }
-            
+
         })(),
         zoom: (() => {
             return {
@@ -552,7 +552,7 @@ const BarChartLinePure = enhance(({ data, xAxis, yAxis, onSelect, zoom, media, d
                     xEntrySpace: 10,
                     yEntrySpace: 5,
                     wordWrapEnabled: true, position: 2
-                  }}
+                }}
                 drawBarShadow={false}
                 pinchZoom={false}
                 legend={{ enabled: false }}
