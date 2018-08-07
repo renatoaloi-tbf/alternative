@@ -50,6 +50,7 @@ export const DocumentationModal = enhance(
         ['CCS', {value: parseInt(Math.round(valores[5])), status: valoresStatus[5]}, valoresPadrao[5]]
       ]
     }
+    console.log('TEEEEEEEEEEESTE', valoresPadrao);
     const checkNormal = <Icon style={{ color: '#6d6d6d', marginRight: 20 }} size={15} opacity={0.00} name="check" />;
     const xisAlert = <Icon style={{ color: '#ffbd00', marginRight: 20 }} size={15} opacity={0.00} name="window-close" />;
     return (

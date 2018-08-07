@@ -133,6 +133,7 @@ const enhance = compose(
 	withState('valoresIN62Status', 'setValoresIN62Status', []),
 	withState('valoresIN62Padrao', 'setValoresIN62Padrao', []),
 	withState('periodoIn62', 'setPeriodoIn62', moment().format('MM/YYYY')),
+	withState('qualityStandards', 'setQualityStandards', null),
 	withHandlers({
 		handlerComparacao: ({
 			setAnoAnterior,
@@ -702,33 +703,93 @@ const enhance = compose(
 
 					if (e && !isEmpty(e)) {
 
-						console.log('ESSE É O E', quality.milkQualityReport);
+						console.log('ESSE É O E', e);
 						const standards = quality.milkQualityStandards;
 						setValoresIN62Padrao([standards.fat, standards.prot, standards.esd, standards.cbt, standards.est, standards.ccs]);
 						var achei = false;
 						var periodoIn62 = moment().format('MM/YYYY');
 						var reportExterno  = {};
-						quality.milkQualityReport.forEach(function(report, index) {
+						/* quality.milkQualityReport.forEach(function(report, index) {
 							if (researched.searchQuality.byIndex[ex] == report.period) 
 							{
 								periodoIn62 = report.period;
 								achei = true;
 								reportExterno = report;
 							}
-						});
+						}); */
+						
+						var sfat, sprot, sesd, scbt, sest, sccs;
+						sfat = standards.fat.split(" ");
+						sprot = standards.prot.split(" ");
+						sesd = standards.esd.split(" ");
+						scbt = standards.cbt.split(" ");
+						sest = standards.est.split(" ");
+						sccs = standards.ccs.split(" ");
+						let standardsFormatados = {
+							'fat': sfat[1],
+							'prot': sprot[1],
+							'esd': sesd[1],
+							'cbt': scbt[1],
+							'est': sest[1],
+							'ccs': sccs[1],
+						}
 
-						if (reportExterno.fat && achei) {
-							console.log('OI EEE', researched.searchQuality.byIndex[ex]);
+						switch (type.value) {
+							case 'fat':
+								if (e.y < parseFloat(standardsFormatados.fat)) {
+									console.log('OOOOOI É MENOR', e);
+									achei = true;
+									
+								}
+									
+								break;
+							case 'prot':
+								if (e.y < parseFloat(standardsFormatados.prot)){
+									
+									achei = true;
+									
+								}
+								break;
+							case 'esd':
+								if (e.y < parseFloat(standardsFormatados.esd)){
+									
+									achei = true;
+									
+								}
+								break;
+							case 'cbt':
+								if (e.y > parseFloat(standardsFormatados.cbt)){
+									
+									achei = true;
+								}
+
+								break;
+							case 'est':
+								if (e.y < parseFloat(standardsFormatados.est)){
+									
+									achei = true;
+									
+								}
+								
+								break;
+							case 'ccs':
+								if (e.y > parseFloat(standardsFormatados.ccs)){
+									
+									achei = true;
+									
+								}
+								
+								break;
+							default:
+								break;
+						}
+
+						if (achei) {
 							setValoresIN62([reportExterno.fat, reportExterno.prot, reportExterno.esd, reportExterno.cbt, reportExterno.est, reportExterno.ccs]);
 							setValoresIN62Status([reportExterno.fatstatus, reportExterno.protstatus, reportExterno.esdstatus, reportExterno.cbtstatus, reportExterno.eststatus, reportExterno.ccsstatus]);
 							setIsIN62(true);
 							setPeriodoIn62(periodoIn62);
 							achei = true;
-						}
-						else  {
-							
-							setIsIN62(false);
-
 							if (quality.groupByMonth[month]) {
 								getDetailsDayQuality(quality.groupByMonth[month], type.value, backend.user);
 								const dateFormat = moment(month, 'MM/YYYY').format('MMMM/YYYY');
@@ -736,23 +797,34 @@ const enhance = compose(
 								setClose(true);
 								setFilter(false);
 								setSearchToMonth(true);
-								if (type.value == 'cbt' || type.value == 'ccs') {
-									setDecimalPlaces(0);
-								}
-								else {
-									setDecimalPlaces(2);
-								}
+								if (type.value == 'cbt' || type.value == 'ccs') setDecimalPlaces(0);
+								else setDecimalPlaces(2);
 								
 								types[0].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(fat);
 								types[1].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(prot);
-								if (totalCbt) {
-									console.log('OI',cbt);
-									types[2].valor = Math.round(cbt);
-								}
-								else {
-									types[2].valor = 0;
-								}
+								if (totalCbt) types[2].valor = Math.round(cbt);
+								else types[2].valor = 0;
+								types[3].valor = Math.round(ccs);
+								types[4].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(est);
+								types[5].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(esd);
+							}
+						}
+						else  {
+							setIsIN62(false);
+							if (quality.groupByMonth[month]) {
+								getDetailsDayQuality(quality.groupByMonth[month], type.value, backend.user);
+								const dateFormat = moment(month, 'MM/YYYY').format('MMMM/YYYY');
+								setSearchMonth(dateFormat);
+								setClose(true);
+								setFilter(false);
+								setSearchToMonth(true);
+								if (type.value == 'cbt' || type.value == 'ccs') setDecimalPlaces(0);
+								else setDecimalPlaces(2);
 								
+								types[0].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(fat);
+								types[1].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(prot);
+								if (totalCbt) types[2].valor = Math.round(cbt);
+								else types[2].valor = 0;
 								types[3].valor = Math.round(ccs);
 								types[4].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(est);
 								types[5].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(esd);
@@ -855,6 +927,26 @@ const enhance = compose(
 				if (this.props.quality.groupByYear[item].code == this.props.backend.user)
 					groupbyUser[item] = this.props.quality.groupByYear[item];
 			});
+			console.log('this.props.quality.milkQualityStandards', this.props.quality.milkQualityStandards);
+			const standards = this.props.quality.milkQualityStandards;
+			var sfat, sprot, sesd, scbt, sest, sccs;
+			sfat = standards.fat.split(" ");
+			sprot = standards.prot.split(" ");
+			sesd = standards.esd.split(" ");
+			scbt = standards.cbt.split(" ");
+			sest = standards.est.split(" ");
+			sccs = standards.ccs.split(" ");
+			let standardsFormatados = {
+				'fat': sfat[1],
+				'prot': sprot[1],
+				'esd': sesd[1],
+				'cbt': scbt[1],
+				'est': sest[1],
+				'ccs': sccs[1],
+			}
+			console.log('standardsFormatados', standardsFormatados);
+			this.props.setQualityStandards(standardsFormatados);
+			this.props.setValoresIN62Padrao([standards.fat, standards.prot, standards.esd, standards.cbt, standards.est, standards.ccs]);
 			this.props.setRange(range);
 			this.props.setRelatorioQualidade(this.props.quality.milkQualityReport);
 			this.props.setType(type);
@@ -903,7 +995,9 @@ export const Quality = enhance(
 		relatorioQualidade,
 		valoresIN62Status,
 		valoresIN62Padrao,
-		periodoIn62
+		periodoIn62,
+		qualityStandards, 
+		type
 	}) => {
 		console.log('MEDIA PERIODO', types);
 		if (primeiraExecucao) {
@@ -965,6 +1059,8 @@ export const Quality = enhance(
 								decimalPlaces={decimalPlaces}
 								granularidade={granularidade}
 								qualityReport={relatorioQualidade}
+								qualityStandards={qualityStandards}
+								parametroLeite={type}
 							/>
 						)}
 						{isLegenda && (
@@ -974,7 +1070,7 @@ export const Quality = enhance(
 							</ViewLegenda>
 						)}
 						{isIN62 && (
-							<ViewAlertIN62 onPress={openModal}>
+							<ViewAlertIN62 >
 								<Image source={require('../../images/ic_warning_white.png')} style={{ height: 70, width: 70, marginTop: 10, marginRight: 10 }} />
 								<ViewAlertIN62Inside>
 									<Text style={{ color: '#ffffff', marginTop: 23, fontSize: 16 }} >
@@ -997,7 +1093,7 @@ export const Quality = enhance(
 						valoresStatus={valoresIN62Status}
 						valoresPadrao={valoresIN62Padrao}
 						periodoIn62 = {periodoIn62}
-					/>
+					/> 	
 				</ScrollWrapperStyle>
 			</Wrapper>
 		);
