@@ -226,8 +226,7 @@ const enhance = compose(
                                 console.log('%c ENTRA AQUI 2 #AZUL! ' + valueFormatter[index], 'background: #0096FF; color: #ffffff');
                                 trataCores[index] = processColor('#0096FF');
                                 //trataCores.push(processColor('#0096FF'));
-                            }
-                                
+                            } 
                         });    
 
                         

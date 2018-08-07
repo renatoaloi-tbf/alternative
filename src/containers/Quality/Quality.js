@@ -133,6 +133,7 @@ const enhance = compose(
 	withState('valoresIN62Status', 'setValoresIN62Status', []),
 	withState('valoresIN62Padrao', 'setValoresIN62Padrao', []),
 	withState('periodoIn62', 'setPeriodoIn62', moment().format('MM/YYYY')),
+	
 	withHandlers({
 		handlerComparacao: ({
 			setAnoAnterior,
@@ -856,6 +857,7 @@ const enhance = compose(
 					groupbyUser[item] = this.props.quality.groupByYear[item];
 			});
 			this.props.setRange(range);
+			
 			this.props.setRelatorioQualidade(this.props.quality.milkQualityReport);
 			this.props.setType(type);
 			this.props.setGranularidade(1.5);

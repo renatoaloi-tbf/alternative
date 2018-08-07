@@ -13,7 +13,6 @@ import In62 from '../In62/In62';
 import {PriceMinimum} from '../PriceMinimum/PriceMinimum';
 import UseTerms from '../UseTerms/UseTerms';
 import PrivacyPolicy from '../PrivacyPolicy/PrivacyPolicy';
-import GraficoTeste from '../GraficoTeste/GraficoTeste';
 import {Password} from '~/containers/Password';
 
 export const registeredScreens = [];
@@ -34,7 +33,6 @@ export const registerScreens = (store, Provider) => {
   registerComponent('PriceMinimum', PriceMinimum);
   registerComponent('UseTerms', UseTerms);
   registerComponent('PrivacyPolicy', PrivacyPolicy);
-  registerComponent('GraficoTeste', GraficoTeste)
   registerComponent('Password', Password);
 
   function registerComponent(name, screen) {
