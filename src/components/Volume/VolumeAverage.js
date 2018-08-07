@@ -84,13 +84,13 @@ export const VolumeAverage = enhance(
               <Text size={12} secondary>
                 Comparativo ({lastYear})
               </Text>
-              <View style={{flexDirection: 'row'}}>
-                <Text size={30} style={{marginRight: 5}} secondary>
+              <View style={{flexDirection: 'column'}}>
+                <Text size={28} secondary>
                   {percentual}%
-              </Text>
-                <Text size={12} style={{top: 18}} secondary>
-                  ({new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 0 }).format(totalAnoAnterior)} L)
-              </Text>
+                </Text>
+                <Text size={11} secondary>
+                    ({new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 0 }).format(totalAnoAnterior)} L)
+                </Text>
               </View>
             </StyleTextMonth>
           ) : (
