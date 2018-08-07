@@ -29,11 +29,13 @@ const enhance = compose(
         update: bool,
         decimalPlaces: number,
         granularidade: number,
-        qualityReport: array
+        qualityReport: array,
+        qualityStandards: object,
+        parametroLeite: object
     }),
     withProps(({ values, valueFormatter, valueFormatterIndex, onSelect, media,
         tipo, anoAnterior, valuesAnoAnterior, detalheDia, dia,
-        formatterMeses, testeUnique, decimalPlaces, granularidade, qualityReport
+        formatterMeses, testeUnique, decimalPlaces, granularidade, qualityReport, qualityStandards, parametroLeite
     }) => ({
         data: (() => {
 
@@ -201,27 +203,58 @@ const enhance = compose(
                 }
                 else {
                     if (qualityReport) {
-                        console.log('QUALITY REPORT', qualityReport);
+                        console.log('%c QUALITY STANDARDS', 'background: #008B8B; color: #ffffff', qualityStandards);
+                        console.log('%c TIPO ATUAL', 'background: #5F9EA0; color: #ffffff', parametroLeite);
                         qualityReport.forEach(function (report, indexReport) {
                             values.forEach(function (valor, index) {
+                                console.log('%c VALORES DA BARRA! ', 'background: #ffCCCC; color: #ffffff', valor)
                                 arrayMedia.push(media);
-                                /* console.log('valueFormatter[index]', valueFormatter[index]);
-                                console.log('report.period', report.period); */
-                                if (report.period == valueFormatter[index]
-                                    && moment(valueFormatter[0], 'MM/YYYY', true).isValid()
-                                ) {
+                                switch (parametroLeite.value) {
+                                    case 'fat':
+                                        if (valor.y < parseFloat(qualityStandards.fat) && moment(valueFormatter[0], 'MM/YYYY', true).isValid())
+                                            trataCores[index] = processColor('#ffbd00');
+                                        else if (trataCores[index] != processColor('#ffbd00')) trataCores[index] = processColor('#0096FF');
 
-                                    //console.log('ENTRA AQUI 1 #AMARELO');
-                                    console.log('%c ENTRA AQUI 1 #AMARELO! ' + valueFormatter[index], 'background: #ffbd00; color: #ffffff');
-                                    trataCores[index] = processColor('#ffbd00');
+                                        break;
+                                    case 'prot':
+                                        if (valor.y < parseFloat(qualityStandards.prot) && moment(valueFormatter[0], 'MM/YYYY', true).isValid())
+                                            trataCores[index] = processColor('#ffbd00');
+                                        else if (trataCores[index] != processColor('#ffbd00')) trataCores[index] = processColor('#0096FF');
+                                        
+                                        break;
+                                    case 'esd':
+                                        if (valor.y < parseFloat(qualityStandards.esd) && moment(valueFormatter[0], 'MM/YYYY', true).isValid())
+                                            trataCores[index] = processColor('#ffbd00');
+                                        else if (trataCores[index] != processColor('#ffbd00')) trataCores[index] = processColor('#0096FF');
 
+                                        break;
+                                    case 'cbt':
+                                        if (valor.y > parseFloat(qualityStandards.cbt) && moment(valueFormatter[0], 'MM/YYYY', true).isValid())
+                                            trataCores[index] = processColor('#ffbd00');
+                                        else if (trataCores[index] != processColor('#ffbd00')) trataCores[index] = processColor('#0096FF');
+
+                                        break;
+                                    case 'est':
+                                        if (valor.y < parseFloat(qualityStandards.est) && moment(valueFormatter[0], 'MM/YYYY', true).isValid())
+                                            trataCores[index] = processColor('#ffbd00');
+                                        else if (trataCores[index] != processColor('#ffbd00')) trataCores[index] = processColor('#0096FF');
+                                        
+                                        break;
+                                    case 'ccs':
+                                        if (valor.y > parseFloat(qualityStandards.ccs) && moment(valueFormatter[0], 'MM/YYYY', true).isValid())     
+                                            trataCores[index] = processColor('#ffbd00');
+                                        else if (trataCores[index] != processColor('#ffbd00')) trataCores[index] = processColor('#0096FF');
+                                        
+                                        break;
+                                    default:
+                                        break;
                                 }
 
-                                else if (trataCores[index] != processColor('#ffbd00')) {
-                                    console.log('%c ENTRA AQUI 2 #AZUL! ' + valueFormatter[index], 'background: #0096FF; color: #ffffff');
-                                    trataCores[index] = processColor('#0096FF');
-                                    //trataCores.push(processColor('#0096FF'));
-                                }
+
+
+
+
+
 
                             });
 
