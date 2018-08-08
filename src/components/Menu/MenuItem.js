@@ -60,13 +60,17 @@ const enhance = compose(
 			});
 			if(!link) {
 				navigator.pop();
-				navigator.push({
-					screen: route,
-					payload: {
-						logout: logout
-					},
-					navigatorStyle
-				});	
+				console.log('route', route);
+				if (route != 'Home')
+				{
+					navigator.push({
+						screen: route,
+						payload: {
+							logout: logout
+						},
+						navigatorStyle
+					});	
+				}
 			} else {
 				Linking.openURL(route)
 			}
