@@ -8,10 +8,10 @@ import {
   withState,
   lifecycle
 } from 'recompose';
-import {func, object} from 'prop-types';
-import {connect} from 'react-redux';
+import { func, object } from 'prop-types';
+import { connect } from 'react-redux';
 import moment from 'moment';
-import {reduce, map} from 'lodash';
+import { reduce, map } from 'lodash';
 import numeral from 'numeral';
 import {
   Wrapper,
@@ -20,29 +20,30 @@ import {
   DrawerButton,
   ScrollWrapper
 } from '~/components/shared';
-import {FilterOneDatePicker} from '~/components/FilterOneDatePicker';
-import {DocumentationItem} from '~/components/Documentation';
-import {getStatements} from '~/actions';
-import {isNumber} from '~/utils';
+import { FilterOneDatePicker } from '~/components/FilterOneDatePicker';
+import { DocumentationItem } from '~/components/Documentation';
+import { getStatements } from '~/actions';
+import { isNumber } from '~/utils';
+import { BackHandler } from 'react-native';
+import { navigatorStyle } from '~/config';
 import Intl from 'intl';
 require('intl/locale-data/jsonp/pt');
 
 const enhance = compose(
   connect(
-    ({quality, statements, researched}) => ({statements, researched, quality}),
-    {getStatements}
+    ({ quality, statements, researched }) => ({ statements, researched, quality }),
+    { getStatements }
   ),
-  withState('count', 'setCount', ({statements}) => {
+  withState('count', 'setCount', ({ statements }) => {
     console.log('statements', statements);
     const documentations = statements.byMonth[moment().format('MM/YYYY')];
     console.log('documentations', documentations);
     if (documentations && documentations.items.length) {
       const qtaList = map(documentations.items, item => item.qtd);
       const acount = reduce(qtaList, (previ, next) => previ + next);
-      if (isNumber(acount))
-      {
+      if (isNumber(acount)) {
         return `${new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 0 }).format(acount)} L`;
-      }  
+      }
     }
     return `0 L`;
   }),
@@ -55,6 +56,7 @@ const enhance = compose(
   withState('valoresIN62Status', 'setValoresIN62Status', []),
   withState('valoresIN62Padrao', 'setValoresIN62Padrao', []),
   withState('periodoIn62', 'setPeriodoIn62', moment().format('MM/YYYY')),
+  withState('backHandler', 'setBackHandler', null),
   withHandlers({
     handlerClose: ({
       setIsFilter,
@@ -91,10 +93,9 @@ const enhance = compose(
           const qtaList = map(documetations.items, item => item.qtd);
           const acount = reduce(qtaList, (previ, next) => previ + next);
           if (__DEV__) console.log("Documentation.js - handlePress", acount);
-          if (isNumber(acount))
-          {
+          if (isNumber(acount)) {
             setCount(`${new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 0 }).format(acount)} L`);
-          }  
+          }
           else {
             setCount(`0 L`);
           }
@@ -116,8 +117,7 @@ const enhance = compose(
       let periodoIn62 = moment().format('MM/YYYY');
 
       quality.milkQualityReport.forEach(function (value, key) {
-        if (value.period == e.value)
-        {
+        if (value.period == e.value) {
           periodoIn62 = value.period;
           valueExt = value;
           isIn62 = true;
@@ -156,8 +156,7 @@ const enhance = compose(
       let periodoIn62 = moment().format('MM/YYYY');
 
       this.props.quality.milkQualityReport.forEach(function (value, key) {
-        if (value.period == now)
-        {
+        if (value.period == now) {
           periodoIn62 = value.period;
           isIn62 = true;
           valueExt = value;
@@ -172,9 +171,9 @@ const enhance = compose(
       else {
         arrayValoresIN62 = [0, 0, 0, 0, 0, 0];
         arrayValoresIN62Status = [0, 0, 0, 0, 0, 0];
-        isIn62 = false; 
+        isIn62 = false;
       }
-      
+
       this.props.setPeriodoIn62(periodoIn62);
       this.props.setValoresIN62(arrayValoresIN62);
       this.props.setValoresIN62Status(arrayValoresIN62Status);
@@ -186,7 +185,8 @@ const enhance = compose(
       } else {
         this.props.setStatements(false);
       }
-    }
+    },
+ 
   })
 );
 
@@ -276,7 +276,7 @@ export const Documentation = enhance(
                 periodoIn62={periodoIn62}
               />
             )}
-            
+
           </WrapperItem>
         </ScrollWrapperStyle>
       </Wrapper>

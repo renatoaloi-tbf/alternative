@@ -59,6 +59,7 @@ const enhance = compose(
 				animated: true
 			});
 			if(!link) {
+				navigator.pop();
 				navigator.push({
 					screen: route,
 					payload: {

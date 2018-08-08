@@ -11,7 +11,8 @@ import {
 import { func, object } from 'prop-types';
 import { connect } from 'react-redux';
 import { ScrollView } from 'react-native';
-import { processColor, TouchableOpacity, Image } from 'react-native';
+import { processColor, TouchableOpacity, Image, BackHandler } from 'react-native';
+import { navigatorStyle } from '~/config';
 import { size, map, forEach, find, isEmpty } from 'lodash';
 
 import Moment from 'moment';
@@ -227,13 +228,13 @@ const enhance = compose(
 					return elemento.code == backend.user ? tot + (elemento.fat ? elemento.fat : 0) : tot;
 				}, 0);
 				let diferencaFat = 0, decimalFat = 0, percentualFat = 0;
-				
-				
+
+
 				if (contaFatAtual == 0) totalFatAtual = 0;
 				else totalFatAtual = (totalFatAtual / contaFatAtual);
 				if (contaFatAnterior == 0) totalFatAnterior = 0;
 				else totalFatAnterior = (totalFatAnterior / contaFatAnterior);
-				
+
 				diferencaFat = totalFatAtual - totalFatAnterior;
 				if (totalFatAnterior == 0) decimalFat = 0;
 				else decimalFat = diferencaFat / totalFatAnterior;
@@ -451,7 +452,7 @@ const enhance = compose(
 			}
 			console.log('passei no close do FilterCore 8');
 			forEach(types, item => {
-				if (item.value ==='fat') {
+				if (item.value === 'fat') {
 					item.selected = true;
 				} else {
 					item.selected = false;
@@ -602,7 +603,7 @@ const enhance = compose(
 			if (size(e) === 2) {
 				setPrimeiraExecucao(true);
 				console.log('quality.groupByYear', quality.groupByYear);
-				
+
 				var groupbyUser = {};
 				const keys = Object.keys(quality.groupByYear);
 				forEach(keys, item => {
@@ -645,7 +646,7 @@ const enhance = compose(
 			setDecimalPlaces,
 			setPrimeiraExecucao,
 			setValoresIN62,
-			backend, 
+			backend,
 			setValoresIN62Status,
 			setValoresIN62Padrao,
 			setPeriodoIn62
@@ -708,7 +709,7 @@ const enhance = compose(
 						setValoresIN62Padrao([standards.fat, standards.prot, standards.esd, standards.cbt, standards.est, standards.ccs]);
 						var achei = false;
 						var periodoIn62 = moment().format('MM/YYYY');
-						var reportExterno  = {};
+						var reportExterno = {};
 						/* quality.milkQualityReport.forEach(function(report, index) {
 							if (researched.searchQuality.byIndex[ex] == report.period) 
 							{
@@ -717,7 +718,7 @@ const enhance = compose(
 								reportExterno = report;
 							}
 						}); */
-						
+
 						var sfat, sprot, sesd, scbt, sest, sccs;
 						sfat = standards.fat.split(" ");
 						sprot = standards.prot.split(" ");
@@ -739,46 +740,46 @@ const enhance = compose(
 								if (e.y < parseFloat(standardsFormatados.fat)) {
 									console.log('OOOOOI É MENOR', e);
 									achei = true;
-									
+
 								}
-									
+
 								break;
 							case 'prot':
-								if (e.y < parseFloat(standardsFormatados.prot)){
-									
+								if (e.y < parseFloat(standardsFormatados.prot)) {
+
 									achei = true;
-									
+
 								}
 								break;
 							case 'esd':
-								if (e.y < parseFloat(standardsFormatados.esd)){
-									
+								if (e.y < parseFloat(standardsFormatados.esd)) {
+
 									achei = true;
-									
+
 								}
 								break;
 							case 'cbt':
-								if (e.y > parseFloat(standardsFormatados.cbt)){
-									
+								if (e.y > parseFloat(standardsFormatados.cbt)) {
+
 									achei = true;
 								}
 
 								break;
 							case 'est':
-								if (e.y < parseFloat(standardsFormatados.est)){
-									
+								if (e.y < parseFloat(standardsFormatados.est)) {
+
 									achei = true;
-									
+
 								}
-								
+
 								break;
 							case 'ccs':
-								if (e.y > parseFloat(standardsFormatados.ccs)){
-									
+								if (e.y > parseFloat(standardsFormatados.ccs)) {
+
 									achei = true;
-									
+
 								}
-								
+
 								break;
 							default:
 								break;
@@ -799,7 +800,7 @@ const enhance = compose(
 								setSearchToMonth(true);
 								if (type.value == 'cbt' || type.value == 'ccs') setDecimalPlaces(0);
 								else setDecimalPlaces(2);
-								
+
 								types[0].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(fat);
 								types[1].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(prot);
 								if (totalCbt) types[2].valor = Math.round(cbt);
@@ -809,7 +810,7 @@ const enhance = compose(
 								types[5].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(esd);
 							}
 						}
-						else  {
+						else {
 							setIsIN62(false);
 							if (quality.groupByMonth[month]) {
 								getDetailsDayQuality(quality.groupByMonth[month], type.value, backend.user);
@@ -820,7 +821,7 @@ const enhance = compose(
 								setSearchToMonth(true);
 								if (type.value == 'cbt' || type.value == 'ccs') setDecimalPlaces(0);
 								else setDecimalPlaces(2);
-								
+
 								types[0].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(fat);
 								types[1].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(prot);
 								if (totalCbt) types[2].valor = Math.round(cbt);
@@ -832,7 +833,7 @@ const enhance = compose(
 						}
 
 
-						
+
 					}
 				}
 			}
@@ -915,6 +916,8 @@ const enhance = compose(
 	}),
 	lifecycle({
 		componentWillMount() {
+
+			console.log('THIS PROPS QUALITY', this.props.quality)
 			const range = {
 				startDate: moment().startOf('month').subtract(11, 'month'),
 				endDate: moment().startOf('month')
@@ -948,7 +951,7 @@ const enhance = compose(
 			this.props.setQualityStandards(standardsFormatados);
 			this.props.setValoresIN62Padrao([standards.fat, standards.prot, standards.esd, standards.cbt, standards.est, standards.ccs]);
 			this.props.setRange(range);
-			
+
 			this.props.setRelatorioQualidade(this.props.quality.milkQualityReport);
 			this.props.setType(type);
 			this.props.setGranularidade(1.5);
@@ -997,10 +1000,11 @@ export const Quality = enhance(
 		valoresIN62Status,
 		valoresIN62Padrao,
 		periodoIn62,
-		qualityStandards, 
+		qualityStandards,
 		type
 	}) => {
 		console.log('MEDIA PERIODO', types);
+		console.log('VALORES QUALIDADE', researched.searchQuality);
 		if (primeiraExecucao) {
 			if (researched.searchQuality.mediaPeriodo['fat']) {
 				types[0].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(researched.searchQuality.mediaPeriodo['fat']);
@@ -1093,8 +1097,8 @@ export const Quality = enhance(
 						valores={valoresIN62}
 						valoresStatus={valoresIN62Status}
 						valoresPadrao={valoresIN62Padrao}
-						periodoIn62 = {periodoIn62}
-					/> 	
+						periodoIn62={periodoIn62}
+					/>
 				</ScrollWrapperStyle>
 			</Wrapper>
 		);
