@@ -85,7 +85,9 @@ const enhance = compose(
 				});
 			}
 			setLoading(true);
+			console.log('ANTES');
 			const { token } = await login(values.user, values.password);
+			console.log('DEPOIS');
 			setLoading(false);
 
 			if (token && token !== 401) {

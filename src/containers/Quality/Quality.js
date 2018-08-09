@@ -951,8 +951,8 @@ const enhance = compose(
 			this.props.setQualityStandards(standardsFormatados);
 			this.props.setValoresIN62Padrao([standards.fat, standards.prot, standards.esd, standards.cbt, standards.est, standards.ccs]);
 			this.props.setRange(range);
-
-			this.props.setRelatorioQualidade(this.props.quality.milkQualityReport);
+			//console.log('MILK QUALITY REPORT', this.props.quality.milkQualityReport);
+			//this.props.setRelatorioQualidade(this.props.quality.milkQualityReport);
 			this.props.setType(type);
 			this.props.setGranularidade(1.5);
 			this.props.getSearchQuality(
@@ -1063,7 +1063,6 @@ export const Quality = enhance(
 								dia={dadosDia}
 								decimalPlaces={decimalPlaces}
 								granularidade={granularidade}
-								qualityReport={relatorioQualidade}
 								qualityStandards={qualityStandards}
 								parametroLeite={type}
 							/>

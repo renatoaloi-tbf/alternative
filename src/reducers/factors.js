@@ -24,34 +24,56 @@ const getFactors = (state, {payload}) => {
   newState.infos.marketBonus = milkPriceFactors.marketBonus;
   newState.infos.tendency = milkPriceFactors.tendency;
   let arrayCbt = [], arrayCcs = [], arrayBpf = [], arrayPncebt = [], arrayFat = [], arrayProt = [], arrayVolume = [], arrayKm = [];
-  milkPriceFactors.cbt.values.forEach(item => {
-    arrayCbt.push({ ...item, type: milkPriceFactors.cbt.type })
-  });
-  milkPriceFactors.ccs.values.forEach(item => {
-    arrayCcs.push({ ...item, type: milkPriceFactors.ccs.type })
-  });
-  milkPriceFactors.bpf.values.forEach(item => {
-    arrayBpf.push({ ...item, type: milkPriceFactors.bpf.type })
-  });
-  milkPriceFactors.pncebt.values.forEach(item => {
-    arrayPncebt.push({ ...item, type: milkPriceFactors.pncebt.type })
-  });
-  milkPriceFactors.fat.values.forEach(item => {
-    arrayFat.push({ ...item, type: milkPriceFactors.fat.type })
-  });
-  milkPriceFactors.prot.values.forEach(item => {
-    arrayProt.push({ ...item, type: milkPriceFactors.prot.type })
-  });
-  milkPriceFactors.volume.values.forEach(item => {
-    arrayVolume.push({ ...item, type: milkPriceFactors.volume.type })
-  });
-  milkPriceFactors.km.values.forEach(item => {
-    arrayKm.push({ ...item, type: milkPriceFactors.km.type })
-  });
 
-  var merge = arrayCbt.concat(arrayCcs).concat(arrayBpf).concat(arrayPncebt)
-                      .concat(arrayFat).concat(arrayProt).concat(arrayVolume).concat(arrayKm);
-  newState.items.push(merge);
+
+  if (milkPriceFactors) {
+    if (milkPriceFactors.cbt) {
+      milkPriceFactors.cbt.values.forEach(item => {
+        arrayCbt.push({ ...item, type: milkPriceFactors.cbt.type })
+      });
+    }
+    if (milkPriceFactors.ccs) {
+      milkPriceFactors.ccs.values.forEach(item => {
+        arrayCcs.push({ ...item, type: milkPriceFactors.ccs.type })
+      });
+    }
+    if (milkPriceFactors.bpf) {
+      milkPriceFactors.bpf.values.forEach(item => {
+        arrayBpf.push({ ...item, type: milkPriceFactors.bpf.type })
+      });
+    }
+    if (milkPriceFactors.pncebt) {
+      milkPriceFactors.pncebt.values.forEach(item => {
+        arrayPncebt.push({ ...item, type: milkPriceFactors.pncebt.type })
+      });
+    }
+    if (milkPriceFactors.fat) {
+      milkPriceFactors.fat.values.forEach(item => {
+        arrayFat.push({ ...item, type: milkPriceFactors.fat.type })
+      });
+    }
+    if (milkPriceFactors.prot) {
+      milkPriceFactors.prot.values.forEach(item => {
+        arrayProt.push({ ...item, type: milkPriceFactors.prot.type })
+      });
+    }
+    if (milkPriceFactors.volume) {
+      milkPriceFactors.volume.values.forEach(item => {
+        arrayVolume.push({ ...item, type: milkPriceFactors.volume.type })
+      });
+    }
+    if (milkPriceFactors.km) {
+      milkPriceFactors.km.values.forEach(item => {
+        arrayKm.push({ ...item, type: milkPriceFactors.km.type })
+      });
+    }
+
+
+    var merge = arrayCbt.concat(arrayCcs).concat(arrayBpf).concat(arrayPncebt)
+                        .concat(arrayFat).concat(arrayProt).concat(arrayVolume).concat(arrayKm);
+    newState.items.push(merge);
+  }
+  
   return newState;
 };
 

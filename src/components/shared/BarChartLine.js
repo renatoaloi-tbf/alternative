@@ -202,10 +202,9 @@ const enhance = compose(
                     }
                 }
                 else {
-                    if (qualityReport) {
+                    if (qualityStandards) {
                         console.log('%c QUALITY STANDARDS', 'background: #008B8B; color: #ffffff', qualityStandards);
                         console.log('%c TIPO ATUAL', 'background: #5F9EA0; color: #ffffff', parametroLeite);
-                        qualityReport.forEach(function (report, indexReport) {
                             values.forEach(function (valor, index) {
                                 console.log('%c VALORES DA BARRA! ', 'background: #ffCCCC; color: #ffffff', valor)
                                 arrayMedia.push(media);
@@ -259,7 +258,7 @@ const enhance = compose(
                             });
 
 
-                        });
+                        
                     }
                     else {
                         values.forEach(valor => {
