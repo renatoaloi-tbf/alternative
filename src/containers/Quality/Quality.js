@@ -414,13 +414,15 @@ const enhance = compose(
 			backend,
 			setSearchToMonth,
 			setTpes,
-			setGranularidade
+			setGranularidade,
+			setIsIN62
 		}) => () => {
 			setRange({});
 			setFilter(true);
 			setClose(false);
 			setComparacao(false);
 			setSearchToMonth(false);
+			setIsIN62(false);
 
 			setSearchMonth('Mais recentes');
 			console.log('passei no close do FilterCore 6');
@@ -490,9 +492,11 @@ const enhance = compose(
 			setPrimeiraExecucao,
 			backend,
 			setDecimalPlaces,
-			setGranularidade
+			setGranularidade,
+			setIsIN62
 		}) => e => {
 			setPrimeiraExecucao(false);
+			setIsIN62(false);
 			if (types[0].valor != null) {
 				if (!anoAnterior) {
 					console.log('PASSA AQUI???!!!');

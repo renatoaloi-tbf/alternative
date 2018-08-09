@@ -86,15 +86,15 @@ const enhance = compose(
 			}
 			setLoading(true);
 			console.log('ANTES');
-			const { token } = await login(values.user, values.password);
+			const { token, error } = await login(values.user, values.password);
 			console.log('DEPOIS');
 			setLoading(false);
-
+			if (__DEV__) console.log('token', token);
 			if (token && token !== 401) {
 				loginSuccess();
 			} else {
 
-				if (__DEV__) console.log('token', token);
+				
 
 				// Verificando se existem dados persistidos
 				var loginOk = false;
@@ -112,8 +112,13 @@ const enhance = compose(
 					}
 				}
 
-				if (!loginOk)
+				if (!loginOk && !error) {
 					showErrorNotification('Usuário ou senha incorretos');
+				}
+				else if (!loginOk && error) {
+					showErrorNotification(error.message);
+				}
+					
 			}
 
 		},
