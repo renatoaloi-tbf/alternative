@@ -234,9 +234,8 @@ const getDetailsDayQuality = (state, { payload }) => {
       map(newState.searchQuality.items, item => item.y),
       (prev, next) => prev + next
     );
-    if(type == 'cbt') newState.searchQuality.average = parseInt(Math.round(newState.searchQuality.total / contador));
+    if(type == 'cbt') newState.searchQuality.average = parseInt(newState.searchQuality.total / contador);
     else newState.searchQuality.average = newState.searchQuality.total / contador;
-
   }
   return newState;
 };

@@ -683,8 +683,8 @@ const enhance = compose(
 					}, 0);
 
 					var totalCbt = quality.groupByMonth[month].reduce(function (tot, elemento) {
-						!elemento.cbt ? elemento.cbt = 0 : elemento.cbt = Math.round(elemento.cbt);
-						return ((elemento.code == backend.user) ? Math.round(tot) + Math.round(elemento.cbt) : Math.round(tot));
+						!elemento.cbt ? elemento.cbt = 0 : elemento.cbt = elemento.cbt;
+						return ((elemento.code == backend.user) ? tot + elemento.cbt : tot);
 					}, 0);
 
 					var totalCcs = quality.groupByMonth[month].reduce(function (tot, elemento) {
@@ -714,14 +714,6 @@ const enhance = compose(
 						var achei = false;
 						var periodoIn62 = moment().format('MM/YYYY');
 						var reportExterno = {};
-						/* quality.milkQualityReport.forEach(function(report, index) {
-							if (researched.searchQuality.byIndex[ex] == report.period) 
-							{
-								periodoIn62 = report.period;
-								achei = true;
-								reportExterno = report;
-							}
-						}); */
 
 						var sfat, sprot, sesd, scbt, sest, sccs;
 						sfat = standards.fat.split(" ");
@@ -807,7 +799,7 @@ const enhance = compose(
 
 								types[0].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(fat);
 								types[1].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(prot);
-								if (totalCbt) types[2].valor = Math.round(cbt);
+								if (totalCbt) types[2].valor = cbt;
 								else types[2].valor = 0;
 								types[3].valor = Math.round(ccs);
 								types[4].valor = new Intl.NumberFormat('pt-BR', { style: 'decimal', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(est);
